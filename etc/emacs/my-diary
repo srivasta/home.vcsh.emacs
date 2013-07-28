@@ -1,0 +1,44 @@
+
+     
+#include "/usr/local/lib/emacs/site-lisp/plgm-setup/plgm-diary"
+    
+
+%%(diary-anniversary 1 8 1972)       Mike Shardo's %d%s birthday
+%%(diary-anniversary 1 21 1989)     Sabina & Debashis %d%s anniversary 
+%%(diary-anniversary 1 27 1966)      Thugs %d%s birthday
+%%(diary-anniversary 2 28 1978)      Danny Shardo's %d%s birthday
+%%(diary-anniversary 3 1 1954)       Jack Shardo's %d%s birthday
+%%(diary-anniversary 3 4 1973)       Angie Shardo's %d%s birthday
+%%(diary-anniversary 3 25 1956)      June Shardo's %d%s birthday
+%%(diary-anniversary 3 25 1956)      Jeff Shardo's %d%s birthday
+%%(diary-anniversary 3 22 1962)      my %d%s birthday
+%%(diary-anniversary 4 6 1946)       Judith Shardo's %d%s birthday
+%%(diary-anniversary 4 14 1962)      Sharad's %d%s birthday
+%%(diary-anniversary 4 30 1962)      Partho's %d%s birthday
+%%(diary-anniversary 5 8 1949)       Jim  Shardo's %d%s birthday
+%%(diary-anniversary 5 28 1964)      Kartik's %d%s birthday
+%%(diary-anniversary 7 20 1964)      Molly's %d%s birthday
+%%(diary-anniversary 7 21 1974)      Jackie Shardo's %d%s birthday
+%%(diary-anniversary 7 27 1964)      Rob's %d%s birthday
+%%(diary-anniversary 8 28 1964)      Sushant's %d%s birthday
+%%(diary-anniversary 9 11 1966)      Sabina's %d%s birthday
+%%(diary-anniversary 9 11 1960)      Jerry Shardo's %d%s birthday
+%%(diary-anniversary 9 15 1962)      Sandeep Gupta's %d%s birthday
+%%(diary-anniversary 9 25 1954)      jijji's %d%s birthday
+%%(diary-anniversary 10 1 1966)      Erika Bach's %d%s birthday
+%%(diary-anniversary 10 11 1961)     Krishnan's %d%s birthday
+%%(diary-anniversary 10 20 1981)     Jason's %d%s birthday
+%%(diary-anniversary 10 28 1988)    Sabina & Debashis %d%s anniversary 
+%%(diary-anniversary 11 15 1952)     J.C. Shardo's %d%s birthday
+%%(diary-anniversary 11 18 1961)     Debashis %d%s birthday
+%%(diary-anniversary 11 19 1958)     John's %d%s birthday
+%%(diary-anniversary 12  2 1964)     Reema's %d%s birthday
+%%(diary-anniversary 12 10 1969)     Anu's %d%s birthday
+%%(diary-anniversary 12 13 1964)     As-is's %d%s birthday
+%%(diary-anniversary 12 14 1966)     Ruchira's %d%s birthday
+%%(diary-anniversary 12 18 1964)     Ruby's %d%s birthday
+
+
+
+
+
