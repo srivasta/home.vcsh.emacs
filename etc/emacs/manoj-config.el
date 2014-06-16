@@ -492,7 +492,6 @@
 (add-to-list 'auto-mode-alist '("wiki\\.boozallenet\\.com_" . wikipedia-mode))
 (setq auto-mode-alist
       (cons '("\\.wiki\\'" . wikipedia-mode) auto-mode-alist))
-(add-to-list 'auto-mode-alist '("index.\\.*" . wikipedia-mode))
 (add-to-list 'auto-mode-alist '("mozex.\\.*" . wikipedia-mode))
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
@@ -2578,11 +2577,51 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;(modify-coding-system-alist 'file "\\.Z\\'" 'no-conversion)
 ;;(modify-coding-system-alist 'file "\\.bz\\'" 'no-conversion)
 ;;(modify-coding-system-alist 'file "\\.bz2\\'" 'no-conversion)
+(defun nxml-custom-keybindings ()
+  (define-key nxml-mode-map "\C-c\C-c" 'nxml-complete)
+  )
+(defun nxml-reset-indent-line-function ()
+  (setq indent-line-function 'nxml-indent-line))
+(add-hook 'nxml-mode-hook 'nxml-custom-keybindings)
+(add-hook 'nxml-mode-hook 'nxml-reset-indent-line-function)
 
 (setq
+ nxml-child-indent 2
+ nxml-outline-child-indent 2
  nxml-slash-auto-complete-flag t
  nxml-auto-insert-xml-declaration-flag t
  )
+(setq magic-mode-alist
+      (cons '("<＼＼?xml " . nxml-mode)
+            magic-mode-alist))
+(fset 'xml-mode 'nxml-mode)
+(fset 'html-mode 'nxml-mode)
+;;;(add-to-list 'flyspell-prog-text-faces 'nxml-text-face)
+
+
+(defun nxml-where ()
+  "Display the hierarchy of XML elements the point is on as a path."
+  (interactive)
+  (let ((path nil))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (while (and (< (point-min) (point)) ;; Doesn't error if point is at beginning of buffer
+                    (condition-case nil
+                        (progn
+                          (nxml-backward-up-element) ; always returns nil
+                          t)
+                      (error nil)))
+          (setq path (cons (xmltok-start-tag-local-name) path)))
+        (if (called-interactively-p t)
+            (message "/%s" (mapconcat 'identity path "/"))
+          (format "/%s" (mapconcat 'identity path "/")))))))
+;;--
+;; Load nxml-mode for files ending in .xml, .xsl, .rng, .xhtml
+;;--
+(setq auto-mode-alist
+      (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\)\\'" . nxml-mode)
+            auto-mode-alist))
 
 ;;(while (rassoc 'html-mode  auto-mode-alist)
 ;;  (setcdr (rassoc 'html-mode  auto-mode-alist) 'sgml-html-mode))
