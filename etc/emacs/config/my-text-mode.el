@@ -48,8 +48,6 @@
       (pabbrev-mode 1))
   (yas-minor-mode 0)
   (smart-tab-mode 0)
-  (if (featurep 'org)
-      (turn-on-orgstruct))
   )
 
 ;; Add a rectangular area containing numbers
