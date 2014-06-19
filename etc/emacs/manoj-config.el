@@ -246,6 +246,13 @@
 
 (setq fill-column 80)            ;;when to split lines
 (setq split-width-threshold nil) ;;;  Do not split window horizontally
+(when (require 'winner nil 'noerror)
+  (winner-mode 1))
+(windmove-default-keybindings)
+;; (desktop-save-mode 1)
+
+(setq savehist-file (concat real-home-directory "/var/cache/emacs-history"))
+(savehist-mode 1)
 
 ;;Whether to add a newline automatically at the end of the file.
 ;;A value of t means do this only when the file is about to be saved.
@@ -978,7 +985,8 @@
                 (lambda()(interactive)(goto-char(point-max))))
 
 (require 'linum)
-(global-set-key (kbd "<f3>") 'linum-mode)
+(global-linum-mode 1)
+;;(global-set-key (kbd "<f3>") 'linum-mode)
 
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
 (global-set-key (kbd "C-<f6>") 'magit-status)               ;; ...git mode
