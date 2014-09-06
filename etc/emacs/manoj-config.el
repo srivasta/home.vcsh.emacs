@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;; -*- Mode: Emacs-Lisp -*- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;; -*- Mode: Emacs-Lisp -*- ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; manoj-config.el ---
 ;; Author           : Emacs Test User ( emacstest@glaurung.green-gryphon.com )
 ;; Created On       : Mon Nov 27 14:16:14 2000
@@ -393,7 +393,11 @@
   "Remove tmux artifacts from region."
   (interactive "r")
   (dolist (re '("\\\\│\·*\n" "\W*│\·*"))
-    (replace-regexp re "" nil beg end)))
+    (save-excursion
+      (goto-char beg)
+      (re-search-forward re  end)
+      (replace-match "")
+      )))
 
 (set-default 'ispell-skip-html t)
 (setq-default ispell-program-name "aspell")
@@ -1509,7 +1513,6 @@
 
 (require 'semantic/senator)
 
-(require 'semantic/bovine/c)
 (require 'semantic/bovine/gcc)
 (require 'semantic/ia)
 (require 'semantic/decorate/include)
@@ -3754,9 +3757,9 @@ ulmer:bbdb-trim-subjects to retain.")
 (require 'dedicated)
 
 ;; dict support
-(require 'dictionary)
-(global-set-key (kbd "C-c C-d s") 'dictionary-search)
-(global-set-key (kbd "C-c C-d m") 'dictionary-match-words)
+;;(require 'dictionary)
+;;(global-set-key (kbd "C-c C-d s") 'dictionary-search)
+;;(global-set-key (kbd "C-c C-d m") 'dictionary-match-words)
 
 ;; show everything in kill ring
 (require 'browse-kill-ring)
@@ -3932,7 +3935,7 @@ ulmer:bbdb-trim-subjects to retain.")
 (global-set-key [?\e ?\[ ?1 ?~] 'beginning-of-buffer)
 (global-set-key [?\e ?\[ ?4 ?~] 'end-of-buffer)
 
-(require 'org-journal)
+;;;(require 'org-journal)
 (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
 (add-to-list 'org-agenda-files org-journal-dir)
 
