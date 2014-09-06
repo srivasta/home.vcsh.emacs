@@ -65,10 +65,6 @@
               (nntp-connection-timeout 300)
               (nntp-port-number 119))
 
-;;        (nntp "news.gwene.org"
-;;              (nntp-address "news.gwene.org")
-;;              (nntp-connection-timeout 300)
-;;              (nntp-port-number 119))
 
        (nnimap "smtp.golden-gryphon.com"
         (nnimap-address "smtp.golden-gryphon.com")
@@ -76,8 +72,22 @@
         (nnir-search-engine imap)
         (nnimap-streaming nil)
         (nnimap-authinfo-file "~/.authinfo"))
+
+       (nnimap "gmail"
+               (nnimap-address "imap.gmail.com")
+               (nnimap-authinfo-file "~/.authinfo")
+               (nnimap-server-port 993)
+               (nnimap-stream ssl)
+               (nnmail-expiry-target "nnimap+gmail:[Gmail]/Trash")
+               (nnmail-expiry-wait immediate))
+
        ))
 
+
+;;        (nntp "news.gwene.org"
+;;              (nntp-address "news.gwene.org")
+;;              (nntp-connection-timeout 300)
+;;              (nntp-port-number 119))
 
         ;;; (nntp "reader.news4all.se"
         ;;;       (nntp-address "reader.news4all.se")
@@ -85,12 +95,6 @@
         ;;;       (nntp-port-number 119)
         ;;;       (nntp-connection-timeout 300))
 
-
-        ;;; (nnimap "gmail"
-        ;;;         (nnimap-address "imap.gmail.com")
-        ;;;         (nnimap-stream ssl)
-        ;;;         (nnimap-authinfo-file "~/.authinfo")
-        ;;;         )
 
         ;;;(nntp "glaurung.internal.golden-gryphon.com")
         ;;;	(nntp "quimby.gnus.org")
@@ -105,13 +109,6 @@
         ;;;                            "datasync.com" "exec" "sleep" "60000")
         ;;;              (sit-for 3))))
 
-        ;;;      '((nnimap "gmail"
-        ;;;	       (nnimap-address "imap.gmail.com")
-        ;;;	       (nnimap-authinfo-file "~/.netrc")
-        ;;;	       (nnimap-server-port 993)
-        ;;;	       (nnimap-stream ssl)
-        ;;;	       (nnmail-expiry-target "nnimap+gmail:[Gmail]/Trash")
-        ;;;	       (nnmail-expiry-wait immediate))))
 
 
 ;; ;; SMTP for GMX (sending)
@@ -218,8 +215,8 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
 (gnus-demon-init)
 (add-hook 'gnus-startup-hook
           '(lambda ()
-             (gnus-demon-add-handler 'gnus-demon-scan-mail 5 nil)
-             (gnus-demon-add-handler 'gnus-demon-scan-news 10 5)
+             (gnus-demon-add-handler 'gnus-demon-scan-mail 120 60)
+             (gnus-demon-add-handler 'gnus-demon-scan-news 120 60)
              (gnus-demon-add-handler 'gnus-demon-scan-timestamps nil 30)
              ))
 
@@ -399,7 +396,9 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
 ;; Groups handling
 (setq
  gnus-subscribe-newsgroup-method 'gnus-subscribe-topics
- gnus-group-sort-function '(gnus-group-sort-by-unread
+ gnus-group-sort-function '(gnus-group-sort-by-alphabet
+                            gnus-group-sort-by-method
+                            gnus-group-sort-by-unread
                             gnus-group-sort-by-rank)
  )
 
