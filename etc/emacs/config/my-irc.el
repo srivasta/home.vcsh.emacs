@@ -19,6 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;-----------------------------------------------------------------------------
 ;;(load "my-zenirc")
+(require 'tls)
 (require 'erc)
 (require 'erc-goodies)
 (setq  erc-hide-list
@@ -411,6 +412,8 @@ stuff, to the current ERC buffer."
         ("freenode.net" "#debian")
         ;;("freenode.net" "#nlug" "#selinux" "#linux-india")
         ))
+
+
 (defun my-irc ()
   "Start to waste time on IRC with ERC."
   (interactive)
@@ -418,15 +421,18 @@ stuff, to the current ERC buffer."
 ;;              :password "Talwsatgig" :full-name "Manoj Srivastava")
 ;;  (sit-for 10)
 ;;  (erc-autojoin-channels "irc.freenode.net" "Manoj")
-  (erc-select :server "irc.oftc.net" :port 6667 :nick "Manoj"
-              :password oftc-password  :full-name "Manoj Srivastava")
+  (if (file-exists-p
+       (concat real-home-directory "/etc/emacs/config/Manoj.pem"))
+      (erc-tls :server "irc.oftc.net" :port 6697
+           :nick "Manoj" :full-name "Manoj Srivastava")
+    (erc-select :server "irc.oftc.net" :port 6667 :nick "Manoj"
+                :password oftc-password  :full-name "Manoj Srivastava"))
   (sit-for 10)
   (erc-autojoin-channels "irc.oftc.net" "Manoj")
   (sit-for 10)
   (erc-select :server "localhost" :port 6667 :nick "Manoj"
               :password bitlbee-password :full-name "Manoj Srivastava")
   )
-
 
 ;; (defun irc-newframe ()
 ;;   "Start to waste time on IRC with ERC."

@@ -1008,7 +1008,6 @@
 (global-set-key "\C-xru" 'gse-number-rectangle)
 
 
-
 (global-set-key (kbd "C-x 4 k") (lambda ()
                                   (interactive)
                                   (kill-buffer (current-buffer))
@@ -2363,7 +2362,40 @@ This requires the external program \"diff\" to be in your `exec-path'."
  vm-highlight-url-face 'font-lock-comment-face
  )
 
-;;;(require 'gnutls)
+;;; verify hostnames and errors
+(setq gnutls-verify-error t)
+;;; '((".*\\.gmail.com" . (:verify-hostname-error t :verify-error t))
+;;;  (".*\\.yahoo.com" . t) ; everything
+;;;  (".*" . nil)) ; nothing
+
+;;; Argh. we still do not preset client certs. fall back to external means
+(if (fboundp 'gnutls-available-p)
+    (fmakunbound 'gnutls-available-p))
+
+(if (file-exists-p
+     (concat real-home-directory "/etc/emacs/config/Manoj.pem"))
+    (setq tls-program
+          '(
+            (concat
+             "openssl s_client -connect %h:%p -no_ssl2 -ign_eof -CAfile "
+             real-home-directory
+             "/etc/emacs/config/spi_ca.pem -cert "
+             real-home-directory
+             "/etc/emacs/config/Manoj.pem  -p %p %h")
+            (concat "gnutls-cli --priority secure256 --x509cafile "
+                    real-home-directory
+                    "/etc/emacs/config/spi_ca.pem --x509certfile "
+                    real-home-directory
+                    "/etc/emacs/config/Manoj.pem  -p %p %h")))
+  (setq tls-program
+        '(
+          "gnutls-cli --priority secure256 -p %p %h"
+          "gnutls-cli --insecure -p %p %h"
+          "gnutls-cli --insecure -p %p %h --protocols ssl3"
+          "openssl s_client -connect %h:%p -no_ssl2 -ign_eof"
+          )))
+(require 'gnutls)
+
 ;;; (setq tls-program
 ;;;       '(
 ;;;         "gnutls-cli -p %p %h"

@@ -25,6 +25,7 @@
 !/etc/emacs/config/my-x-setup.el
 !/etc/emacs/config/secrets.el
 !/etc/emacs/config/secrets.el.gpg
+!/etc/emacs/config/spi_ca.pem
 !/etc/emacs/.gitignore
 !/etc/emacs/lisp
 !/etc/emacs/lisp/ascii.el
