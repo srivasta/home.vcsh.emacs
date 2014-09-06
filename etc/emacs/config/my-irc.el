@@ -22,6 +22,7 @@
 (require 'tls)
 (require 'erc)
 (require 'erc-goodies)
+(require 'erc-bbdb)
 (setq  erc-hide-list
        '(
          "324"
