@@ -41,7 +41,7 @@
                  irccontrols log list match menu move-to-prompt
                  netsplit networks noncommands notify
                  notifications page readonly replace ring
-                 scrolltobottom services smiley sound spelling
+                 services smiley sound spelling
                  sound stamp track unmorse))
 
 (erc-update-modules)
@@ -215,7 +215,6 @@
    (set (make-local-variable 'erc-fill-column) (- (window-width) 10))
    (set (make-local-variable 'erc-timestamp-right-column)
       (1+ erc-fill-column))
-   (erc-add-scroll-to-bottom)
    (setq default-directory "~/")
    (erc-timestamp-mode 1)
    (erc-button-mode t)                   ;slow
