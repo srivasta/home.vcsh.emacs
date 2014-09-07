@@ -1546,7 +1546,7 @@
 (global-semantic-show-unmatched-syntax-mode t)
 
 (global-semantic-idle-completions-mode t)
-(semantic-gcc-setup)
+;;;(semantic-gcc-setup)
 
 
 (when (cedet-gnu-global-version-check t)
@@ -2372,28 +2372,14 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (if (fboundp 'gnutls-available-p)
     (fmakunbound 'gnutls-available-p))
 
-(if (file-exists-p
-     (concat real-home-directory "/etc/emacs/config/Manoj.pem"))
-    (setq tls-program
-          '(
-            (concat
-             "openssl s_client -connect %h:%p -no_ssl2 -ign_eof -CAfile "
-             real-home-directory
-             "/etc/emacs/config/spi_ca.pem -cert "
-             real-home-directory
-             "/etc/emacs/config/Manoj.pem  -p %p %h")
-            (concat "gnutls-cli --priority secure256 --x509cafile "
-                    real-home-directory
-                    "/etc/emacs/config/spi_ca.pem --x509certfile "
-                    real-home-directory
-                    "/etc/emacs/config/Manoj.pem  -p %p %h")))
-  (setq tls-program
-        '(
-          "gnutls-cli --priority secure256 -p %p %h"
-          "gnutls-cli --insecure -p %p %h"
-          "gnutls-cli --insecure -p %p %h --protocols ssl3"
-          "openssl s_client -connect %h:%p -no_ssl2 -ign_eof"
-          )))
+
+(setq tls-program
+      '(
+        "gnutls-cli --priority secure256 -p %p %h"
+        "gnutls-cli --insecure -p %p %h"
+        "gnutls-cli --insecure -p %p %h --protocols ssl3"
+        "openssl s_client -connect %h:%p -no_ssl2 -ign_eof"
+        ))
 (require 'gnutls)
 
 ;;; (setq tls-program

@@ -424,8 +424,22 @@ stuff, to the current ERC buffer."
 ;;  (erc-autojoin-channels "irc.freenode.net" "Manoj")
   (if (file-exists-p
        (concat real-home-directory "/etc/emacs/config/Manoj.pem"))
-      (erc-tls :server "irc.oftc.net" :port 6697
-           :nick "Manoj" :full-name "Manoj Srivastava")
+      (let ((tls-program
+             (list
+              (concat
+               "openssl s_client -connect %h:%p -no_ssl2 -ign_eof -CAfile "
+               real-home-directory
+               "/etc/emacs/config/spi_ca.pem -cert "
+               real-home-directory
+               "/etc/emacs/config/Manoj.pem  -p %p %h")
+              (concat "gnutls-cli --priority secure256 --x509cafile "
+                      real-home-directory
+                      "/etc/emacs/config/spi_ca.pem --x509certfile "
+                      real-home-directory
+                      "/etc/emacs/config/Manoj.pem  -p %p %h")
+              )))
+        (erc-tls :server "irc.oftc.net" :port 6697
+                 :nick "Manoj" :full-name "Manoj Srivastava"))
     (erc-select :server "irc.oftc.net" :port 6667 :nick "Manoj"
                 :password oftc-password  :full-name "Manoj Srivastava"))
   (sit-for 10)
