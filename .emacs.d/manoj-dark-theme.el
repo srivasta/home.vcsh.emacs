@@ -571,6 +571,7 @@ jarring angry fruit salad look to reduce eye fatigue.")
  '(isearch-lazy-highlight-face ((t (:background "paleturquoise4"))))
  '(isearch-secondary ((t (:foreground "red3"))))
  '(italic ((t (:italic t))))
+ '(indent-guide-face ((t (:foreground "#93C393"))))
 
  '(menu ((t (:background "#191922" :foreground "Azure"))))
 

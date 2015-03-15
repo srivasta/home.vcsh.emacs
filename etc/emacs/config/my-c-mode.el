@@ -12,6 +12,8 @@
 ;; Description      :
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'cc-styles)
+(require 'cc-cmds)
 
 (defun my-c-mode-ps-hook ()
   (require 'ps-print)

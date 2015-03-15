@@ -63,6 +63,7 @@
         (nntp "news.gmane.org"
               (nntp-address "news.gmane.org")
               (nntp-connection-timeout 300)
+              (nntp-open-connection-function nntp-open-network-stream)
               (nntp-port-number 119))
 
 
@@ -73,13 +74,13 @@
         (nnimap-streaming nil)
         (nnimap-authinfo-file "~/.authinfo"))
 
-       (nnimap "gmail"
-               (nnimap-address "imap.gmail.com")
-               (nnimap-authinfo-file "~/.authinfo")
-               (nnimap-server-port 993)
-               (nnimap-stream ssl)
-               (nnmail-expiry-target "nnimap+gmail:[Gmail]/Trash")
-               (nnmail-expiry-wait immediate))
+       ;;; (nnimap "gmail"
+       ;;;         (nnimap-address "imap.gmail.com")
+       ;;;         (nnimap-authinfo-file "~/.authinfo")
+       ;;;         (nnimap-server-port 993)
+       ;;;         (nnimap-stream ssl)
+       ;;;         (nnmail-expiry-target "nnimap+gmail:[Gmail]/Trash")
+       ;;;         (nnmail-expiry-wait immediate))
 
        ))
 

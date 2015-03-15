@@ -15,6 +15,8 @@
 
 ;;-----------------------------------------------------------------------------
 ;; Macros
+(defun eldoc-documentation-function-default ()
+  )
 (load-file (concat my-emacs-config-dir "/lisp/emacs-vers.el"))
 (defmacro GNUEmacs-23 (&rest body)
   `(when (= emacs-major-version 23)
@@ -132,11 +134,17 @@
 ;;                              Identity                              ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'add-log)
+(require 'message)
+(require 'ecomplete)
+(require 'smime)
+(require 'url-cache)
+(require 'eshell)
 (setq
  add-log-mailing-address debian-mailing-address
  add-log-time-zone-rule t
  debian-changelog-mailing-address debian-mailing-address
- gnus-local-organization mail-organization-header
+;;; gnus-local-organization mail-organization-header
  mail-host-address "golden-gryphon.com"
  mail-self-address (concat "<" user-mail-address ">")
  message-user-organization mail-organization-header
@@ -164,7 +172,7 @@
  temporary-file-directory (concat real-home-directory "/var/tmp")
 ;; The directory where cache files should be stored;
  url-cache-directory (concat real-home-directory "/var/cache")
- w3-configuration-directory "~/etc/w3"
+;; w3-configuration-directory "~/etc/w3"
  )
 
 
@@ -235,6 +243,7 @@
  visual-order-cursor-movement t
  )
 
+(require 'recentf)
 ;; Set up recentf so I can get a list of recent files when I start
 (recentf-mode 1)
 ;;(recentf-open-files nil "*Recent Files*")
@@ -548,7 +557,7 @@
 ;; C-k kills whole line and newline if at beginning of line
 (setq kill-whole-line t)
 
-
+(require 'xref)
 (require 'header2)
 (add-hook 'emacs-lisp-mode-hook 'auto-make-header)
 (add-hook 'c-mode-common-hook   'auto-make-header)
@@ -989,7 +998,7 @@
                 (lambda()(interactive)(goto-char(point-max))))
 
 (require 'linum)
-(global-linum-mode 1)
+;;(global-linum-mode 1)
 ;;(global-set-key (kbd "<f3>") 'linum-mode)
 
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
@@ -1453,8 +1462,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Enable EDE (Project Management) features
-(global-ede-mode 1)
+;;(global-ede-mode 1)
+(require 'ede/generic)
 (ede-enable-generic-projects)
+(require 'ede/speedbar)
+(require 'ede/proj)
+(require 'ede/dired)
+
 
 ;; Enable EDE for a pre-existing C++ project
 ;; (ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
@@ -1495,7 +1509,7 @@
 (defun my-semantic-hook ()
   (imenu-add-to-menubar "TAGS"))
 (add-hook 'semantic-init-hooks 'my-semantic-hook)
-
+
 ;;;
 (require 'cedet-cscope)
 
@@ -1503,12 +1517,10 @@
 (require 'semantic/sb)
 
 (require 'srecode)
-(require 'ede/speedbar)
 
 (require 'semantic/ia)
 (require 'semantic/db)
 (require 'semantic/db-global)
-(require 'ede/proj)
 
 (require 'semantic/senator)
 
@@ -1516,7 +1528,6 @@
 (require 'semantic/ia)
 (require 'semantic/decorate/include)
 (require 'semantic/lex-spp)
-(require 'ede/dired)
 
 ;;; One of:
 ;;; semantic-format-tag-name
@@ -2363,14 +2374,14 @@ This requires the external program \"diff\" to be in your `exec-path'."
  )
 
 ;;; verify hostnames and errors
-(setq gnutls-verify-error t)
+(setq gnutls-verify-error nil)
 ;;; '((".*\\.gmail.com" . (:verify-hostname-error t :verify-error t))
 ;;;  (".*\\.yahoo.com" . t) ; everything
 ;;;  (".*" . nil)) ; nothing
 
 ;;; Argh. we still do not preset client certs. fall back to external means
-(if (fboundp 'gnutls-available-p)
-    (fmakunbound 'gnutls-available-p))
+;;(if (fboundp 'gnutls-available-p)
+;;    (fmakunbound 'gnutls-available-p))
 
 
 (setq tls-program
@@ -2896,7 +2907,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (setq confirm-nonexistent-file-or-buffer nil)
 
 ;;; Completion in the mini buffer
-(setq  completion-styles '(partial-completion))
+(setq  completion-styles '(basic partial-completion initials substring  emacs22))
 (setq completion-word-extra-chars '(" " "-"))
 ;; Loading this package implements a more fine-grained minibuffer
 ;; completion feedback scheme.  Prospective completions are concisely
@@ -3870,6 +3881,7 @@ ulmer:bbdb-trim-subjects to retain.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; YASnippet
 ;; Replace yasnippets's TAB
+(require 'clipmon)
 (add-hook 'yas/minor-mode-hook
           (lambda ()
             (define-key yas-minor-mode-map (kbd "TAB") 'smart-tab)
@@ -3958,7 +3970,7 @@ ulmer:bbdb-trim-subjects to retain.")
 (add-to-list 'org-agenda-files org-journal-dir)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(perform-x-setup )
+(perform-x-setup)
 ;; Stop Cursor Going into Minibuffer Prompt
 (setq minibuffer-prompt-properties
       '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt))
@@ -3976,6 +3988,9 @@ ulmer:bbdb-trim-subjects to retain.")
           (list "epylint" (list local-file))))
       (add-to-list 'flymake-allowed-file-name-masks
                    '("\\.py\\'" flymake-pylint-init)))
+
+(require 'indent-guide)
+(indent-guide-global-mode)
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
