@@ -92,6 +92,7 @@
 ;;;       (add-to-list  'load-path "/usr/local/src//org-mode/EXPERIMENTAL/")
 ;;;       ))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                   Common variables used later                      ;;
@@ -1093,14 +1094,14 @@
  ;;; Behave like other X applications. This is confusing.
 
  ;; after copy Ctrl+c in X11 apps, you can paste by `yank' in emacs
- x-select-enable-clipboard t    ;;; cut/paste use clipboard
+ select-enable-clipboard t    ;;; cut/paste use clipboard
 
  interprogram-paste-function  'x-cut-buffer-or-selection-value
  select-active-regions     nil      ;;; This could be nill too
  mouse-drag-copy-region    t      ;;; copy dragged region to kill ring
 
  ;; after mouse selection in X11, you can paste by `yank' in emacs
- x-select-enable-primary   t
+ select-enable-primary   t
  delete-active-region      nil ;;; Whether single-char deletion
  ;;; commands delete an active region.
  )
@@ -3024,42 +3025,42 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 ;; If you want Emacs to defer loading the JDE until you open a
 ;; Java file,
-(setq defer-loading-jde t)
-(setq jde-enable-abbrev-mode t)
-(setq jde-jdk-registry
-      '(("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun")
-        ("1.6.0" . "/usr/lib/jvm/java-6-sun"))
-      jde-jdk '("1.6.0")
-      )
+;;; (setq defer-loading-jde t)
+;;; (setq jde-enable-abbrev-mode t)
+;;; (setq jde-jdk-registry
+;;;       '(("1.5.0" . "/usr/lib/jvm/java-1.5.0-sun")
+;;;         ("1.6.0" . "/usr/lib/jvm/java-6-sun"))
+;;;       jde-jdk '("1.6.0")
+;;;       )
 
-(if defer-loading-jde
-    (progn
-      (autoload 'jde-mode "jde" "JDE mode." t)
-      (setq interpreter-mode-alist
-            (cons '("java" . java-mode)
-                  interpreter-mode-alist))
-      (setq auto-mode-alist
-            (append
-             '(("\\.java\\'" . jde-mode))
-             auto-mode-alist)))
-  (require 'jde))
+;;; (if defer-loading-jde
+;;;     (progn
+;;;       (autoload 'jde-mode "jde" "JDE mode." t)
+;;;       (setq interpreter-mode-alist
+;;;             (cons '("java" . java-mode)
+;;;                   interpreter-mode-alist))
+;;;       (setq auto-mode-alist
+;;;             (append
+;;;              '(("\\.java\\'" . jde-mode))
+;;;              auto-mode-alist)))
+;;;   (require 'jde))
 
 
 ;; Sets the basic indentation for Java source files
 ;; to two spaces.
-(defun my-jde-mode-hook ()
-  ;;don't indent braces
-  (c-set-offset 'substatement-open 0)
-  (c-set-offset 'statement-case-open 0)
-  (c-set-offset 'substatement-open 0)
-  (c-set-offset 'case-label '+)
-  (setq tab-width 4
-        c-auto-newline t
-        ;; make sure spaces are used instead of tabs
-        indent-tabs-mode nil)
-  (eval-after-load "cc-vars" '(setq c-basic-offset 2)))
+;;; (defun my-jde-mode-hook ()
+;;;   ;;don't indent braces
+;;;   (c-set-offset 'substatement-open 0)
+;;;   (c-set-offset 'statement-case-open 0)
+;;;   (c-set-offset 'substatement-open 0)
+;;;   (c-set-offset 'case-label '+)
+;;;   (setq tab-width 4
+;;;         c-auto-newline t
+;;;         ;; make sure spaces are used instead of tabs
+;;;         indent-tabs-mode nil)
+;;;   (eval-after-load "cc-vars" '(setq c-basic-offset 2)))
 
-(add-hook 'jde-mode-hook 'my-jde-mode-hook)
+;;; (add-hook 'jde-mode-hook 'my-jde-mode-hook)
 
 (if (and (not (featurep 'xemacs))
          window-system
@@ -3889,6 +3890,7 @@ ulmer:bbdb-trim-subjects to retain.")
           ) ; was yas/expand
 
 (when (require 'yasnippet nil 'noerror) ;; not: yasnippet-bundle
+  (require 'clipmon)
   (yas-global-mode 1)
   (require 'dropdown-list)
   (setq yas-prompt-functions
@@ -3991,6 +3993,12 @@ ulmer:bbdb-trim-subjects to retain.")
 
 (require 'indent-guide)
 (indent-guide-global-mode)
+
+(defun what-face (pos)
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
