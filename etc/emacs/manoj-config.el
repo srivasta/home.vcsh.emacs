@@ -542,6 +542,7 @@
 (add-hook 'makefile-mode-hook
           (lambda()
             (setq show-trailing-whitespace t)))
+(add-hook 'java-mode-hook (lambda () (setq whitespace-line-column 100)))
 
 
 
@@ -1132,6 +1133,9 @@
 
 ;; activate scrolling using mouse wheel
 (mouse-wheel-mode t)
+;; Turn off mouse wheel speedup
+(setq mouse-wheel-progressive-speed nil)
+
 (setq mouse-autoselect-window -1
       focus-follows-mouse t
       mouse-1-click-follows-link  450
@@ -3409,6 +3413,9 @@ ulmer:bbdb-trim-subjects to retain.")
 
 
 (add-hook 'compilation-mode-hook (lambda () (setenv "TERM" "emacs")))
+;; Setup compilation buffer to stop at the first error
+(setq compilation-scroll-output 'first-error)
+
 ;; jabber
 (setq jabber-nickname "ManojSrivastava"
       jabber-username (user-real-login-name)
@@ -3999,6 +4006,19 @@ ulmer:bbdb-trim-subjects to retain.")
   (let ((face (or (get-char-property (point) 'read-face-name)
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
+
+(defun my-find-file-as-root ()
+  "Like `ido-find-file, but automatically edit the file with
+root-privileges (using tramp/sudo), if the file is not writable by
+user."
+  (interactive)
+  (let ((file (ido-read-file-name "Edit as root: ")))
+    (unless (file-writable-p file)
+      (setq file (concat "/sudo:root@localhost:" file)))
+    (find-file file)))
+;; or some other keybinding...
+(global-set-key (kbd "C-x F") 'my-find-file-as-root)
+
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp

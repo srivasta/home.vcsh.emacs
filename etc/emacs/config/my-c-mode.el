@@ -36,6 +36,10 @@
   (linum-mode 1)
   (setq compilation-window-height 16)
   (setq compilation-scroll-output t)
+  ;; Highlight words such as TODO, FIXME, and BUG
+  ;; Modify the regex to also accept parend and email address, then add colon back
+  (font-lock-add-keywords nil '(("\\<\\(FIXME\\|TODO\\|BUG\\)" 1
+				 font-lock-warning-face t)))
   )
 
 
