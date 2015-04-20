@@ -141,6 +141,7 @@
 (require 'smime)
 (require 'url-cache)
 (require 'eshell)
+
 (setq
  add-log-mailing-address debian-mailing-address
  add-log-time-zone-rule t
@@ -173,7 +174,7 @@
  temporary-file-directory (concat real-home-directory "/var/tmp")
 ;; The directory where cache files should be stored;
  url-cache-directory (concat real-home-directory "/var/cache")
-;; w3-configuration-directory "~/etc/w3"
+;;; w3-configuration-directory "~/etc/w3"
  )
 
 
@@ -1035,6 +1036,7 @@
 (global-set-key (kbd "C-x 5 m") 'compose-mail)
 
 (global-set-key (kbd "C-c r") 'revert-buffer)
+(define-key global-map (kbd "C-c SPC") 'cua-set-mark)
 
 (global-set-key (kbd "C-c /")
                 '(lambda()
@@ -1550,7 +1552,6 @@
 (setq semantic-idle-summary-function 'semantic-format-tag-short-doc)
 
 (semantic-mode 1)
-(global-srecode-minor-mode 1)
 
 (global-semanticdb-minor-mode 1)
 (global-semantic-idle-scheduler-mode 1)
@@ -1575,10 +1576,11 @@
   (semantic-idle-completions-mode 1)
   (semantic-idle-summary-mode 1)
   (semantic-idle-local-symbol-highlight-mode 1)
-  (semantic-auto-parse-mode 1)
+  ;;  (semantic-auto-parse-mode 1) ;;; defunct
   (semantic-stickyfunc-mode 1)
   (semantic-mru-bookmark-mode 1)
-  (semanticdb-minor-mode 1))
+  ;;; (semanticdb-minor-mode 1)
+  )
 
 (defun lisp-semantic-hook ()
   (semantic-enable-other-helpers))
@@ -1836,6 +1838,9 @@
 
 
 ;;-----------------------------------------------------------------------------
+(require 'clipmon)
+
+
 ;; diff with associated file
 
 (defun diff-buffer-with-associated-file ()
@@ -2421,6 +2426,15 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;  feedmail-nuke-resent-bcc nil
 ;;  )
 ;; (add-hook 'message-mail-send-hook 'feedmail-mail-send-hook-splitter)
+
+;; smtp
+;;; (setq message-send-mail-function 'message-smtpmail-send-it
+;;;       smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+;;;       smtpmail-default-smtp-server "smtp.gmail.com"
+;;;       smtpmail-smtp-service 587
+;;;       smtpmail-local-domain "google.com")
+;;      smtpmail-auth-credentials (concat gnus-home-directory "/.authinfo"))
+
 
 ;; To use smtp auth
 (setq send-mail-function 'smtpmail-send-it) ; if you use `mail'

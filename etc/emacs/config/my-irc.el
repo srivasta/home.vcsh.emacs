@@ -414,6 +414,35 @@ stuff, to the current ERC buffer."
         ;;("freenode.net" "#nlug" "#selinux" "#linux-india")
         ))
 
+(defun add-autojoin (server channel)
+  (require 'erc-join)
+  (when (and erc-autojoin-domain-only
+             (string-match "[^.\n]+\\.\\([^.\n]+\\.[^.\n]+\\)$" server))
+    (setq server (match-string 1 server)))
+  (let ((elem (assoc server erc-autojoin-channels-alist)))
+    (if elem
+        (unless (member channel (cdr elem))
+          (setcdr elem (cons channel (cdr elem))))
+      (setq erc-autojoin-channels-alist
+            (cons (list server channel) erc-autojoin-channels-alist)))))
+
+(defmacro define-chat-command (function server channel &optional port tls password)
+  `(defun ,function ()
+     (interactive)
+     (add-autojoin ,server ,channel)
+     (funcall (if ,tls 'erc-tls 'erc)
+              :server ,server :port ,(or port 6667) :nick (getenv "USER") :password ,password)))
+
+(define-chat-command abcl-chat "irc.freenode.net" "#abcl")
+(define-chat-command go-chat "irc.freenode.net" "#go-nuts")
+(define-chat-command org-tools-chat "irc.corp.google.com" "#org-tools")
+(define-chat-command ita-integration-chat
+  "ita5prattle1.itasoftware.com" "#integration" 6601 t "XXXXXXXXXX")
+(define-chat-command lisp-chat "irc.freenode.net" "#lisp")
+(define-chat-command sbcl-chat "irc.freenode.net" "#sbcl")
+(define-chat-command ubuntu-chat "irc.freenode.net" "#ubuntu")
+(define-chat-command bitlbee-start "localhost" 6667)
+
 
 (defun my-irc ()
   "Start to waste time on IRC with ERC."
@@ -468,6 +497,7 @@ stuff, to the current ERC buffer."
   ;;; (call-interactively 'erc-freenode)
   ;;; (sit-for 1)
   ;;; (call-interactively 'erc-oftc)
+  (setq erc-join-buffer 'frame)
   (call-interactively 'my-irc)
   )
 (provide 'my-irc)

@@ -277,11 +277,13 @@
                                        ("EDUCATION" . ?E)
                                        ("FINDJOB" . ?F)
                                        ("JOB" . ?J)
+                                       ("KEYRESULT" ?K)
                                        ("MAIL" . ?M)
                                        ("PLAY" . ?P)
                                        ("INFRASTRUCTURE" . ?I)
                                        ("CANCELLED" . ?C)
                                        ("NEXT" . ?N)
+                                       ("Task" ?T)
                                        ("WAITING" . ?W)
                                        )
  ; Allow setting single tags without the menu
@@ -384,8 +386,8 @@
          "* TODO %?\n  %u\n  %i\n  %a" :clock-in t :clock-resume t)
         ("r" "respond" entry (file "~/lib/org/refile.org")
          "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-        ("n" "note" entry (file "~/lib/org/refile.org")
-         "* %? :NOTE:  %u\n  %i\n  %a" :clock-in t :clock-resume t)
+        ("n" "note" checkitem
+         (file+headline "~/lib/org/refile.org" "Notes"))
         ("w" "org-protocol" entry (file "~/lib/org/refile.org")
          "* TODO Review %c\n%U\n" :immediate-finish t)
         ("m" "Meeting" entry (file "~/lib/org/refile.org")
@@ -407,6 +409,48 @@
          (file+datetree "~/lib/org/tickets.org")
          "* TODO [[tt:%x][Ticket %x]] :TICKET:\n:PROPERTIES:\n\t:CREATED: %U\n:END:\n\n  %i\n  %a\n - Status: %?" :immediate-finish t :clock-in t :clock-resume t :unnarrowed t )
         ))
+
+;;; Publishing
+(require 'ox-publish)
+(setq
+ org-publish-project-alist
+ '(("manoj" :components ("landing"))
+   ("landing"
+    :base-directory "~/lib/org/"
+    :base-extension "org"
+    :publishing-directory "~/public_html/"
+    :recursive t
+    :publishing-function org-html-publish-to-html
+    :export-with-tags t
+    :headline-levels 4             ; Just the default for this project.
+    :table-of-contents t
+    :timestamp t
+    :exclude-tags ("noexport")
+    :auto-preamble t
+    )
+   ("time-report"
+    :base-directory "~/lib/org/"
+    :base-extension "org"
+    :style "This is raw html for stylesheet <link>'s"
+    :html-preamble "blog header goes here"
+    :html-postamble nil
+    :section-numbers nil
+    :sub-superscript nil
+    :todo-keywords nil
+    :author nil
+    :creator-info nil
+    :publishing-directory "~/public_html/"
+    :recursive t
+    :publishing-function org-publish-org-to-html
+    )
+   ("notes"
+    :base-directory "~/lib/org/"
+    :base-extension "org"
+    :publishing-directory "~/public_html/"
+    :recursive t
+    :publishing-function org-publish-org-to-html
+    )
+   ))
 
 ;;;
 ;;; Clocking
@@ -431,7 +475,7 @@
  ;; Resume clocking task on clock-in if the clock is open
  org-clock-in-resume t
  ;; Change tasks to NEXT when clocking in
- org-clock-in-switch-to-state 'bh/clock-in-to-next
+ org-clock-in-switch-to-state 'org-clock-in-to-next
  ;; Separate drawers for clocking and logs
  org-drawers (quote ("PROPERTIES" "LOGBOOK"))
  ;; Clock out when moving task to a done state
@@ -544,7 +588,10 @@ as the default task."
   (interactive)
   (save-excursion
     (beginning-of-line 0)
-    (org-remove-empty-drawer-at (point))))
+    (while (re-search-forward org-drawer-regexp nil t)
+      (mapc (lambda (d)
+              (org-remove-empty-drawer-at d (point)))
+            org-drawers))))
 
 (add-hook 'org-clock-out-hook 'remove-empty-drawer-on-clock-out 'append)
 

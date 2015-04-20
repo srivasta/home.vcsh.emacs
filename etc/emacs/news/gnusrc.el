@@ -18,6 +18,9 @@
 ;;; System Level Stuff
 (setq gnus-local-organization "Manoj Srivastava's Home")
 
+(require 'gnus-registry)
+(gnus-registry-initialize)
+
 ;
 ;; ;; receive mail
 ;; (add-to-list 'gnus-secondary-select-methods '(nnml ""))
@@ -120,6 +123,11 @@
 ;;       smtpmail-starttls-credentials
 ;;       '(("mail.gmx.net" 25 nil nil)))
 
+;;; (setq
+;;;  nnimap-inbox '("INBOX" "SENT")
+;;;  nnmail-split-methods 'nnimap-split-fancy ;in case…
+;;;  )
+
 (eval-when-compile (require 'nnml))
 (setq  nnml-use-compressed-files t)
 
@@ -143,7 +151,20 @@
 (defun gnus-user-format-function-X (header)
   (let ((descr
          (assq nnrss-description-field (mail-header-extra header))))
-    (if descr (concat "\n\t" (cdr descr)) "")))
+    (if descr (concat "\n\t" (cdr descr)) ""))
+  (let* ((to (or (cdr (assoc 'To (mail-header-extra header))) ""))
+         (cc (or (cdr (assoc 'Cc (mail-header-extra header))) "")))
+    (if (string-match gnus-ignored-from-addresses (concat to ", " cc))
+        ">"
+      ""))
+  )
+
+(defun gnus-user-format-function-Y (header)
+  "Fix this"
+  (let* ((listid (or (cdr (assoc 'List-ID (mail-header-extra header))) "")))
+    (if (cdr (assoc listid list-label-map))
+        (format " <%s>" (cdr (assoc listid list-label-map)))
+      "")))
 
 
 (defun gnus-user-format-function-@ (header)
@@ -365,7 +386,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
  gnus-topic-line-format "%i[ %(%5{%n%}%) -- %g/%a/%A ]%v\n"
  )
 
-(defvar my-headers '(To Cc Newsgroups Keywords X-Newsreader
+(defvar my-headers '(To Cc Newsgroups Keywords X-Newsreader List-ID
                    Resent-CC X-Debian-PR-Package nnrss-description-field
                    X-Debian-PR-Message Content-Type))
 (while my-headers
@@ -1524,6 +1545,11 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
           (gnus-group-exit)))))
 
 (add-hook 'kill-emacs-hook 'exit-gnus-on-exit)
+
+;;; This instructs the imap.el package to log any exchanges with the
+;;; server. The log is stored in the buffer `*imap-log*'. Look for
+;;; error messages, which sometimes are tagged with the keyword BAD
+;;(setq imap-debug t imap-log t)
 
 
 
