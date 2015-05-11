@@ -3751,6 +3751,12 @@ ulmer:bbdb-trim-subjects to retain.")
 (add-hook 'perl-mode-hook 'flyspell-prog-mode)
 (add-hook 'perl-mode-hook 'which-func-mode)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                         Python
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq
+ python-indent-offset 2
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; flymake minor mode
