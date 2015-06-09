@@ -1001,8 +1001,8 @@
                 (lambda()(interactive)(goto-char(point-max))))
 
 (require 'linum)
-;;(global-linum-mode 1)
-;;(global-set-key (kbd "<f3>") 'linum-mode)
+(global-linum-mode 1)
+(global-set-key (kbd "<f3>") 'linum-mode)
 
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
 (global-set-key (kbd "C-<f6>") 'magit-status)               ;; ...git mode
@@ -1714,6 +1714,7 @@
 (which-function-mode 1)
 (electric-indent-mode 1)
 (electric-layout-mode 1)
+(electric-quote-mode 1)
 
 (setq require-final-newline t)
 
