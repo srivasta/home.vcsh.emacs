@@ -1839,9 +1839,6 @@
 
 
 ;;-----------------------------------------------------------------------------
-(require 'clipmon)
-
-
 ;; diff with associated file
 
 (defun diff-buffer-with-associated-file ()
@@ -3390,7 +3387,6 @@ ulmer:bbdb-trim-subjects to retain.")
 (add-hook 'bbdb-notice-hook   'bbdb-auto-notes-hook) ; see -auto-notes-alist
 
 
-(require 'my-org)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3420,9 +3416,6 @@ ulmer:bbdb-trim-subjects to retain.")
           (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/dvc"))
       (require 'dvc-autoloads)))
 
-;; If we leave Emacs running overnight - reset the appointments one
-;; minute after midnight
-(run-at-time "24:01" nil 'my-org-agenda-to-appt)
 
 (global-highlight-changes-mode -1)
 
@@ -3468,25 +3461,11 @@ ulmer:bbdb-trim-subjects to retain.")
 (delete-selection-mode -1)
 (setq mouse-region-delete-keys '([delete]))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (imenu-add-to-menubar "Imenu")
-            (local-set-key (kbd "\M-\C-n") 'outline-next-visible-heading)
-            (local-set-key (kbd "\M-\C-p") 'outline-previous-visible-heading)
-            (local-set-key (kbd "\M-\C-u") 'outline-up-heading)
-            ;; flyspell mode to spell check everywhere
-            (flyspell-mode 1)))
-
 (add-hook 'xgit-log-edit-mode-hook
           (lambda ()
             ;; flyspell mode to spell check everywhere
             (flyspell-mode 1)))
 
-(defun what-face (pos)
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
-    (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 
 (require 'my-faces)
@@ -3505,6 +3484,8 @@ ulmer:bbdb-trim-subjects to retain.")
         (system-time-locale "en_US"))
     (insert (format-time-string format))))
 
+(require 'cl-lib)
+(require 'cl-macs)
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
@@ -3931,11 +3912,15 @@ ulmer:bbdb-trim-subjects to retain.")
 ;;(add-hook 'c-mode-common-hook 'yas-minor-mode-on)
 ;;(add-hook 'lisp-mode-hook     'yas-minor-mode-on)
 ;;(add-hook 'cperl-mode-hook    'yas-minor-mode-on)
-;; Make TAB the yas trigger key in the org-mode-hook and turn on flyspell mode
 
 
 
-;; Autocomplete
+;;; ;; Autocomplete
+
+(require 'company-ycmd)
+(require 'flycheck-ycmd)
+
+
 (require 'auto-complete)
 (global-auto-complete-mode t)
 (define-key ac-complete-mode-map "\M-n" 'ac-next)
@@ -3946,8 +3931,6 @@ ulmer:bbdb-trim-subjects to retain.")
  )
 (setq ac-dwim t)                        ;Do what i mean
 
-;;; if you want enable auto-complete at org-mode, uncomment this line
-;; (add-to-list 'ac-trigger-commands 'org-self-insert-command)
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories
              (expand-file-name
@@ -3969,8 +3952,6 @@ ulmer:bbdb-trim-subjects to retain.")
 (setq completion-cycle-threshold 5)
 (add-to-list 'completion-styles 'substring)
 
-(if (not (member 'org-mode ac-modes))
-    (add-to-list 'ac-modes 'org-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (dolist (hook (list
@@ -3985,6 +3966,11 @@ ulmer:bbdb-trim-subjects to retain.")
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
 (ac-set-trigger-key "TAB")
 
+;;; if you want enable auto-complete at org-mode, uncomment this line
+(add-to-list 'ac-trigger-commands 'org-self-insert-command)
+
+(if (not (member 'org-mode ac-modes))
+    (add-to-list 'ac-modes 'org-mode))
 
 
 
@@ -3994,10 +3980,25 @@ ulmer:bbdb-trim-subjects to retain.")
 
 (global-set-key [?\e ?\[ ?1 ?~] 'beginning-of-buffer)
 (global-set-key [?\e ?\[ ?4 ?~] 'end-of-buffer)
+
+;; Make TAB the yas trigger key in the org-mode-hook and turn on flyspell mode
+(add-hook 'org-mode-hook
+          (lambda ()
+            (imenu-add-to-menubar "Imenu")
+            (local-set-key (kbd "\M-\C-n") 'outline-next-visible-heading)
+            (local-set-key (kbd "\M-\C-p") 'outline-previous-visible-heading)
+            (local-set-key (kbd "\M-\C-u") 'outline-up-heading)
+            ;; flyspell mode to spell check everywhere
+            (flyspell-mode 1)))
 
-;;;(require 'org-journal)
+(require 'org-journal)
+(require 'my-org)
 (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
 (add-to-list 'org-agenda-files org-journal-dir)
+;; If we leave Emacs running overnight - reset the appointments one
+;; minute after midnight
+(run-at-time "24:01" nil 'my-org-agenda-to-appt)
+
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (perform-x-setup)
@@ -4019,8 +4020,8 @@ ulmer:bbdb-trim-subjects to retain.")
       (add-to-list 'flymake-allowed-file-name-masks
                    '("\\.py\\'" flymake-pylint-init)))
 
-(require 'indent-guide)
-(indent-guide-global-mode)
+(when (load "indent-guide" t)
+  (indent-guide-global-mode))
 
 (defun what-face (pos)
   (interactive "d")

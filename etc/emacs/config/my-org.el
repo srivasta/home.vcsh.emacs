@@ -194,7 +194,13 @@
  ;; files of projects & groups you participate in. You can also set
  ;; this through M-x org-customize or typing C-c[ in each org file.
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- org-agenda-files                   (directory-files (concat real-home-directory "/lib/org/") t ".org$" t)
+ org-agenda-files
+ (append
+  (directory-files (concat real-home-directory "/lib/org/") t ".org$" t)
+  (directory-files (concat real-home-directory "/lib/jounrnal/") t ".org$" t)
+  ))
+
+(setq
  org-agenda-add-entry-text-maxlines 3
  org-agenda-include-diary           t  ;; Include Emacs diary entries into Org-mode agenda
  ;; org-agenda-window-setup            'other-frame
@@ -264,7 +270,7 @@
  org-startup-folded                  nil
 
  ; Tags with fast selection keys
- org-tag-alist                       '((:startgroup)
+ org-tag-persistent-alist            '((:startgroup)
                                        ("@InTown" . ?t)
                                        ("@AWAY" . ?a)
                                        ("@Work" . ?w)
@@ -332,7 +338,7 @@
 
 
 (setq org-archive-mark-done nil)
-(setq org-archive-location "%s_archive::* Archived Tasks")
+(setq org-archive-location "archive/%s::datetree/* Finished Tasks")
 
 (defun org-skip-non-archivable-tasks ()
   "Skip trees that are not available for archiving"
@@ -460,6 +466,10 @@
 ;; load it on startup
 (setq org-clock-persist t)
 (org-clock-persistence-insinuate)
+(defvar org-keep-clock-running nil
+  "*Whether or not to keep the clock running ion org mode."
+  )
+(require 'org-clock)
 
 (setq
  ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
@@ -600,7 +610,7 @@ as the default task."
   (interactive)
   (save-excursion
     (org-back-to-heading 'invisible-ok)
-    (hide-other)
+    (outline-hide-other)
     (org-cycle)
     (org-cycle)
     (org-cycle)))
@@ -1083,6 +1093,86 @@ dd {margin-bottom: 0.66em;}
     (org-set-local 'org-export-babel-evaluate nil)))
 
 (add-hook 'org-export-before-processing-hook #'my-toggle-off-babel)
+
+;; To use:
+;;
+;; Assumes that you have an N level categorisation of tasks using specific
+;; properties.
+;;
+;; Insert two lines like this in an org-mode buffer:
+;;
+;; #+BEGIN: clocktable :maxlevel 9 :properties ("CATEGORY" "Project") :scope agenda :block lastweek :link nil :formatter nik/org-clocktable-snippets
+;; #+END:
+;;
+;; Put the cursor on the BEGIN line and C-c C-c. That should fetch
+;; items from all files known to your agenda that had activity in the
+;; previous week and produce roughly Markdown formatted output useful
+;; for pasting in to snippets. Only entries with a keyword that
+;; matches one of your org-todo-keywords are included.
+;;
+;; The ":properties" section is a list of properties that will be used
+;; as headings in the Markdown output. Each task in a tree in a file
+;; that has a property named after this will have these headings set
+;; first.
+;;
+;; # [:CATEGORY:] (e.g., "Main project")
+;;
+;; ## [:Project:] (e.g., "Sub project 1")
+;;
+;; - Item 1
+;; - Item 2
+;; - Item 3
+;;
+;; # [:CATEGORY:] (e.g., "20% project")
+;;
+;; ## [:Project:] (e.g., "20% sub project 1")
+;;
+;; - Item 1
+;; - Item 2
+;; - Item 3
+;;
+;; Known issues:
+;;
+;; - If you re-use a property value across multiple files then the headings
+;;   will appear in the output multiple times, and must be manually cleaned
+;;   up.
+
+(defun nik/org-clocktable-snippets (ipos tables params)
+  (let* ((properties (plist-get params :properties))
+         (todo-regexp (concat "\\<" (regexp-opt org-todo-keywords-1 t) "\\>"))
+         tbl total-time file-time entries entry headline level)
+
+    (setq total-time (apply '+ (mapcar 'cadr tables)))
+    (goto-char ipos)
+
+    (when (and total-time (> total-time 0))
+      (while (setq tbl (pop tables))
+        ;; now tbl is the table resulting from one file.
+        (setq file-time (nth 1 tbl))
+        ;; Iterate over all entries that have time associated with them.
+        (when (and file-time (> file-time 0))
+          (setq entries (nth 2 tbl))
+          (while (setq entry (pop entries))
+            (setq level (car entry)
+                  headline (nth 1 entry))
+
+            (setq heading-level 1)
+            ;; Insert all the property values that apply to these tasks
+            ;; as Markdown headings (of increasing level)
+            (dolist (p properties)
+              (setq prop-val (cdr (assoc p (nth 4 entry))))
+              (setq heading-level (1+ heading-level))
+              (when prop-val
+                (insert "\n")
+                (insert (concat (make-string heading-level ?#) " " prop-val "\n"))
+                ))
+            ;; Insert the headline, preceeded by 0-n spaces (in
+            ;; multiples of 4) depending on the task level.
+            (when (string-match-p todo-regexp (nth 1 entry))
+              (insert (concat
+                       ;;; (make-string (* (- level 1) 4) ?\s)
+                       "- " headline "\n"))
+              )))))))
 
 (provide 'my-org)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
