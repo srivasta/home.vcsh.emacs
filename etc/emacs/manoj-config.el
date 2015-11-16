@@ -256,6 +256,8 @@
       query-replace-highlight t)             ;; ...and replacing
 
 (setq fill-column 80)            ;;when to split lines
+(add-hook 'prog-mode-hook (lambda () (setq fill-column 80)))
+
 (setq split-width-threshold nil) ;;;  Do not split window horizontally
 (when (require 'winner nil 'noerror)
   (winner-mode 1))
@@ -627,6 +629,9 @@
 (require 'tramp)
 (require 'tramp-sh)
 
+(setq
+ shell-prompt-pattern "^[^#$%>\n]*[#$%>] *"
+ )
 ;; edit files as root in remote servers
 (add-to-list 'tramp-default-proxies-alist
 	     '(nil "\\`root\\'" "/ssh:%h:"))
@@ -3739,6 +3744,11 @@ ulmer:bbdb-trim-subjects to retain.")
 (setq
  python-indent-offset 2
 )
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq fill-column 80)
+            (setq indent-tabs-mode nil)
+            ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; flymake minor mode

@@ -33,6 +33,8 @@
   ;; a switch statement.
   (c-set-offset 'case-label '+)
   (c-set-offset 'statement-cont '--)
+  (setq indent-tabs-mode nil)
+  (setq fill-column 80)
   (linum-mode 1)
   (setq compilation-window-height 16)
   (setq compilation-scroll-output t)
