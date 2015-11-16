@@ -1592,12 +1592,10 @@
 
 (defun c-like-semantic-hook ()
   (semantic-enable-other-helpers)
-  (complete-instance-variables-and-methods)
   (when (cedet-gnu-global-version-check t)
     (semanticdb-enable-gnu-global-databases 'c-mode)
     (semanticdb-enable-gnu-global-databases 'c++-mode))
-  (when (cedet-ectag-version-check)
-    (semantic-load-enable-primary-exuberant-ctags-support)))
+  )
 
 (add-hook 'c-mode-common-hook 'c-like-semantic-hook)
 
@@ -2660,24 +2658,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (fset 'html-mode 'nxml-mode)
 ;;;(add-to-list 'flyspell-prog-text-faces 'nxml-text-face)
 
-
-(defun nxml-where ()
-  "Display the hierarchy of XML elements the point is on as a path."
-  (interactive)
-  (let ((path nil))
-    (save-excursion
-      (save-restriction
-        (widen)
-        (while (and (< (point-min) (point)) ;; Doesn't error if point is at beginning of buffer
-                    (condition-case nil
-                        (progn
-                          (nxml-backward-up-element) ; always returns nil
-                          t)
-                      (error nil)))
-          (setq path (cons (xmltok-start-tag-local-name) path)))
-        (if (called-interactively-p t)
-            (message "/%s" (mapconcat 'identity path "/"))
-          (format "/%s" (mapconcat 'identity path "/")))))))
 ;;--
 ;; Load nxml-mode for files ending in .xml, .xsl, .rng, .xhtml
 ;;--
@@ -3926,11 +3906,7 @@ ulmer:bbdb-trim-subjects to retain.")
 
 
 ;;; ;; Autocomplete
-
-(require 'company-ycmd)
 (require 'flycheck-ycmd)
-
-
 (require 'auto-complete)
 (global-auto-complete-mode t)
 (define-key ac-complete-mode-map "\M-n" 'ac-next)
