@@ -412,6 +412,127 @@
       (replace-match "")
       )))
 
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph or REGION and make it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil region)))
+
+(defun align-second-column ()
+  "Align the second space delimeted column."
+  (interactive)
+  (align-regexp (region-beginning) (region-end) "\\w+\\(\\s-*\\)" 1 1 nil)
+  (deactivate-mark))
+
+(defun insert-deb-date ()
+  "Insert the current date and time using the format required for debian files."
+  (interactive)
+  (shell-command "date +'%a, %d %b %Y %H:%m:%S %z'" t))
+(defun rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" filename)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (cond ((get-buffer new-name)
+               (error "A buffer named '%s' already exists!" new-name))
+              (t
+               (rename-file filename new-name 1)
+               (rename-buffer new-name)
+               (set-visited-file-name new-name)
+               (set-buffer-modified-p nil)
+               (message "File '%s' successfully renamed to '%s'"
+                        name (file-name-nondirectory new-name))))))))
+(defun what-face (pos)
+  "Print the face at POS."
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))
+(defun duplicate-current-line-or-region (arg)
+  "Duplicates the current line or region ARG times.
+If there's no region, the current line will be duplicated."
+  (interactive "p")
+  (save-excursion
+    (if (region-active-p)
+        (duplicate-region arg)
+      (duplicate-current-line arg))))
+(defun duplicate-region (num &optional start end)
+  "Duplicates NUM times the region bounded by START and END times.
+If no START and END is provided, the current `region-beginning' and
+`region-end' is used."
+  (interactive "p")
+  (let* ((start (or start (region-beginning)))
+         (end (or end (region-end)))
+         (region (buffer-substring start end)))
+    (goto-char start)
+    (dotimes (i num)
+      (insert region))))
+
+(defun toggle-window-split ()
+  "Toggle between vertical and horizontal split."
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  #'split-window-horizontally
+                #'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+(defun imenu-elisp-sections ()
+  "Find sections in elisp file denoted by `;;;'."
+  (setq imenu-prev-index-position-function nil)
+  (add-to-list 'imenu-generic-expression '(nil "^;;;; \\(.+\\)$" 1) t))
+(defun shift-element (ele lst)
+  "Cyclical shift ELE in LST to the right."
+  (if (> (length lst) 1)
+      (if (equal (car (last lst)) ele)
+          (cons ele (butlast lst))
+        (if (equal (car lst) ele)
+            (cons (cadr lst) (cons ele (cddr lst)))
+          (cons (car lst) (shift-element ele (cdr lst)))))
+    lst))
+(defun swap-windows (w1 w2)
+  "Swaw window W1 and W2."
+  (let ((b1 (window-buffer w1))
+        (b2 (window-buffer w2))
+        (s1 (window-start w1))
+        (s2 (window-start w2)))
+    (set-window-buffer w1  b2)
+    (set-window-buffer w2 b1)
+    (set-window-start w1 s2)
+    (set-window-start w2 s1)))
+(defun rotate-windows ()
+  "Rotate windows."
+  (interactive)
+  (let ((lst (window-list))
+        (sel (selected-window))
+        slst)
+    (cond ((not (> (length lst) 1))
+           (message "You can't rotate a single window!"))
+          ((equal (car (last lst)) sel)
+           (swap-windows (car lst) (car (last lst))))
+          ((setq slst (member sel lst))
+           (swap-windows (car slst) (cadr slst)))))
+  (other-window 1))
+
 (set-default 'ispell-skip-html t)
 (setq-default ispell-program-name "aspell")
 
@@ -492,8 +613,6 @@
       (cons '("\\.mdwn$" . markdown-mode) auto-mode-alist))
 (add-hook 'markdown-mode-hook 'flyspell-mode)
 (setq auto-mode-case-fold t)
-
-
 
 (setq ditaa-cmd (concat "java -jar " real-home-directory "/lib/ditaa0_6b.jar"))
 (defun djcb-ditaa-generate ()
@@ -1036,6 +1155,13 @@
 (global-set-key "\C-c\C-zr" 'browse-url-of-region)
 (global-set-key "\C-c\C-zu" 'browse-url)
 (global-set-key "\C-c\C-zv" 'browse-url-of-file)
+
+(global-set-key "\C-c\C-c\C-q" 'unfill-paragraph)
+(global-set-key "\C-c\C-c\C-a" 'align-second-column)
+(global-set-key "\C-c\C-c\C-d" 'insert-deb-date)
+(global-set-key "\C-c\C-c\C-r" 'rename-current-buffer-file)
+(global-set-key "\C-c\C-c\C-f" 'what-face)
+(global-set-key "\C-c\C-c\C-t" 'toggle-window-split)
 
 (global-set-key (kbd "C-x m") 'compose-mail-other-frame)
 (global-set-key (kbd "C-x 5 m") 'compose-mail)
