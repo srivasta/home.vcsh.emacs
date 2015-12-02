@@ -197,7 +197,7 @@
  org-agenda-files
  (append
   (directory-files (concat real-home-directory "/lib/org/") t ".org$" t)
-  (directory-files (concat real-home-directory "/lib/jounrnal/") t ".org$" t)
+  (directory-files (concat real-home-directory "/lib/journal/") t ".org$" t)
   ))
 
 (setq
