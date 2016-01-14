@@ -2193,7 +2193,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (autoload 'icalendar-import-buffer "icalendar"
   "Import iCalendar data from current buffer" t)
 
-;;;;;;;;;;;;;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+;;;;;;;;;;;;;;
 ;;;
 ;;; Printing
 ;;;
@@ -3786,6 +3786,7 @@ ulmer:bbdb-trim-subjects to retain.")
  ;; perl-label-offset               -5   -8   -2   -2   -2
 
  )
+(require 'clipmon)
 
 ;;;(eval-after-load "cperl-mode" '(add-hook 'cperl-mode-hook #'perl-syntax-mode))
 ;;;(eval-after-load "perl-mode"  '(add-hook 'perl-mode-hook  #'perl-syntax-mode))
@@ -4007,7 +4008,6 @@ ulmer:bbdb-trim-subjects to retain.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; YASnippet
 ;; Replace yasnippets's TAB
-(require 'clipmon)
 (add-hook 'yas/minor-mode-hook
           (lambda ()
             (define-key yas-minor-mode-map (kbd "TAB") 'smart-tab)
