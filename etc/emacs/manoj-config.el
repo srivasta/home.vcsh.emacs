@@ -2688,7 +2688,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (setq
  epg-user-id "C5779A1C"
  mml2015-signers '("C5779A1C")
-
  mm-decrypt-option 'never
  mm-verify-option 'never
 
@@ -2716,8 +2715,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
    )
  mm-discouraged-alternatives '("text/html" "text/richtext")
 
- mml-default-sign-method "pgpmime"
- mml-default-encrypt-method "pgpmime"
+ mml-default-sign-method "smime"
+ mml-default-encrypt-method "smime"
 )
 
 (define-key message-mode-map [f7] 'mml-secure-sign-pgpmime)
