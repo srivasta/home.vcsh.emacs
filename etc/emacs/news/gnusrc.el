@@ -945,7 +945,9 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
  '(("spam" gnus-group-spam-classification-spam))
  ;; see documentation for these
  spam-mark-ham-unread-before-move-from-spam-group t
- gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.org:" "nnml:spam")
+;; gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.org:" "nnml:spam")
+;;                                  ("^nnml.*" "nnml:spam"))
+ gnus-spam-process-destinations '((nnml:spam")
                                   ("^nnml.*" "nnml:spam"))
  gnus-ham-process-destinations
  '(("^nnml:spam" "nnml:reclassify"))
