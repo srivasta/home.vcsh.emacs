@@ -154,7 +154,8 @@
  ecomplete-database-file   "~/etc/emacs/ecompleterc"
  vm-mail-header-from (concat (user-full-name) " <" user-mail-address ">")
  bbdb-file (concat real-home-directory "/var/lib/contacts/bbdb")
-;; S/MIME
+ bbdb-file-remote (concat real-home-directory "/var/lib/contacts/bbdb-local")
+ ;; S/MIME
  smime-keys '(("manoj.srivastava@stdc.com" "~/certs/usercert.pem"
                ("~/certs/thawte_cert.pem"))
               ("srivasta@golden-gryphon.com" "~/certs/manoj_cert.pem"
@@ -646,12 +647,9 @@ If no START and END is provided, the current `region-beginning' and
 ;; * Similarly, enabling `wikipedia-turn-on-longlines-mode' will
 ;;   automatically and transparently break lines in articles.
 ;;
-;; * If you include `wikipedia-mode' into `which-func-modes' list, you
-;;   will see the current article subsection name in the mode line.
-;;   In any case you can use `imenu'.
 ;;(add-hook 'wikipedia-mode-hook 'wikipedia-turn-on-eldoc-mode)
 (add-hook 'wikipedia-mode-hook 'flyspell-mode)
-(add-to-list 'which-func-modes 'wikipedia-mode)
+
 
 
 (require 'whitespace)
@@ -2600,9 +2598,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
             (if (fboundp 'mail-aliases-setup)
                 (mail-aliases-setup))))
 
-(add-hook 'mail-setup-hook 'bbdb-define-all-aliases)
-(add-hook 'message-setup-hook 'bbdb-define-all-aliases)
-
 (add-hook 'mail-setup-hook 'my-mail-setup-function)
 (add-hook 'message-setup-hook 'my-message-setup-function)
 
@@ -2612,7 +2607,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (add-hook 'message-header-hook 'canlock-insert-header t)
 
 ;; Sign messages by default.
-(add-hook 'message-setup-hook 'mml-secure-message-sign-pgpmime)
+(add-hook 'message-setup-hook 'mml-secure-message-sign-smime)
 
 ;(add-hook 'mail-send-hook 'bbdb/sendmail-update-records)
 ;(add-hook 'message-send-hook 'bbdb/sendmail-update-records)
@@ -2660,7 +2655,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                      ;;; Email signing and encryption ;;;
                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+(setq epg-gpg-program "gpg")
 (setq mml2015-use 'epg)
 ;; mml2015-signers
 
@@ -2719,8 +2714,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
  mml-default-encrypt-method "smime"
 )
 
-(define-key message-mode-map [f7] 'mml-secure-sign-pgpmime)
-(define-key message-mode-map [f8] 'mml-secure-encrypt-pgpmime)
+(define-key message-mode-map [f7] 'mml-secure-sign-smime)
+(define-key message-mode-map [f8] 'mml-secure-encrypt-smime)
 (setq
  crypt-confirm-password t
  crypt-encoded-disable-auto-save t
@@ -3272,229 +3267,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (setq ps-multibyte-buffer 'bdf-font-except-latin)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;                           BBDB stuff                           ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (autoload 'bbdb-fontify-buffer              "bbdb-display" "")
-;; (autoload 'bbdb-maybe-fontify-buffer        "bbdb-display" "")
-;; (autoload 'bbdb-menu                        "bbdb-display" "")
-;; (load-library "bbdb-hooks.el")
-;; (require 'bbdb)                         ;needs a debian package
-;; (require 'bbdb-com)                             ;needs a debian package
-;;(require 'bbdb-hooks)                         ;needs a debian package
-;;(load "bbdb-autoloads")
-(autoload 'bbdb-define-all-aliases          "bbdb-com"     "")
-(autoload 'bbdb/sc-default                  "bbdb-sc"      "")
-
-(autoload 'my-bbdb-canonicalize-net-hook      "my-bbdb")
-(autoload 'bbdb/pgp-key                       "my-bbdb")
-(autoload 'my--message-mode-hook-mail-aliases "my-bbdb")
-(autoload 'bbdb/sendmail-update-records       "my-bbdb")
-;;; Avoid BBDB getting confused by 8 bit characters:
-(setq bbdb-file-coding-system 'utf-8-unix)
-(add-hook 'bbdb-load-hook
-          (lambda () (setq bbdb-file-coding-system 'utf-8-unix)))
-;; define the coding system
-;; http://bbdb.sourceforge.net/faq.html
-(setq file-coding-system-alist
-      (cons '("\\.bbdb" utf-8 . utf-8)
-            file-coding-system-alist))
-;;(add-to-list 'file-coding-system-alist
-;;             '("/\\.bbdb\\'" iso-8859-1 . iso-8859-1))
-
-(setq
- bbdb/sms-mobile-field "Cell"
- bbdb-csv-export-type 'outlook
- )
-(require 'bbdb-snarf)
-(require 'bbdb-rf)
-(require 'country-info)
-
-(setq
- bbdb-always-add-addresses             t
- bbdb-auto-notes-alist
- (append
-  (list
-   (append '("From")
-           ;; Recognize the country names implicit in the address
-           (mapcar (function
-                    (lambda (x)
-                      (list (concat "@[^<>, ()]*\\."
-                                    (car x) "\\([<>, ()].*\\)?$")
-                            'country
-                            (nth 1 x))))
-                   domain-country-list)
-           )
-   )
-  '(
-    ("Newsgroups" ("[^,]+" newsgroups 0 t))
-    ("X-URL" (".*" url 0 t))
-    ("X-www" (".*" url 0 t))
-    ("X-Organisation" (".*" company 0))
-    ("X-Organization" (".*" company 0))
-    ("Organization" (".*" company 0))
-    ("Organisation" (".*" company 0))
-    ("User-Agent"   (".*" mailer 0))
-    ("X-Mailer"     (".*" mailer 0))
-    ("X-Newsreader" (".*" mailer 0))
-    ("Web" (".*" url 0))
-    ("X-WWW-Homepage" (".*" url 0))
-    ;; This is what Netscape puts in when sending a URL reference
-    ("X-Url" (".*" last-url 0))
-    ("From"
-     (".*@debian.org>" debian-developer "\\&" t))
-    ("Date" (".*" lastmessage "\\&" t))
-    ("Subject" (".*" re "\\&" t))
-    ;;("Sender"
-    ;;  ("owner-bbdb" mail-list "bbdb")
-    ;;  ("soc-anz-discuss" mail-list "soc-anz-discuss")
-    ;;  ("dsch-l" mail-list "DSCH-L"))
-    ))
- bbdb-auto-notes-ignore
- '(("Organization" . "^Gatewayed from\\|^Source only"))
- bbdb-canonicalize-redundant-nets-p    t
- bbdb-complete-name-allow-cycling t
- ;; No popup on autocomplete
- bbdb-completion-display-record        nil
- bbdb-default-area-code                334
- bbdb-dwim-net-address-allow-redundancy t
- bbdb-electric-p                       t
- bbdb-file (concat real-home-directory "/etc/bbdb")
- bbdb-ignore-some-messages-alist
- '(("From" . "mailer.daemon")
-   ("From" . "daemon")
-   ("From" . "delivery system")
-   ("From" . "postmaster")
-   ("From" . "listmaster")
-   ("From" . "post office")
-   ("From" . "root")
-   ("From" . "operator")
-   ("From" . "delivery")
-   ("From" . "administ")
-   ("X-CU-Spam"      . "Yes")
-   ("X-Spam-Status"  . "Yes")
-   )
- bbdb-letter-directory-name            "~/tex/letter/"
- bbdb-message-caching-enabled          t
- bbdb-new-nets-always-primary          'never
- bbdb-north-american-phone-numbers-p   nil
- bbdb-notice-auto-save-file            t
- bbdb-offer-save                       'just-do-it
- ;; Popup uses this many lines
- bbdb-pop-up-target-lines 5
- bbdb-print-require                 '(and name (or address phone))
- bbdb-print-alist
- '((omit-area-code . "(334)")
-   (phone-on-first-line . "^[ \t]*$")
-   (ps-fonts . nil)
-   (font-size . 6)
-   (quad-hsize . "3.15in")
-   (quad-vsize . "4.5in"))
- bbdb-print-full-alist
- '((columns . 3)
-   (separator . 2)
-   (include-files "bbdb-print" "bbdb-cols"))
- bbdb-print-brief-alist
- '((columns . 1)
-   (separator . 1)
-   (n-phones . 2)
-   (n-addresses . 1)
-   (include-files "bbdb-print-brief" "bbdb-cols"))
- ;; bbdb-silent-running t
- ;; Be quiet if a name doesn't match a previous name
- bbdb-quiet-about-name-mismatches      nil
- bbdb-use-alternate-names              t
- bbdb-user-mail-names                  (user-real-login-name)
- ;; Use a nifty popup
- bbdb-use-pop-up                       nil
- ;; bbdb/mail-auto-create-p              'bbdb-ignore-some-messages-hook
- bbdb/mail-auto-create-p               nil
- )
-;; display-layout
-;;
-;; Currently there are three different layout types, which are
-;; `one-line', `multi-line' and `full-multi-line'. You can use `t' and
-;; `T' to toggle the display-layout.
-;;
-;;
-;; My current setting (`bbdb-display-layout-alist'):
-;;
-;; ((one-line   (order     . (phones mail-alias net notes))
-;;              (name-end  . 24)
-;;              (toggle    . t))
-;;  (multi-line (omit      . (creation-date timestamp))
-;;              (toggle    . t))
-;;  (full-multi-line))
-;;
-;; (describe-variable 'bbdb-display-layout-alist)
-(setq bbdb-display-layout 'multi-line
-      bbdb-pop-up-display-layout 'one-line)
-
-(add-hook 'bbdb-notice-hook 'ulmer:bbdb-trim-subjects)
-
-;; Die N letzten Subjects in der BBDB halten
-(defvar ulmer:bbdb-subject-limit 25
-  "*Maximum number of subject records for
-ulmer:bbdb-trim-subjects to retain.")
-
-(defun ulmer:delete-duplicates (list)
-  "Remove duplicate elements from a list."
-  (let (result head)
-    (while list
-      (setq head (car list))
-      (setq list (delete head list))
-      (setq result (cons head result)))
-    (nreverse result)))
-
-(defun ulmer:bbdb-trim-subjects (record)
-  "Remove all but the first ulmer:bbdb-subject-limit subject
- records from the subjects in the notes field of a BBDB record.
- Also squished duplicate subjects. Meant to be run from
- bbdb-change-hook."
-  (let* ((sep (get 'subjects 'field-separator))
-         (foo (reverse
-               (split-string
-                (or (bbdb-record-getprop record 'subjects) "")
-                sep)))
-         (num-to-keep ulmer:bbdb-subject-limit)
-         (new-subj ""))
-    (setq foo (ulmer:delete-duplicates foo))
-    (while (and (> num-to-keep 0) (> (length foo) 0))
-      (if (> (length (car foo)) 0)
-          (setq new-subj (concat (car foo)
-                                 (if (> (length new-subj) 0)
-                                     (concat sep new-subj)
-                                   ""))
-                num-to-keep (- num-to-keep 1)))
-      (setq foo (cdr foo)))
-    (bbdb-record-putprop record 'subjects new-subj)))
-
-;;(setq bbdb-print-elide
-;;      (append bbdb-print-elide
-;;            '(pgp-mail attribution signature x-mailer x-newsreader
-;;                       x-face timestamp creation-date)))
-
-(setq bbdb-auto-notes-alist
-      (append bbdb-auto-notes-alist
-              (list
-               (list "x-face"
-                     (list (concat "[ \t\n]*\\([^ \t\n]*\\)"
-                                   "\\([ \t\n]+\\([^ \t\n]+\\)\\)?"
-                                   "\\([ \t\n]+\\([^ \t\n]+\\)\\)?"
-                                   "\\([ \t\n]+\\([^ \t\n]+\\)\\)?"
-                                   )
-                           'face
-                           "\\1\\3\\5\\7")))))
-
-;;(setq bbdb-canonicalize-net-hook 'my-bbdb-canonicalize-net-hook)
-;;(add-hook 'bbdb-change-hook 'bbdb-delete-redundant-nets)
-(add-hook 'bbdb-change-hook   'bbdb-timestamp-hook)
-(add-hook 'bbdb-create-hook   'bbdb-creation-date-hook) ; creation date field
-(add-hook 'bbdb-notice-hook   'bbdb-auto-notes-hook) ; see -auto-notes-alist
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3644,7 +3416,226 @@ ulmer:bbdb-trim-subjects to retain.")
              (auto-fill-mode 1)
              (setq add-log-mailing-address debian-mailing-address)))
 (setq debian-changelog-local-variables-maybe-remove nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;                           BBDB stuff                           ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; (autoload 'bbdb-fontify-buffer              "bbdb-display" "")
+;; (autoload 'bbdb-maybe-fontify-buffer        "bbdb-display" "")
+;; (autoload 'bbdb-menu                        "bbdb-display" "")
+;; (load-library "bbdb-hooks.el")
+;; (require 'bbdb)                         ;needs a debian package
+;; (require 'bbdb-com)                             ;needs a debian package
+;;(require 'bbdb-hooks)                         ;needs a debian package
+;;(load "bbdb-autoloads")
+(autoload 'bbdb/sc-default                  "bbdb-sc"      "")
+
+(autoload 'my-bbdb-canonicalize-net-hook      "my-bbdb")
+(autoload 'bbdb/pgp-key                       "my-bbdb")
+(autoload 'my--message-mode-hook-mail-aliases "my-bbdb")
+(autoload 'bbdb/sendmail-update-records       "my-bbdb")
+;;; Avoid BBDB getting confused by 8 bit characters:
+(setq bbdb-file-coding-system 'utf-8-unix)
+(add-hook 'bbdb-load-hook
+          (lambda () (setq bbdb-file-coding-system 'utf-8-unix)))
+;; define the coding system
+;; http://bbdb.sourceforge.net/faq.html
+(setq file-coding-system-alist
+      (cons '("\\.bbdb" utf-8 . utf-8)
+            file-coding-system-alist))
+;;(add-to-list 'file-coding-system-alist
+;;             '("/\\.bbdb\\'" iso-8859-1 . iso-8859-1))
+
+(setq
+ bbdb/sms-mobile-field "Cell"
+ bbdb-csv-export-type 'outlook
+ )
+(require 'bbdb-snarf)
+(require 'country-info)
+
+(setq
+ bbdb-always-add-addresses             t
+ bbdb-auto-notes-alist
+ (append
+  (list
+   (append '("From")
+           ;; Recognize the country names implicit in the address
+           (mapcar (function
+                    (lambda (x)
+                      (list (concat "@[^<>, ()]*\\."
+                                    (car x) "\\([<>, ()].*\\)?$")
+                            'country
+                            (nth 1 x))))
+                   domain-country-list)
+           )
+   )
+  '(
+    ("Newsgroups" ("[^,]+" newsgroups 0 t))
+    ("X-URL" (".*" url 0 t))
+    ("X-www" (".*" url 0 t))
+    ("X-Organisation" (".*" company 0))
+    ("X-Organization" (".*" company 0))
+    ("Organization" (".*" company 0))
+    ("Organisation" (".*" company 0))
+    ("User-Agent"   (".*" mailer 0))
+    ("X-Mailer"     (".*" mailer 0))
+    ("X-Newsreader" (".*" mailer 0))
+    ("Web" (".*" url 0))
+    ("X-WWW-Homepage" (".*" url 0))
+    ;; This is what Netscape puts in when sending a URL reference
+    ("X-Url" (".*" last-url 0))
+    ("From"
+     (".*@debian.org>" debian-developer "\\&" t))
+    ("Date" (".*" lastmessage "\\&" t))
+    ("Subject" (".*" re "\\&" t))
+    ;;("Sender"
+    ;;  ("owner-bbdb" mail-list "bbdb")
+    ;;  ("soc-anz-discuss" mail-list "soc-anz-discuss")
+    ;;  ("dsch-l" mail-list "DSCH-L"))
+    ))
+ bbdb-auto-notes-ignore
+ '(("Organization" . "^Gatewayed from\\|^Source only"))
+ bbdb-canonicalize-redundant-nets-p    t
+ bbdb-complete-name-allow-cycling t
+ ;; No popup on autocomplete
+ bbdb-completion-display-record        nil
+ bbdb-default-area-code                334
+ bbdb-dwim-net-address-allow-redundancy t
+ bbdb-electric-p                       t
+ bbdb-ignore-some-messages-alist
+ '(("From" . "mailer.daemon")
+   ("From" . "daemon")
+   ("From" . "delivery system")
+   ("From" . "postmaster")
+   ("From" . "listmaster")
+   ("From" . "post office")
+   ("From" . "root")
+   ("From" . "operator")
+   ("From" . "delivery")
+   ("From" . "administ")
+   ("X-CU-Spam"      . "Yes")
+   ("X-Spam-Status"  . "Yes")
+   )
+ bbdb-letter-directory-name            "~/tex/letter/"
+ bbdb-message-caching-enabled          t
+ bbdb-new-nets-always-primary          'never
+ bbdb-north-american-phone-numbers-p   nil
+ bbdb-notice-auto-save-file            t
+ ;; Popup uses this many lines
+ bbdb-pop-up-target-lines 5
+ bbdb-print-require                 '(and name (or address phone))
+ bbdb-print-alist
+ '((omit-area-code . "(334)")
+   (phone-on-first-line . "^[ \t]*$")
+   (ps-fonts . nil)
+   (font-size . 6)
+   (quad-hsize . "3.15in")
+   (quad-vsize . "4.5in"))
+ bbdb-print-full-alist
+ '((columns . 3)
+   (separator . 2)
+   (include-files "bbdb-print" "bbdb-cols"))
+ bbdb-print-brief-alist
+ '((columns . 1)
+   (separator . 1)
+   (n-phones . 2)
+   (n-addresses . 1)
+   (include-files "bbdb-print-brief" "bbdb-cols"))
+ ;; bbdb-silent-running t
+ ;; Be quiet if a name doesn't match a previous name
+ bbdb-quiet-about-name-mismatches      nil
+ bbdb-use-alternate-names              t
+ bbdb-user-mail-names                  (user-real-login-name)
+ ;; Use a nifty popup
+ bbdb-use-pop-up                       nil
+ ;; bbdb/mail-auto-create-p              'bbdb-ignore-some-messages-hook
+ bbdb/mail-auto-create-p               nil
+ )
+;; display-layout
+;;
+;; Currently there are three different layout types, which are
+;; `one-line', `multi-line' and `full-multi-line'. You can use `t' and
+;; `T' to toggle the display-layout.
+;;
+;;
+;; My current setting (`bbdb-display-layout-alist'):
+;;
+;; ((one-line   (order     . (phones mail-alias net notes))
+;;              (name-end  . 24)
+;;              (toggle    . t))
+;;  (multi-line (omit      . (creation-date timestamp))
+;;              (toggle    . t))
+;;  (full-multi-line))
+;;
+;; (describe-variable 'bbdb-display-layout-alist)
+(setq bbdb-display-layout 'multi-line
+      bbdb-pop-up-display-layout 'one-line)
+
+(add-hook 'bbdb-notice-hook 'ulmer:bbdb-trim-subjects)
+
+;; Die N letzten Subjects in der BBDB halten
+(defvar ulmer:bbdb-subject-limit 25
+  "*Maximum number of subject records for
+ulmer:bbdb-trim-subjects to retain.")
+
+(defun ulmer:delete-duplicates (list)
+  "Remove duplicate elements from a list."
+  (let (result head)
+    (while list
+      (setq head (car list))
+      (setq list (delete head list))
+      (setq result (cons head result)))
+    (nreverse result)))
+
+(defun ulmer:bbdb-trim-subjects (record)
+  "Remove all but the first ulmer:bbdb-subject-limit subject
+ records from the subjects in the notes field of a BBDB record.
+ Also squished duplicate subjects. Meant to be run from
+ bbdb-change-hook."
+  (let* ((sep (get 'subjects 'field-separator))
+         (foo (reverse
+               (split-string
+                (or (bbdb-record-getprop record 'subjects) "")
+                sep)))
+         (num-to-keep ulmer:bbdb-subject-limit)
+         (new-subj ""))
+    (setq foo (ulmer:delete-duplicates foo))
+    (while (and (> num-to-keep 0) (> (length foo) 0))
+      (if (> (length (car foo)) 0)
+          (setq new-subj (concat (car foo)
+                                 (if (> (length new-subj) 0)
+                                     (concat sep new-subj)
+                                   ""))
+                num-to-keep (- num-to-keep 1)))
+      (setq foo (cdr foo)))
+    (bbdb-record-putprop record 'subjects new-subj)))
+
+;;(setq bbdb-print-elide
+;;      (append bbdb-print-elide
+;;            '(pgp-mail attribution signature x-mailer x-newsreader
+;;                       x-face timestamp creation-date)))
+
+(setq bbdb-auto-notes-alist
+      (append bbdb-auto-notes-alist
+              (list
+               (list "x-face"
+                     (list (concat "[ \t\n]*\\([^ \t\n]*\\)"
+                                   "\\([ \t\n]+\\([^ \t\n]+\\)\\)?"
+                                   "\\([ \t\n]+\\([^ \t\n]+\\)\\)?"
+                                   "\\([ \t\n]+\\([^ \t\n]+\\)\\)?"
+                                   )
+                           'face
+                           "\\1\\3\\5\\7")))))
+
+;;(setq bbdb-canonicalize-net-hook 'my-bbdb-canonicalize-net-hook)
+;;(add-hook 'bbdb-change-hook 'bbdb-delete-redundant-nets)
+(add-hook 'bbdb-change-hook   'bbdb-timestamp-hook)
+(add-hook 'bbdb-create-hook   'bbdb-creation-date-hook) ; creation date field
+(add-hook 'bbdb-notice-hook   'bbdb-auto-notes-hook) ; see -auto-notes-alist
+
 ;;
 ;; Perl
 ;;
@@ -3840,9 +3831,8 @@ ulmer:bbdb-trim-subjects to retain.")
 (add-to-list 'auto-mode-alist '("\\.[Pp][Oo][Dd]$" . pod-mode))
 
 (add-hook 'cperl-mode-hook 'flyspell-prog-mode)
-(add-hook 'cperl-mode-hook 'which-func-mode)
 (add-hook 'perl-mode-hook 'flyspell-prog-mode)
-(add-hook 'perl-mode-hook 'which-func-mode)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                         Python

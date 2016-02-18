@@ -28,6 +28,7 @@
   (turn-on-auto-fill)
   (c-toggle-auto-hungry-state 1)
   (c-toggle-electric-state 1)
+  (setq c-electric-pound-behavior '(alignleft))
   (global-cwarn-mode 1)
   ;; Indent the case expression in
   ;; a switch statement.

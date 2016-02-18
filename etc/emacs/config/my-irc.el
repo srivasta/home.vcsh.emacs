@@ -22,7 +22,6 @@
 (require 'tls)
 (require 'erc)
 (require 'erc-goodies)
-(require 'erc-bbdb)
 (setq  erc-hide-list
        '(
          "324"
@@ -39,7 +38,7 @@
          ))
 
 (setq erc-modules
-      '(autoaway autojoin bbdb button completion fill
+      '(autoaway autojoin button completion fill
                  irccontrols log list match menu move-to-prompt
                  netsplit networks noncommands notify
                  notifications page readonly replace ring
@@ -61,7 +60,6 @@
       erc-away-nickname nil
       erc-auto-discard-away t
       erc-autoaway-idle-method 'irc
-      erc-bbdb-auto-create-on-whois-p nil
       erc-auto-query 'window-noselect
       ;;      erc-timestamp-format "%H:%M "
       erc-timestamp-format "[%R-%m/%d]"
@@ -189,7 +187,6 @@
 (erc-match-mode 1)
 
 ;;(require 'erc-auto)
-(require 'erc-bbdb)
 (require 'erc-list)
 ;; (setq erc-autojoin-channels-alist
 ;;           '(("freenode.net" "#emacs" "#gentoo" "#latex" "#python"

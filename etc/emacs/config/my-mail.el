@@ -144,7 +144,6 @@
 (defun my-mail-setup-function ()
   "Set up mail stuff."
   ;;  (setq scroll-in-place t)
-  (bbdb-define-all-aliases)
   (font-lock-mode 1)
   (flyspell-mode 1)
   (yas-minor-mode 0)
@@ -164,7 +163,6 @@
   (setq scroll-in-place t)
   (flyspell-mode 1)
   (font-lock-mode 1)
-  (bbdb-define-all-aliases)
   (yas-minor-mode 0)
   (smart-tab-mode 0)
   (set (make-local-variable 'indent-line-function) 'indent-relative-maybe)

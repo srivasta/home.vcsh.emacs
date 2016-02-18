@@ -947,7 +947,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
  spam-mark-ham-unread-before-move-from-spam-group t
 ;; gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.org:" "nnml:spam")
 ;;                                  ("^nnml.*" "nnml:spam"))
- gnus-spam-process-destinations '((nnml:spam")
+ gnus-spam-process-destinations '(("nnml:spam")
                                   ("^nnml.*" "nnml:spam"))
  gnus-ham-process-destinations
  '(("^nnml:spam" "nnml:reclassify"))
@@ -1081,13 +1081,6 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
   (defvar gnus-optional-headers))
 (eval-when-compile (require 'bbdb-gnus))
 (require 'bbdb-gnus)
-
-(autoload 'bbdb-delete-redundant-nets "bbdb-hooks" "BBDB use")
-
-;; Was in bbdb-insinuate-gnus.
-(add-hook 'gnus-save-newsrc-hook 'bbdb-offer-save)
-(add-hook 'gnus-exit-group-hook 'bbdb-offer-save)
-(add-hook 'message-setup-hook 'bbdb-define-all-aliases)
 
 ;(add-hook 'gnus-select-group-hook 'dmoore::gnus-toggle-bbdb-popup)
 ;; (setq bbdb-use-pop-up nil)

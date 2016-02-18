@@ -405,7 +405,6 @@
   ))
 
 (add-hook 'vm-quit-hook 'vm-expunge-folder)
-(add-hook 'vm-quit-hook 'bbdb-save-db)
 
 (defun my-vm-mode-function ()
   "Added quitting, no  backups, and load a few libs."
@@ -417,7 +416,7 @@
   ;;  (load-library "ml-alias")
   ;;  (require 'vm-sort)
   (require 'message)
-  (add-hook 'local-write-file-hooks 'bbdb-offer-save)
+  ;;; (add-hook 'local-write-file-hooks 'bbdb-offer-save)
   (setq fill-column 60
         comment-start "> "
         indent-line-function 'indent-relative-maybe)

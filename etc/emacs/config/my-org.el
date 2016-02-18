@@ -625,7 +625,7 @@ as the default task."
             (flyspell-mode 1)
             ;; (orgstruct++-mode 1)
             (turn-on-auto-fill)
-            (bbdb-define-all-aliases)))
+            ))
 
 ;;
 ;; Phone capture template handling with BBDB lookup

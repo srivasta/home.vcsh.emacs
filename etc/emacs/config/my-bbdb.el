@@ -92,7 +92,7 @@
    ;; Otherwise, leave it as it is.  Returning a string EQ to the one passed
    ;; in tells BBDB that we're done.
    ;;
-   (t addr))) 
+   (t addr)))
 
 (defun bbdb/pgp-key (email)
   "Return the pgp key belonging to the person with the specified email
@@ -110,7 +110,7 @@ the variable bbdb/pgp-field."
 (add-hook 'gnus-load-hook
 	  (function
 	   (lambda ()
-	     ((bbdb-initialize 'gnus 'message 'sc 'sendmail))))) 
+	     ((bbdb-initialize 'gnus 'message 'sc 'sendmail)))))
 
 ;;; So after evaluating the piece of advice below, I can type `:' in Gnus
 ;;; Summary mode to see/create the BBDB entry for the sender, or I can type
@@ -147,11 +147,11 @@ the variable bbdb/pgp-field."
   "Add bbdb entry for this message."
   (interactive)
   (let ((bbdb/news-auto-create-p t))
-    (bbdb/gnus-pop-up-bbdb-buffer)))
+    ))
 
 (defadvice message-reply (before pdf-bbdb/add-on-reply activate)
   "Add addresses replied to to bbdb."
-  (save-excursion 
+  (save-excursion
     (save-window-excursion
       (my-bbdb/gnus-force-create))))
 
@@ -160,7 +160,7 @@ the variable bbdb/pgp-field."
   (interactive)
   (let ((bbdb/mail-auto-create-p t)
 	(bbdb-message-caching-enabled nil))
-    (save-excursion 
+    (save-excursion
       (vm-select-folder-buffer)
       (bbdb/vm-pop-up-bbdb-buffer))))
 
@@ -168,20 +168,20 @@ the variable bbdb/pgp-field."
 
 ;;;  Is there something I can do such that the bbdb window isn't normally
 ;;;  shown, and when I hit `:', a third window for bbdb is created as with
-;;;  bbdb-use-pop-up? 
+;;;  bbdb-use-pop-up?
 
 ;;; (defadvice bbdb/gnus-show-sender (after split-article-window last activate)
 ;;;   (gnus-summary-show-article)
 ;;;   (bbdb/gnus-pop-up-bbdb-buffer t))
 
-;;; (defadvice gnus-summary-display-article (before delete-bbdb-window first 
-;;;  						activate) 
+;;; (defadvice gnus-summary-display-article (before delete-bbdb-window first
+;;;  						activate)
 ;;;   (delete-windows-on (get-buffer bbdb-buffer-name)))
 
 (defun bbdb/gnus-alternative-show-sender ()
   (interactive)
   (gnus-summary-select-article)
-  (bbdb/gnus-pop-up-bbdb-buffer t))
+  )
 
 (defun bbdb/mail-insert-address-at-point (address)
   "Prompt for and insert an address from the BBDB at point."
