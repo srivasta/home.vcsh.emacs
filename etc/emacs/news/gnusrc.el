@@ -840,37 +840,6 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
         ("Sylpheed-Claws\\|MicroPlanet-Gravity\\|Apple Mailer\\|MT-NewsWatcher\\|Gravity\\|MesNews\\|Forte Agent\\|MacSOUP/2.5\\|MacSOUP/F-2.4.4\\|Forte Free Agent" gnus-header-name-face gnus-user-agent-unknown-face))
       )
 
-;; Here is the function
-;; This one is by lawrence on #emacs
-;; I developped my own based on gnus-article-highlight headers but this one is shorter
-;; so I prefer to use this one :)
-
-;; Note there was a bug. re-search-forward was done from point to end of buffer.
-;; Fixed that problem
-(defun gnus-article-user-agent-headers ()
-  "Highlight article User Agent headers as specified by `gnus-user-agent-good'."
-  (interactive)
-  (with-current-buffer gnus-article-buffer
-    (let ((buffer-read-only nil))
-      (save-restriction
-        (article-narrow-to-head)
-        (goto-char (point-min))
-        (dolist (entry gnus-user-agent-alist)
-          (dolist (header '("X-Mailer" "Newsreader" "User-Agent" "X-Newsreader"))
-            (save-excursion
-              (while (re-search-forward (concat "^" header) nil t)
-                (gnus-put-text-property (match-beginning 0)
-                                        (match-end 0)
-                                        'face (nth 1 entry))
-                (when (re-search-forward (concat ": \\(" (nth 0 entry) "\\).*$") nil t)
-                  (goto-char (match-beginning 0))
-                  (forward-char 1)
-                  (gnus-put-text-property (point) ;;(match-beginning 0)
-                                          (point-at-eol)
-                                          'face (nth 2 entry)))))))))))
-(add-hook 'gnus-article-prepare-hook 'gnus-article-user-agent-headers)
-;;(add-hook 'gnus-article-prepare-hook 'icalendar-import-buffer)
-
 (add-hook 'display-time-hook
           (lambda () (setq gnus-mode-non-string-length
                            (+ 21

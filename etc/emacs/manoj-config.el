@@ -2655,7 +2655,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                      ;;; Email signing and encryption ;;;
                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq epg-gpg-program "gpg")
 (setq mml2015-use 'epg)
 ;; mml2015-signers
 
@@ -2735,9 +2734,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;
 ;; gpg
 ;;
-(setq
- gpg-command-program "gpg2"
- )
 
 ;;; What vertsion of gpg/pgp to use? For Xemacs only
 ; (cond ((locate-file "gpg" exec-path)
