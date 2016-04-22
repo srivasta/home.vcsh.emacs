@@ -155,16 +155,6 @@ the variable bbdb/pgp-field."
     (save-window-excursion
       (my-bbdb/gnus-force-create))))
 
-(defun bbdb/vm-force-create ()
-  "Force automatic adding of a bbdb entry for current message."
-  (interactive)
-  (let ((bbdb/mail-auto-create-p t)
-	(bbdb-message-caching-enabled nil))
-    (save-excursion
-      (vm-select-folder-buffer)
-      (bbdb/vm-pop-up-bbdb-buffer))))
-
-(add-hook 'vm-reply-hook 'bbdb/vm-force-create)
 
 ;;;  Is there something I can do such that the bbdb window isn't normally
 ;;;  shown, and when I hit `:', a third window for bbdb is created as with

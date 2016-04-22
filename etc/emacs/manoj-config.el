@@ -413,12 +413,6 @@
       (replace-match "")
       )))
 
-(defun unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph or REGION and make it into a single line of text."
-  (interactive (progn (barf-if-buffer-read-only) '(t)))
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil region)))
-
 (defun align-second-column ()
   "Align the second space delimeted column."
   (interactive)
@@ -452,14 +446,7 @@
   (let ((face (or (get-char-property (point) 'read-face-name)
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
-(defun duplicate-current-line-or-region (arg)
-  "Duplicates the current line or region ARG times.
-If there's no region, the current line will be duplicated."
-  (interactive "p")
-  (save-excursion
-    (if (region-active-p)
-        (duplicate-region arg)
-      (duplicate-current-line arg))))
+
 (defun duplicate-region (num &optional start end)
   "Duplicates NUM times the region bounded by START and END times.
 If no START and END is provided, the current `region-beginning' and
@@ -1154,7 +1141,6 @@ If no START and END is provided, the current `region-beginning' and
 (global-set-key "\C-c\C-zu" 'browse-url)
 (global-set-key "\C-c\C-zv" 'browse-url-of-file)
 
-(global-set-key "\C-c\C-c\C-q" 'unfill-paragraph)
 (global-set-key "\C-c\C-c\C-a" 'align-second-column)
 (global-set-key "\C-c\C-c\C-d" 'insert-deb-date)
 (global-set-key "\C-c\C-c\C-r" 'rename-current-buffer-file)
@@ -2377,8 +2363,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
  )
 
 (setq gnus-startup-file-coding-system 'utf-8)
-;;(add-hook 'gnus-startup-hook 'rfc2015-setup)
-(add-hook 'mail-setup-hook 'bbdb-insinuate-sendmail)
 (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
 (setq x-face-mule-highlight-x-face-position 'x-face)
 ;;;
@@ -2681,7 +2665,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (setq
  epg-user-id "C5779A1C"
- mml2015-signers '("C5779A1C")
+ mml-secure-openpgp-signers '("C5779A1C")
  mm-decrypt-option 'never
  mm-verify-option 'never
 
@@ -2689,11 +2673,11 @@ This requires the external program \"diff\" to be in your `exec-path'."
  mml-secure-passphrase-cache-expiry 36000
  mml-secure-verbose t
 
- mml2015-always-trust nil
- mml2015-cache-passphrase t
- mml2015-encrypt-to-self t
- mml2015-passphrase-cache-expiry '36000
- mml2015-sign-with-sender t
+ mml-secure-openpgp-always-trust nil
+ mml-secure-cache-passphrase t
+ mml-secure-openpgp-encrypt-to-self t
+ mml-secure-passphrase-cache-expiry '36000
+ mml-secure-openpgp-sign-with-sender t
  mml2015-use 'epg
  mml2015-verbose t
 
@@ -2753,9 +2737,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;(modify-coding-system-alist 'file "\\.Z\\'" 'no-conversion)
 ;;(modify-coding-system-alist 'file "\\.bz\\'" 'no-conversion)
 ;;(modify-coding-system-alist 'file "\\.bz2\\'" 'no-conversion)
-(defun nxml-custom-keybindings ()
-  (define-key nxml-mode-map "\C-c\C-c" 'nxml-complete)
-  )
 (defun nxml-reset-indent-line-function ()
   (setq indent-line-function 'nxml-indent-line))
 (add-hook 'nxml-mode-hook 'nxml-custom-keybindings)
@@ -3390,6 +3371,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (require 'member-function)
 (setq mf--source-file-extension "cpp")
 
+(global-set-key (kbd "C-M-+") 'shift-number-up)
+(global-set-key (kbd "C-M-_") 'shift-number-down)
+
 (require 'ecb)
 ;; (setq ecb-compile-window-height 12)
 ;;; activate and deactivate ecb
@@ -3418,21 +3402,22 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;                           BBDB stuff                           ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+(require 'clipmon)
 ;; (autoload 'bbdb-fontify-buffer              "bbdb-display" "")
 ;; (autoload 'bbdb-maybe-fontify-buffer        "bbdb-display" "")
 ;; (autoload 'bbdb-menu                        "bbdb-display" "")
 ;; (load-library "bbdb-hooks.el")
-;; (require 'bbdb)                         ;needs a debian package
+(require 'bbdb)
 ;; (require 'bbdb-com)                             ;needs a debian package
 ;;(require 'bbdb-hooks)                         ;needs a debian package
-;;(load "bbdb-autoloads")
+(load "bbdb-autoloads")
 (autoload 'bbdb/sc-default                  "bbdb-sc"      "")
 
 (autoload 'my-bbdb-canonicalize-net-hook      "my-bbdb")
 (autoload 'bbdb/pgp-key                       "my-bbdb")
 (autoload 'my--message-mode-hook-mail-aliases "my-bbdb")
 (autoload 'bbdb/sendmail-update-records       "my-bbdb")
+(require 'bbdb-vm)
 ;;; Avoid BBDB getting confused by 8 bit characters:
 (setq bbdb-file-coding-system 'utf-8-unix)
 (add-hook 'bbdb-load-hook
@@ -3570,50 +3555,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (setq bbdb-display-layout 'multi-line
       bbdb-pop-up-display-layout 'one-line)
 
-(add-hook 'bbdb-notice-hook 'ulmer:bbdb-trim-subjects)
-
-;; Die N letzten Subjects in der BBDB halten
-(defvar ulmer:bbdb-subject-limit 25
-  "*Maximum number of subject records for
-ulmer:bbdb-trim-subjects to retain.")
-
-(defun ulmer:delete-duplicates (list)
-  "Remove duplicate elements from a list."
-  (let (result head)
-    (while list
-      (setq head (car list))
-      (setq list (delete head list))
-      (setq result (cons head result)))
-    (nreverse result)))
-
-(defun ulmer:bbdb-trim-subjects (record)
-  "Remove all but the first ulmer:bbdb-subject-limit subject
- records from the subjects in the notes field of a BBDB record.
- Also squished duplicate subjects. Meant to be run from
- bbdb-change-hook."
-  (let* ((sep (get 'subjects 'field-separator))
-         (foo (reverse
-               (split-string
-                (or (bbdb-record-getprop record 'subjects) "")
-                sep)))
-         (num-to-keep ulmer:bbdb-subject-limit)
-         (new-subj ""))
-    (setq foo (ulmer:delete-duplicates foo))
-    (while (and (> num-to-keep 0) (> (length foo) 0))
-      (if (> (length (car foo)) 0)
-          (setq new-subj (concat (car foo)
-                                 (if (> (length new-subj) 0)
-                                     (concat sep new-subj)
-                                   ""))
-                num-to-keep (- num-to-keep 1)))
-      (setq foo (cdr foo)))
-    (bbdb-record-putprop record 'subjects new-subj)))
-
-;;(setq bbdb-print-elide
-;;      (append bbdb-print-elide
-;;            '(pgp-mail attribution signature x-mailer x-newsreader
-;;                       x-face timestamp creation-date)))
-
 (setq bbdb-auto-notes-alist
       (append bbdb-auto-notes-alist
               (list
@@ -3628,7 +3569,6 @@ ulmer:bbdb-trim-subjects to retain.")
 
 ;;(setq bbdb-canonicalize-net-hook 'my-bbdb-canonicalize-net-hook)
 ;;(add-hook 'bbdb-change-hook 'bbdb-delete-redundant-nets)
-(add-hook 'bbdb-change-hook   'bbdb-timestamp-hook)
 (add-hook 'bbdb-create-hook   'bbdb-creation-date-hook) ; creation date field
 (add-hook 'bbdb-notice-hook   'bbdb-auto-notes-hook) ; see -auto-notes-alist
 
@@ -3772,8 +3712,6 @@ ulmer:bbdb-trim-subjects to retain.")
  ;; perl-label-offset               -5   -8   -2   -2   -2
 
  )
-(require 'clipmon)
-
 ;;;(eval-after-load "cperl-mode" '(add-hook 'cperl-mode-hook #'perl-syntax-mode))
 ;;;(eval-after-load "perl-mode"  '(add-hook 'perl-mode-hook  #'perl-syntax-mode))
                                         ; Makes perltidy-mode automatic for cperl-mode
@@ -4000,7 +3938,6 @@ ulmer:bbdb-trim-subjects to retain.")
           ) ; was yas/expand
 
 (when (require 'yasnippet nil 'noerror) ;; not: yasnippet-bundle
-  (require 'clipmon)
   (yas-global-mode 1)
   (require 'dropdown-list)
   (setq yas-prompt-functions
@@ -4119,12 +4056,6 @@ ulmer:bbdb-trim-subjects to retain.")
 
 (when (load "indent-guide" t)
   (indent-guide-global-mode))
-
-(defun what-face (pos)
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
-    (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 (defun my-find-file-as-root ()
   "Like `ido-find-file, but automatically edit the file with

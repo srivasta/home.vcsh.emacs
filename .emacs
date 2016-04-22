@@ -51,6 +51,12 @@
 
   ;; On error in init file, just reload this file to see the error
   ;; <(config-file)>
+(setq
+ custom-file (format "%scustom-emacs%d.el"
+		     (concat my-emacs-config-dir "/custom/")
+                     emacs-major-version))
+(load custom-file)
+
 (let ((debug-on-error t))
   ;;; add our own emacs directory to the path.
   (if (not (member my-emacs-config-dir load-path))
