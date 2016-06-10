@@ -1579,6 +1579,7 @@ If no START and END is provided, the current `region-beginning' and
 ;;;                          Programming                           ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-prettify-symbols-mode t)
 
 ;; Enable EDE (Project Management) features
 ;;(global-ede-mode 1)
