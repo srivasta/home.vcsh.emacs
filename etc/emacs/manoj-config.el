@@ -1103,11 +1103,8 @@ If no START and END is provided, the current `region-beginning' and
 (global-set-key (kbd "RET")         'newline-and-indent)
 
 
-;; C-pgup goes to the start, C-pgdw goes to the end
-(global-set-key (kbd "<C-prior>")
-                (lambda()(interactive)(goto-char(point-min))))
-(global-set-key (kbd "<C-next>")
-                (lambda()(interactive)(goto-char(point-max))))
+(global-set-key [C-prior] 'previous-buffer)  ; C-<page-down>
+(global-set-key [C-next] 'next-buffer)       ; C-<page-up>
 
 (require 'linum)
 (global-linum-mode 1)
