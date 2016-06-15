@@ -222,7 +222,8 @@
 (menu-bar-mode  t)                       ;; show the menu...
 (tool-bar-mode -1)                       ;; turn-off toolbar
 (setq fringe-mode '(8 . 8))              ;; emacs 22+
-(delete-selection-mode 1)                ;; delete the sel with a keyp
+(delete-selection-mode nil)              ;; don’t delete the sel with a
+                                         ;; keypress, be explicit
 (set-scroll-bar-mode 'left)
 
 ;; Basic customization
@@ -256,8 +257,11 @@
 (setq search-highlight t                 ;; highlight when searching...
       query-replace-highlight t)             ;; ...and replacing
 
+(eval-after-load "apropos"
+  (setq apropos-sort-by-scores 'verbose)
+  )
+
 (setq fill-column 80)            ;;when to split lines
-(add-hook 'prog-mode-hook (lambda () (setq fill-column 80)))
 
 (setq split-width-threshold nil) ;;;  Do not split window horizontally
 (when (require 'winner nil 'noerror)
@@ -975,7 +979,7 @@ If no START and END is provided, the current `region-beginning' and
       scroll-up-aggressively 0.0
       scroll-down-aggressively 0.0
       track-eol t
-      line-move-visual nil
+      line-move-visual nil ;;; retain traditional movement commands and fringe
       )
 
 ;; imenu needs to be set up yet
@@ -1815,13 +1819,14 @@ If no START and END is provided, the current `region-beginning' and
 
 (autoload 'my-common-c-mode-hook-function "my-c-mode")
 (add-hook 'c-mode-common-hook 'manoj-c-mode-cedet-hook)
-(add-hook 'c-mode-common-hook
- 	  (lambda () (subword-mode 1)))
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (subword-mode 1)
+            ))
 (add-hook 'c-mode-common-hook
           (lambda ()
             (font-lock-add-keywords nil
                                     '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
-(subword-mode 1)
 (which-function-mode 1)
 (electric-indent-mode 1)
 (electric-layout-mode 1)
@@ -2995,7 +3000,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
  ido-max-work-file-list      50   ; remember many
 ;; ido-use-filename-at-point nil    ; don't use filename at point (annoying)
 ;; ido-use-url-at-point nil         ; don't use url at point (annoying)
- ido-enable-flex-matching nil     ; don't try to be too smart
+ ido-enable-flex-matching t       ; nil means don't try to be too smart
  ido-max-prospects 8              ; don't spam my minibuffer
  ido-use-virtual-buffers 'auto
  )
@@ -4066,6 +4071,9 @@ user."
     (find-file file)))
 ;; or some other keybinding...
 (global-set-key (kbd "C-x F") 'my-find-file-as-root)
+
+(global-set-key (kbd "C-:") 'ac-complete-with-helm)
+(define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
 
 ;;; Local Variables:
