@@ -22,6 +22,7 @@
   ;;(insert-mode-line)
   ;; Disable parsing on saving, instead, type C-c C-n (M-x
   ;; TeX-normal-mode) when you need to parse the buffer.
+  (setq ispell-parser 'tex)
   (setq TeX-parse-self t ; Enable parse on load.
 	TeX-auto-save nil ; Disable parse on save.
 	TeX-electric-escape t

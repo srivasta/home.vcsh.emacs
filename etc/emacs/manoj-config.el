@@ -747,7 +747,13 @@ If no START and END is provided, the current `region-beginning' and
 	     '((regexp-quote (system-name)) nil nil))
 ;;(setq tramp-default-method "ssh") ; already had this, didn't work by itself
 ;;(add-to-list 'tramp-remote-path 'tramp-own-remote-path) ; seems to be the key
-
+(defun sudo ()
+  "Use TRAMP to `sudo' the current buffer"
+  (interactive)
+  (when buffer-file-name
+    (find-alternate-file
+     (concat "/sudo:root@localhost:"
+             buffer-file-name))))
 
 
 
@@ -1817,12 +1823,15 @@ If no START and END is provided, the current `region-beginning' and
   (hs-minor-mode 1)
   )
 
-(autoload 'my-common-c-mode-hook-function "my-c-mode")
-(add-hook 'c-mode-common-hook 'manoj-c-mode-cedet-hook)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (add-hook 'prog-mode-hook
           (lambda ()
             (subword-mode 1)
             ))
+
+(autoload 'my-common-c-mode-hook-function "my-c-mode")
+(add-hook 'c-mode-common-hook 'manoj-c-mode-cedet-hook)
+
 (add-hook 'c-mode-common-hook
           (lambda ()
             (font-lock-add-keywords nil
@@ -3766,10 +3775,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;                         Associate pod-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'auto-mode-alist '("\\.[Pp][Oo][Dd]$" . pod-mode))
-
-(add-hook 'cperl-mode-hook 'flyspell-prog-mode)
-(add-hook 'perl-mode-hook 'flyspell-prog-mode)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                         Python
