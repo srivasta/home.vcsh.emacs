@@ -12,25 +12,68 @@
 ;; Description      :
 ;; arch-tag: 0e75c713-e0dd-4929-9c90-460977e767d0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Commentary:
 
+;;; Code:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                   Common variables used later                      ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar home-directory (expand-file-name (concat "~" (user-real-login-name)))
+  "*The effective home directory of the user.
+\(changes when the user has su'd).")
+(defvar real-home-directory (expand-file-name (concat "~" (user-login-name)))
+  "*The Real home directory of the user.")
+(defvar my-emacs-config-dir (concat real-home-directory "/etc/emacs")
+  "*The directory where Emacs config files are kept.")
+(defvar my-diary-file (concat my-emacs-config-dir "/my-diary")
+  "*The name of your diary file.")
+(defvar my-mail-dir (concat real-home-directory "/mail")
+  "*The variable vm-folder-directory is set from this var.")
+(defvar my-log-directory (concat my-mail-dir "/log")
+  "*The directory that all mail traffic is logged to.")
+(defvar my-login-name-regexp
+  (concat "\\<" (user-login-name) "\\|" (upcase (user-login-name)) "\\>")
+  "* The users login name as a regular expression.")
+(defvar BiBTeX-file-list '( (concat real-home-directory "/tex/mybib.bib"))
+  "*Default bibliography database.")
+(defvar mail-organization-header "Manoj Srivastava's Home"
+  "*The name of the organization.")
+(defvar mail-personal-alias-file (expand-file-name "~/.mailrc")
+  "* File where mail aliases are kept.")
+(defvar need-auto-fill t)
+(defvar debian-mailing-address "srivasta@debian.org"
+  "*Mailing address used i Debian contexts.")
+
+(defvar my-emacs-var-dir (concat real-home-directory "/var/run/emacs")
+  "Emacs' var directory.")
+(defvar my-emacs-state-dir (concat real-home-directory "/var/state/emacs")
+  "Emacs' state directory.")
+;;(defvar buf my-emacs-state-dir "Temporary file name")
+
 ;;-----------------------------------------------------------------------------
 ;; Macros
-(defun eldoc-documentation-function-default ()
-  )
+;;; (defun eldoc-documentation-function-default ()
+;;;  )
 (load-file (concat my-emacs-config-dir "/lisp/emacs-vers.el"))
-(defmacro GNUEmacs-23 (&rest body)
-  `(when (= emacs-major-version 23)
+(defmacro GNUEmacs-25 (&rest body)
+  "Evaluate BODY when the Emacs major version is 25."
+  `(when (= emacs-major-version 25)
      ,@body))
 
 (defmacro GNUEmacs-24 (&rest body)
+  "Evaluate BODY when the Emacs major version is 24."
   `(when (= emacs-major-version 24)
      ,@body))
 
 (defmacro Linux (&rest x)
+  "Evaluate X when the system type is GNU/Linux."
   (list 'if (string-match "linux" (prin1-to-string system-type))
         (cons 'progn x)))
 
 (defmacro Windows (&rest x)
+  "Evaluate X when the system type is Windows."
   (list 'if (string-match "windows" (prin1-to-string system-type))
         (cons 'progn x)))
 
@@ -93,43 +136,6 @@
 ;;;       ))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                   Common variables used later                      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar home-directory (expand-file-name (concat "~" (user-real-login-name)))
-  "*The effective home directory of the user (changes when the user
- has su'd).")
-(defvar real-home-directory (expand-file-name (concat "~" (user-login-name)))
-  "*The Real home directory of the user.")
-(defvar my-emacs-config-dir (concat real-home-directory "/etc/emacs")
-  "*The directory where emacs config files are kept.")
-(defvar my-diary-file (concat my-emacs-config-dir "/my-diary")
-  "*The name of your diary file.")
-(defvar my-mail-dir (concat real-home-directory "/mail")
-  "*vm-folder-directory is set from this var.")
-(defvar my-log-directory (concat my-mail-dir "/log")
-  "*The directory that all mail traffic is logged")
-(defvar my-login-name-regexp
-  (concat "\\<" (user-login-name) "\\|" (upcase (user-login-name)) "\\>")
-  "* The users login name as a regular expression")
-(defvar BiBTeX-file-list '( (concat real-home-directory "/tex/mybib.bib"))
-  "*Default bibliography database.")
-(defvar mail-organization-header "Manoj Srivastava's Home"
-  "*The name of the organization.")
-(defvar mail-personal-alias-file (expand-file-name "~/.mailrc")
-  "* File where mail aliases are kept.")
-(defvar need-auto-fill t)
-(defvar debian-mailing-address "srivasta@debian.org"
-  "*Mailing address used i Debian contexts.")
-
-(defvar my-emacs-var-dir (concat real-home-directory "/var/run/emacs")
-  "Emacs' var directory")
-(defvar my-emacs-state-dir (concat real-home-directory "/var/state/emacs")
-  "Emacs' state directory")
-;;(defvar buf my-emacs-state-dir "Temporary file name")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                              Identity                              ;;
@@ -641,13 +647,19 @@ If no START and END is provided, the current `region-beginning' and
 ;;(add-hook 'wikipedia-mode-hook 'wikipedia-turn-on-eldoc-mode)
 (add-hook 'wikipedia-mode-hook 'flyspell-mode)
 
-
-
 (require 'whitespace)
-(setq whitespace-style
-      '(trailing lines-tail empty indentation space-after-tab
-                 space-before-tab ))
+(setq whitespace-style '(face tabs spaces trailing lines-tail
+                              space-before-tab newline indentation empty space-after-tab
+                              space-before-tabspace-mark tab-mark newline-mark))
 (setq whitespace-action  '(report-on-bogus warn-if-read-only cleanup))
+(setq whitespace-display-mappings
+      ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+      '(
+        (space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+        (newline-mark 10 [9166 10] [36 10]) ; 10 LINE FEED
+        (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+        ))
+
 ;; Show trailing space/tabs in makefile mode (so space after \ is very
 ;; visible)
 (add-hook 'makefile-mode-hook
@@ -742,9 +754,9 @@ If no START and END is provided, the current `region-beginning' and
  )
 ;; edit files as root in remote servers
 (add-to-list 'tramp-default-proxies-alist
-	     '(nil "\\`root\\'" "/ssh:%h:"))
+             '(nil "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
-	     '((regexp-quote (system-name)) nil nil))
+             '((regexp-quote (system-name)) nil nil))
 ;;(setq tramp-default-method "ssh") ; already had this, didn't work by itself
 ;;(add-to-list 'tramp-remote-path 'tramp-own-remote-path) ; seems to be the key
 (defun sudo ()
@@ -966,9 +978,9 @@ If no START and END is provided, the current `region-beginning' and
 
 (add-hook 'text-mode-hook 'turn-on-filladapt-mode)
 (add-hook 'c-mode-common-hook
-	  (lambda ()
-	    (when (featurep 'filladapt)
-	      (c-setup-filladapt))))
+          (lambda ()
+            (when (featurep 'filladapt)
+              (c-setup-filladapt))))
  ;;; (add-hook 'c-mode-hook 'turn-off-filladapt-mode)
 
 ;; combination of following two variables finally makes Emacs scroll
