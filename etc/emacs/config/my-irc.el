@@ -38,7 +38,7 @@
          ))
 
 (setq erc-modules
-      '(autoaway autojoin button completion fill
+      '(autoaway autojoin button capab-identify completion fill
                  irccontrols log list match menu move-to-prompt
                  netsplit networks noncommands notify
                  notifications page readonly replace ring
@@ -136,19 +136,12 @@
 
 (setq erc-generate-log-file-name-function 'erc-generate-log-file-name-manoj)
 
-
-
-
 (require 'easymenu)
 (easy-menu-add-item  nil '("tools")
                      ["IRC" erc-select t])
 
-
-
-
 ;(add-to-list 'erc-replace-list erc-replace-lefthanded-smiley-re)
 ;(add-to-list 'erc-replace-list erc-replace-righthanded-smiley-re)
-
 
 (autoload 'erc-complete "erc-complete" "Complete nick at point." t)
 
@@ -497,6 +490,12 @@ stuff, to the current ERC buffer."
   (setq erc-join-buffer 'frame)
   (call-interactively 'my-irc)
   )
+
+;;; (if (display-graphic-p)
+;;;     (setq erc-join-buffer 'frame)
+;;;   (setq erc-join-buffer 'buffer))
+
+
 (provide 'my-irc)
 
 

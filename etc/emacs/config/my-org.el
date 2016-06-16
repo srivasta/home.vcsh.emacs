@@ -332,10 +332,11 @@
  org-treat-S-cursor-todo-selection-as-state-change nil
  org-use-fast-todo-selection        t
  org-use-speed-commands             t
+ org-use-sub-superscripts           "{}"
  org-yank-adjusted-subtrees         t
  outline-blank-line                 t
  )
-
+(setq org-journal-file-format "%Y%m%d.org")
 
 (setq org-archive-mark-done nil)
 (setq org-archive-location "archive/%s::datetree/* Finished Tasks")
@@ -498,7 +499,6 @@
  org-clock-report-include-clocking-task t
  )
 
-(setq org-keep-clock-running nil)
 
 (defun org-clock-in-to-next (kw)
   "Switch a task from TODO to NEXT when clocking in.
@@ -599,9 +599,7 @@ as the default task."
   (save-excursion
     (beginning-of-line 0)
     (while (re-search-forward org-drawer-regexp nil t)
-      (mapc (lambda (d)
-              (org-remove-empty-drawer-at d (point)))
-            org-drawers))))
+      (org-remove-empty-drawer-at (point)))))
 
 (add-hook 'org-clock-out-hook 'remove-empty-drawer-on-clock-out 'append)
 
@@ -1093,6 +1091,7 @@ dd {margin-bottom: 0.66em;}
     (org-set-local 'org-export-babel-evaluate nil)))
 
 (add-hook 'org-export-before-processing-hook #'my-toggle-off-babel)
+
 
 ;; To use:
 ;;
@@ -1136,6 +1135,7 @@ dd {margin-bottom: 0.66em;}
 ;; - If you re-use a property value across multiple files then the headings
 ;;   will appear in the output multiple times, and must be manually cleaned
 ;;   up.
+
 
 (defun nik/org-clocktable-snippets (ipos tables params)
   (let* ((properties (plist-get params :properties))

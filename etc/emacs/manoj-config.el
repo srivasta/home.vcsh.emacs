@@ -250,9 +250,11 @@
  max-specpdl-size 10000
  initial-scratch-message ";; scratch buffer created -- happy hacking\n"
  initial-buffer-choice  'remember-notes
- visual-order-cursor-movement t
+ visual-order-cursor-movement nil
  )
 
+(require 'saveplace)
+(setq-default save-place t)
 (require 'recentf)
 ;; Set up recentf so I can get a list of recent files when I start
 (recentf-mode 1)
@@ -450,6 +452,7 @@
                (set-buffer-modified-p nil)
                (message "File '%s' successfully renamed to '%s'"
                         name (file-name-nondirectory new-name))))))))
+
 (defun what-face (pos)
   "Print the face at POS."
   (interactive "d")
@@ -611,6 +614,9 @@ If no START and END is provided, the current `region-beginning' and
       (cons '("\\.mdwn$" . markdown-mode) auto-mode-alist))
 (add-hook 'markdown-mode-hook 'flyspell-mode)
 (setq auto-mode-case-fold t)
+
+(require 'clipmon)
+
 
 (setq ditaa-cmd (concat "java -jar " real-home-directory "/lib/ditaa0_6b.jar"))
 (defun djcb-ditaa-generate ()
@@ -1714,7 +1720,6 @@ If no START and END is provided, the current `region-beginning' and
   ;;  (semantic-auto-parse-mode 1) ;;; defunct
   (semantic-stickyfunc-mode 1)
   (semantic-mru-bookmark-mode 1)
-  ;;; (semanticdb-minor-mode 1)
   )
 
 (defun lisp-semantic-hook ()
@@ -1724,8 +1729,7 @@ If no START and END is provided, the current `region-beginning' and
   (semantic-enable-other-helpers)
   (when (cedet-gnu-global-version-check t)
     (semanticdb-enable-gnu-global-databases 'c-mode)
-    (semanticdb-enable-gnu-global-databases 'c++-mode))
-  )
+    (semanticdb-enable-gnu-global-databases 'c++-mode)))
 
 (add-hook 'c-mode-common-hook 'c-like-semantic-hook)
 
@@ -3132,7 +3136,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 (require 'apt-sources nil 'noerror)
-(require 'apt-utils nil 'noerror) ;;; apt-utils-show-package
+;;(require 'apt-utils nil 'noerror)
+;;; apt-utils-show-package
 (require 'debian-bug nil 'noerror)
 (require 'debian-el nil 'noerror)
 (require 'my-irc)
@@ -3596,6 +3601,124 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (add-hook 'bbdb-create-hook   'bbdb-creation-date-hook) ; creation date field
 (add-hook 'bbdb-notice-hook   'bbdb-auto-notes-hook) ; see -auto-notes-alist
 
+(add-hook 'compilation-mode-hook (lambda () (setenv "TERM" "emacs")))
+;; Setup compilation buffer to stop at the first error
+(setq compilation-scroll-output 'first-error)
+
+;; jabber
+(setq jabber-nickname "ManojSrivastava"
+      jabber-username (user-real-login-name)
+      jabber-connection-type (quote ssl)
+      jabber-network-server "jabber.org"
+      jabber-port 5223
+      jabber-server "jabber.org"
+      )
+
+;; If idle for 60 seconds, we seem to get booted. So to fix this, set
+;; the keepalive interval for 55 seconds and then start it up after connecting
+(setq jabber-keepalive-interval 55)
+(require 'tls)
+;;(require 'jabber)
+;;(add-hook 'jabber-post-connect-hook 'jabber-keepalive-start)
+
+;; Optionally connect automatically when starting Emacs
+;;(jabber-connect)
+
+
+(require 'server)
+(if (and (not (file-exists-p manoj-server-lock-file))
+         (not (string-equal "root" (getenv "USER")))
+         (or (not server-process)
+             (not (boundp 'server-process))
+             (not (eq (process-status server-process)  'listen)))
+         (not noninteractive))
+    (manoj-server-start)
+  (message "Emacs Server NOT started."))
+
+;; Remove lock file when emacs server ends
+(add-hook 'kill-emacs-hook
+          'manoj-server-remove-lock-file)
+
+(delete-selection-mode -1)
+(setq mouse-region-delete-keys '([delete]))
+
+(add-hook 'xgit-log-edit-mode-hook
+          (lambda ()
+            ;; flyspell mode to spell check everywhere
+            (flyspell-mode 1)))
+
+
+
+(require 'my-faces)
+(setq custom-enabled-themes '(manoj-dark))
+(load-theme  'manoj-dark)
+(setq bbdb-canonicalize-net-hook nil)
+
+(defun insert-date (prefix)
+  "Insert the current date. With prefix-argument, use ISO format. With
+   two prefix arguments, write out the day and month name."
+  (interactive "P")
+  (let ((format (cond
+                 ((not prefix) "%d.%m.%Y")
+                 ((equal prefix '(4)) "%Y-%m-%d")
+                 ((equal prefix '(16)) "%A, %d. %B %Y")))
+        (system-time-locale "en_US"))
+    (insert (format-time-string format))))
+
+(require 'cl-lib)
+(require 'cl-macs)
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (package-initialize)
+  )
+
+(electric-pair-mode 1)
+;;; (require 'autopair)
+;;; (autopair-global-mode 1) ;; to enable in all buffers
+;;; ;; Disables autopair mode in JavaScript mode (js-mode) and C mode buffers.
+;;; (dolist (this-hook (list 'js-mode-hook 'c-mode-common-hook 'cperl-mode-hook
+;;;                          'erc-mode-hook))
+;;;   (add-hook this-hook
+;;;             #'(lambda ()
+;;;                 (setq autopair-dont-activate t)
+;;;                 (autopair-mode -1))))
+;;; (add-hook 'emacs-lisp-mode-hook
+;;;           #'(lambda ()
+;;;               (push '(?` . ?')
+;;;                     (getf autopair-extra-pairs :comment))
+;;;               (push '(?` . ?')
+;;;                     (getf autopair-extra-pairs :string))))
+;;; (setq autopair-autowrap t)
+
+(require 'member-function)
+(setq mf--source-file-extension "cpp")
+
+(global-set-key (kbd "C-M-+") 'shift-number-up)
+(global-set-key (kbd "C-M-_") 'shift-number-down)
+
+(require 'ecb)
+;; (setq ecb-compile-window-height 12)
+;;; activate and deactivate ecb
+(global-set-key (kbd "C-c C-;") 'ecb-activate)
+(global-set-key (kbd "C-c C-'") 'ecb-deactivate)
+;;; show/hide ecb window
+(global-set-key (kbd "C-;") 'ecb-show-ecb-windows)
+(global-set-key (kbd "C-'") 'ecb-hide-ecb-windows)
+
+(require 'smart-tab)
+(setq smart-tab-using-hippie-expand t)
+(global-smart-tab-mode 1)
+
+;; Set up the debian-chagelog mode
+(load-library "debian-changelog-mode")
+(add-hook 'debian-changelog-mode-hook
+          '(lambda ()
+             (make-local-variable 'add-log-mailing-address)
+             (flyspell-mode 1)
+             (auto-fill-mode 1)
+             (setq add-log-mailing-address debian-mailing-address)))
+(setq debian-changelog-local-variables-maybe-remove nil)
+
 ;;
 ;; Perl
 ;;
