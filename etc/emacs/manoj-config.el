@@ -758,6 +758,18 @@ If no START and END is provided, the current `region-beginning' and
 (setq
  shell-prompt-pattern "^[^#$%>\n]*[#$%>] *"
  )
+
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))
+
+;;;  Additionally, it will be useful to set file-precious-flag to t
+;;;  for TRAMP files. Then the file contents will be written into a
+;;;  temporary file first, which is checked for correct checksum.
+(add-hook
+   'find-file-hook
+   (lambda ()
+     (when (file-remote-p default-directory)
+       (set (make-local-variable 'file-precious-flag) t))))
+
 ;; edit files as root in remote servers
 (add-to-list 'tramp-default-proxies-alist
              '(nil "\\`root\\'" "/ssh:%h:"))
