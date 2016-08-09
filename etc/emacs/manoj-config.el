@@ -756,7 +756,7 @@ If no START and END is provided, the current `region-beginning' and
 (require 'tramp-sh)
 
 (setq
- shell-prompt-pattern "^[^#$%>\n]*[#$%>] *"
+ shell-prompt-pattern "^[^#$>\n]*[#$%>]+ *"
  )
 
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))
