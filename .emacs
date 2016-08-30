@@ -16,7 +16,7 @@
 ;;;         (byte-compile-file file)
 ;;;         (message (concat file " recompiled"))
 ;;;         (sit-for 2))))
-
+(setq epg-debug t)
 (load-file "~/etc/emacs/lisp/emacs-vers.el")
 (require 'dired)
 
