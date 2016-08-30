@@ -250,6 +250,7 @@
  max-specpdl-size 10000
  initial-scratch-message ";; scratch buffer created -- happy hacking\n"
  initial-buffer-choice  'remember-notes
+ shell-command-not-erase-buffer t
  visual-order-cursor-movement nil
  )
 
