@@ -904,61 +904,61 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
  gnus-treat-leading-whitespace 'head
  gnus-outlook-deuglify-unwrap-stop-chars  ".?!"
  )
-;; Spam
-(eval-when-compile (require 'spam))
+;;; ;; Spam
+;;; (eval-when-compile (require 'spam))
 
-(setq
- spam-log-to-registry t     ; for spam autodetection
- ;; all groups with `spam' in the name contain spam
- gnus-spam-newsgroup-contents
- '(("spam" gnus-group-spam-classification-spam))
- ;; see documentation for these
- spam-mark-ham-unread-before-move-from-spam-group t
-;; gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.org:" "nnml:spam")
-;;                                  ("^nnml.*" "nnml:spam"))
- gnus-spam-process-destinations '(("nnml:spam")
-                                  ("^nnml.*" "nnml:spam"))
- gnus-ham-process-destinations
- '(("^nnml:spam" "nnml:reclassify"))
- spam-mark-ham-unread-before-move-from-spam-group t
- spam-use-crm114 t
- spam-use-hashcash t
- spam-use-blacklist t
- spam-use-whitelist t
-)
-;; Where to put incoming mail
-(setq spam-crm114-database-directory (expand-file-name "~/var/lib/crm114"))
-(setq gnus-spam-autodetect-methods
-      '(
-        ("^gmane\\." . (spam-use-blacklist
-                        spam-use-BBDB spam-use-hashcash
-                        spam-use-gmane-xref))
-        ("^nntp+news\\.gmane\\.org" . (spam-use-blacklist
-                        spam-use-BBDB
-                        spam-use-gmane-xref))
-        (".*" . (spam-use-blacklist spam-use-hashcash
-                 spam-use-BBDB))
-        ))
+;;; (setq
+;;;  spam-log-to-registry t     ; for spam autodetection
+;;;  ;; all groups with `spam' in the name contain spam
+;;;  gnus-spam-newsgroup-contents
+;;;  '(("spam" gnus-group-spam-classification-spam))
+;;;  ;; see documentation for these
+;;;  spam-mark-ham-unread-before-move-from-spam-group t
+;;; ;; gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.org:" "nnml:spam")
+;;; ;;                                  ("^nnml.*" "nnml:spam"))
+;;;  gnus-spam-process-destinations '(("nnml:spam")
+;;;                                   ("^nnml.*" "nnml:spam"))
+;;;  gnus-ham-process-destinations
+;;;  '(("^nnml:spam" "nnml:reclassify"))
+;;;  spam-mark-ham-unread-before-move-from-spam-group t
+;;;  spam-use-crm114 t
+;;;  spam-use-hashcash t
+;;;  spam-use-blacklist t
+;;;  spam-use-whitelist t
+;;; )
+;;; ;; Where to put incoming mail
+;;; (setq spam-crm114-database-directory (expand-file-name "~/var/lib/crm114"))
+;;; (setq gnus-spam-autodetect-methods
+;;;       '(
+;;;         ("^gmane\\." . (spam-use-blacklist
+;;;                         spam-use-BBDB spam-use-hashcash
+;;;                         spam-use-gmane-xref))
+;;;         ("^nntp+news\\.gmane\\.org" . (spam-use-blacklist
+;;;                         spam-use-BBDB
+;;;                         spam-use-gmane-xref))
+;;;         (".*" . (spam-use-blacklist spam-use-hashcash
+;;;                  spam-use-BBDB))
+;;;         ))
 
-(setq gnus-spam-autodetect '(("^nntp.*" . t)
-                             ("^gmane\\." .t)
-                             ("^nnml:\\(debian-.*\\)$" . t)))
+;;; (setq gnus-spam-autodetect '(("^nntp.*" . t)
+;;;                              ("^gmane\\." .t)
+;;;                              ("^nnml:\\(debian-.*\\)$" . t)))
 
-(setq gnus-spam-process-newsgroups
-      '(("^nntp\\+news\\.gmane\\.org"
-         ((spam spam-use-gmane)
-          (spam spam-use-blacklist)
-          ))
-        ("^gmane\\."
-         ((spam spam-use-gmane)
-          (spam spam-use-blacklist)
-          ))
-        ("^nnml:\\(debian-.*\\)$"
-         ((spam-use-resend)))
-        (".*"
-         ((spam spam-use-blacklist)
-          ))
-        ))
+;;; (setq gnus-spam-process-newsgroups
+;;;       '(("^nntp\\+news\\.gmane\\.org"
+;;;          ((spam spam-use-gmane)
+;;;           (spam spam-use-blacklist)
+;;;           ))
+;;;         ("^gmane\\."
+;;;          ((spam spam-use-gmane)
+;;;           (spam spam-use-blacklist)
+;;;           ))
+;;;         ("^nnml:\\(debian-.*\\)$"
+;;;          ((spam-use-resend)))
+;;;         (".*"
+;;;          ((spam spam-use-blacklist)
+;;;           ))
+;;;         ))
 
 ;;; (add-to-list
 ;;;  'gnus-parameters
