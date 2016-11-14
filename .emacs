@@ -17,26 +17,23 @@
 ;;;         (message (concat file " recompiled"))
 ;;;         (sit-for 2))))
 (setq epg-debug t)
-(load-file "~/etc/emacs/lisp/emacs-vers.el")
 (require 'dired)
 
-(if (emacs-type-eq 'fsf)
-    (progn
-      (defvar temp-compatibility-dir
+(defvar temp-compatibility-dir
 	"/usr/local/share/emacs/site-lisp/site-start.d"
 	"*The directory where select debian emacs20 init scripts are kept."
 	)
-      (add-to-list 'load-path "/usr/share/emacs/site-lisp/")
-      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
-      (unless (boundp 'debian-emacs-flavor)
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
+(unless (boundp 'debian-emacs-flavor)
 	(defconst debian-emacs-flavor 'emacs24))
 
-      (load "debian-startup")
-      (debian-startup 'emacs24)
-      (if (not (member temp-compatibility-dir load-path))
+(load "debian-startup")
+(debian-startup 'emacs24)
+(if (not (member temp-compatibility-dir load-path))
 	  (setq load-path (cons temp-compatibility-dir load-path)))
-      ;;(debian-run-directories temp-compatibility-dir)
-      ))
+;;(debian-run-directories temp-compatibility-dir)
+
 
 ;; Replace all occurrences of nil in load-path by "." since nil breaks
 ;; debian-pkg-add-load-path-item

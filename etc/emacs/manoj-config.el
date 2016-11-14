@@ -53,44 +53,6 @@
 ;;(defvar buf my-emacs-state-dir "Temporary file name")
 
 ;;-----------------------------------------------------------------------------
-;; Macros
-;;; (defun eldoc-documentation-function-default ()
-;;;  )
-(load-file (concat my-emacs-config-dir "/lisp/emacs-vers.el"))
-(defmacro GNUEmacs-25 (&rest body)
-  "Evaluate BODY when the Emacs major version is 25."
-  `(when (= emacs-major-version 25)
-     ,@body))
-
-(defmacro GNUEmacs-24 (&rest body)
-  "Evaluate BODY when the Emacs major version is 24."
-  `(when (= emacs-major-version 24)
-     ,@body))
-
-(defmacro Linux (&rest x)
-  "Evaluate X when the system type is GNU/Linux."
-  (list 'if (string-match "linux" (prin1-to-string system-type))
-        (cons 'progn x)))
-
-(defmacro Windows (&rest x)
-  "Evaluate X when the system type is Windows."
-  (list 'if (string-match "windows" (prin1-to-string system-type))
-        (cons 'progn x)))
-
-(defmacro WindowSystem (&rest body)
-  `(when (not (equal window-system nil))
-     ,@body))
-
-(defmacro Console (&rest body)
-  `(when (equal window-system nil)
-     ,@body))
-
-(defmacro Console-XTerm (&rest body)
-  `(when (and (not window-system)
-              (equal (getenv "TERM") "xterm"))
-     ,@body))
-
-;;-----------------------------------------------------------------------------
 (defvar ulocal-lisp-subdirs
   (list "bbdb" "auctex" "dictionary" "functions" "org" "vm" "w3m")
   "*The list of subdirtectories we want in the path.")
@@ -110,8 +72,8 @@
 
 ;; "nhxhtml"
 (defvar manoj-lisp-subdirs (list "bbdb" "config" "lisp" "mail" "news"
-                                 (format "emacs%d/gnus" (emacs-major-version))
-                                 (format "emacs%d" (emacs-major-version))
+                                 (format "emacs%d/gnus" emacs-major-version)
+                                 (format "emacs%d" emacs-major-version)
                                  )
   "*The list of subdirtectories we want in the path.")
 
@@ -1030,13 +992,9 @@ If no START and END is provided, the current `region-beginning' and
 (add-hook 'suspend-hook 'resume-suspend-hook)
 (add-hook 'suspend-resume-hook 'resume-process-args)
 
-(if (emacs-type-eq 'fsf)
-    (if (emacs-version=  21)
-        (if (emacs-minor-version= 3)
-            (if (featurep 'outline)
-                (require 'foldout)
-              (eval-after-load "outline" '(require 'foldout)))
-          )))
+(if (featurep 'outline)
+    (require 'foldout)
+  (eval-after-load "outline" '(require 'foldout)))
 
 ;; (add-hook 'after-save-hook 'byte-compile-after-save-function)
 (defun byte-compile-after-save-function ()
@@ -1304,7 +1262,7 @@ If no START and END is provided, the current `region-beginning' and
 (global-set-key (kbd "C-x _") 'shrink-window)
 
 ;; fix some keys for the terminal
-(Console-XTerm
+(when (equal window-system nil)
  (global-set-key (kbd "C-c h") 'help-command)
  (add-hook 'term-setup-hook
            (lambda ()
@@ -3416,7 +3374,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (global-set-key (kbd "C-M-+") 'shift-number-up)
 (global-set-key (kbd "C-M-_") 'shift-number-down)
 
-(require 'ecb)
+;; (require 'ecb)
 ;; (setq ecb-compile-window-height 12)
 ;;; activate and deactivate ecb
 (global-set-key (kbd "C-c C-;") 'ecb-activate)
@@ -3680,10 +3638,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (require 'cl-lib)
 (require 'cl-macs)
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  )
+(require 'package)
+(package-initialize)
+
 
 (electric-pair-mode 1)
 ;;; (require 'autopair)
@@ -3709,7 +3666,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (global-set-key (kbd "C-M-+") 'shift-number-up)
 (global-set-key (kbd "C-M-_") 'shift-number-down)
 
-(require 'ecb)
 ;; (setq ecb-compile-window-height 12)
 ;;; activate and deactivate ecb
 (global-set-key (kbd "C-c C-;") 'ecb-activate)
