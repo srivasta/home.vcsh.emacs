@@ -3642,6 +3642,11 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (package-initialize)
 
 
+;; set up git-gutter
+(require 'git-gutter)
+(global-git-gutter-mode t)
+(git-gutter:linum-setup)
+
 (electric-pair-mode 1)
 ;;; (require 'autopair)
 ;;; (autopair-global-mode 1) ;; to enable in all buffers
