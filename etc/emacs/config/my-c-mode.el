@@ -22,6 +22,17 @@
            (cons 'my-ps-c-buffer-function-name
                  (cdr ps-left-header)))))
 
+;; gcc emits "In file included from " once per inclusion chain (indenting the
+;; rest) and then the salient file name is last, but clang emits the "In file
+;; included from" prefix for every file in the inclusion chain, so we need a
+;; special alist element to ignore those lines, which are rarely useful.
+(require 'compile)
+(add-to-list
+ 'compilation-error-regexp-alist-alist
+ '(clang-include
+   "^In file included from \\(.+\\):\\([0-9]+\\):" 1 2 nil 0) nil)
+(add-to-list 'compilation-error-regexp-alist 'clang-include nil)
+
 (defun my-common-c-mode-hook-function ()
   "Things to add to all c like modes."
   (interactive)

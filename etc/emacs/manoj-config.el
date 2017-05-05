@@ -187,6 +187,7 @@
 ;;                   General Settings                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'clipmon)
 (menu-bar-mode  t)                       ;; show the menu...
 (tool-bar-mode -1)                       ;; turn-off toolbar
 (setq fringe-mode '(8 . 8))              ;; emacs 22+
@@ -578,7 +579,7 @@ If no START and END is provided, the current `region-beginning' and
 (add-hook 'markdown-mode-hook 'flyspell-mode)
 (setq auto-mode-case-fold t)
 
-(require 'clipmon)
+
 
 
 (setq ditaa-cmd (concat "java -jar " real-home-directory "/lib/ditaa0_6b.jar"))
