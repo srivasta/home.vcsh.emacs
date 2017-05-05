@@ -3370,7 +3370,12 @@ This requires the external program \"diff\" to be in your `exec-path'."
   (package-initialize)
   )
 
+
+(require 'notifications)
+;;; (notifications-notify :title "hi")
+
 (electric-pair-mode 1)
+
 ;;; (require 'autopair)
 ;;; (autopair-global-mode 1) ;; to enable in all buffers
 ;;; ;; Disables autopair mode in JavaScript mode (js-mode) and C mode buffers.
