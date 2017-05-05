@@ -202,6 +202,7 @@
 (put 'erase-buffer 'disabled nil)        ;; ... useful things
 (file-name-shadow-mode t)                ;; be smart about filenames in mbuf
 
+(defvar shell-command-not-erase-buffer t)
 (setq
  comment-style 'multi-line
  find-file-visit-truename t
@@ -213,7 +214,6 @@
  max-specpdl-size 10000
  initial-scratch-message ";; scratch buffer created -- happy hacking\n"
  initial-buffer-choice  'remember-notes
- shell-command-not-erase-buffer t
  visual-order-cursor-movement nil
  )
 
@@ -1108,7 +1108,6 @@ If no START and END is provided, the current `region-beginning' and
 
 (require 'linum)
 (global-linum-mode 1)
-(global-set-key (kbd "<f3>") 'linum-mode)
 
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
 (global-set-key (kbd "C-<f6>") 'magit-status)               ;; ...git mode
@@ -1580,6 +1579,26 @@ If no START and END is provided, the current `region-beginning' and
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (global-prettify-symbols-mode t)
+;; Make sure the equals sign stands out in named argument lists
+(defvar font-lock-keyword-config-face
+  'font-lock-keyword-config-face
+  "Face name to use for the equals in bla=5, foo=7 argument lists.")
+(defvar font-lock-equals-symbol-face
+  'font-lock-equals-symbol-face
+  "Face name to use for the equals in variable settings, e.g. x = 56.")
+
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (font-lock-add-keywords nil
+                                    '(
+                                      ("\\<\\(FIXME\\):" 1 'font-lock-warning-face prepend)
+                                      ("\\<\\(TODO([a-z]*@?)\\):" 1 'font-lock-warning-face prepend)
+                                      (" \\(=\\) " 1 font-lock-equals-symbol-face)
+                                      ("[^ ]\\(=\\)[^ ]" 1 font-lock-keyword-config-face)
+                                      )
+                                    )
+            ))
+
 
 ;; Enable EDE (Project Management) features
 ;;(global-ede-mode 1)
@@ -3944,11 +3963,14 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;(global-set-key "\C-cid" 'identica-direct-message-interactive)
 
 
-(require 'highlight-symbol)
-(global-set-key [(control f3)] 'highlight-symbol-at-point)
-(global-set-key [f3] 'highlight-symbol-next)
-(global-set-key [(shift f3)] 'highlight-symbol-prev)
-(global-set-key [(meta f3)] 'highlight-symbol-query-replace)
+;;; (require 'highlight-symbol)
+;;; (global-set-key [(control f3)] 'highlight-symbol-at-point)
+;;; (global-set-key [f3] 'highlight-symbol-next)
+;;; (global-set-key [(shift f3)] 'highlight-symbol-prev)
+;;; (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
+(require 'symbol-overlay)
+(global-set-key [f3] symbol-overlay-map)
+;;; (define-key symbol-overlay-map (kbd "your-prefer-key") 'any-command)
 
 (require 'all)
 (require 'dedicated)
