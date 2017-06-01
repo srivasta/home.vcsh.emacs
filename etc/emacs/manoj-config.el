@@ -202,6 +202,8 @@
 (put 'erase-buffer 'disabled nil)        ;; ... useful things
 (file-name-shadow-mode t)                ;; be smart about filenames in mbuf
 
+;;; Try to find a useful buffer to show
+(setq switch-to-visible-buffer nil)
 (defvar shell-command-not-erase-buffer t)
 (setq
  comment-style 'multi-line
@@ -3665,7 +3667,13 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (require 'cl-macs)
 (require 'package)
 (package-initialize)
-
+
+;;; Calendar integration
+(require 'org-gcal)
+(require 'calfw)
+(require 'calfw-org)
+(require 'calfw-cal)
+
 
 ;; set up git-gutter
 (require 'git-gutter)
@@ -4216,6 +4224,7 @@ user."
 
 (global-set-key (kbd "C-:") 'ac-complete-with-helm)
 (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
+
 
 
 ;;; Local Variables:
