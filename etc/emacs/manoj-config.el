@@ -2953,15 +2953,15 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;            (or (file-remote-p default-directory 'host) system-name)
 ;;;            (file-name-nondirectory (or (buffer-file-name) default-directory)))))
 
-; Frame title bar formatting to show full path of file
-(setq-default
- frame-title-format
- (list
-  '((buffer-file-name
-     " %f" (dired-directory
-            dired-directory
-            (revert-buffer-function
-             " %b" ("%b - Dir:  " default-directory)))))))
+;;; ; Frame title bar formatting to show full path of file
+;;; (setq-default
+;;;  frame-title-format
+;;;  (list
+;;;   '((buffer-file-name
+;;;      " %f" (dired-directory
+;;;             dired-directory
+;;;             (revert-buffer-function
+;;;              " %b" ("%b - Dir:  " default-directory)))))))
 
 (setq-default
  icon-title-format
@@ -2970,6 +2970,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
                              dired-directory
                              (revert-buffer-function
                               " %b"  ("%b - Dir:  " default-directory)))))))
+
+(setq-default frame-title-format `(,(user-login-name) "@" ,(system-name) " " global-mode-string " %b" ))
 
 (setq
  ;; no messages
