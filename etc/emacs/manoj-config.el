@@ -751,6 +751,22 @@ If no START and END is provided, the current `region-beginning' and
      (concat "/sudo:root@localhost:"
              buffer-file-name))))
 
+
+(add-to-list 'tramp-methods
+             '("gcssh"
+               (tramp-login-program "gcloud")
+               (tramp-login-args
+                (
+                 ("compute" "ssh")
+                 ("-l" "%u")
+                 ("-p" "%p")
+                 ("%h")))
+               (tramp-async-args
+                (("-q")))
+               (tramp-remote-shell "/bin/sh")
+               (tramp-remote-shell-login ("-l"))
+               (tramp-remote-shell-args ("-c"))))
+
 
 
 (require 'ansi-color)
