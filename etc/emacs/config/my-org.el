@@ -1084,9 +1084,9 @@ dd {margin-bottom: 0.66em;}
 
 (require 'ob)
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((sh . t)))
+;;; (org-babel-do-load-languages
+;;;  'org-babel-load-languages
+;;;  '((sh . t)))
 
 (defun my-toggle-off-babel (backend)
   (when (org-export-derived-backend-p backend 'icalendar)
