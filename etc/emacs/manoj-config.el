@@ -1676,6 +1676,10 @@ If no START and END is provided, the current `region-beginning' and
   (imenu-add-to-menubar "TAGS"))
 (add-hook 'semantic-init-hooks 'my-semantic-hook)
 
+(setq gofmt-command "goimports")
+;;(require 'go-mode-autoloads)
+(add-hook 'before-save-hook 'gofmt-before-save)
+
 ;;;
 (require 'cedet-cscope)
 
