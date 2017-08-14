@@ -3475,7 +3475,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (autoload 'bbdb/pgp-key                       "my-bbdb")
 (autoload 'my--message-mode-hook-mail-aliases "my-bbdb")
 (autoload 'bbdb/sendmail-update-records       "my-bbdb")
-(require 'bbdb-vm)
+;;(require 'bbdb-vm)
 ;;; Avoid BBDB getting confused by 8 bit characters:
 (setq bbdb-file-coding-system 'utf-8-unix)
 (add-hook 'bbdb-load-hook
