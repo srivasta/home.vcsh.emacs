@@ -565,6 +565,15 @@ If no START and END is provided, the current `region-beginning' and
  cua-enable-modeline-indications t
  )
 (cua-mode t)
+;;; --------------------------------------------------------------------
+;;; x11 key config
+;;; --------------------------------------------------------------------
+
+(global-unset-key (kbd "C-S-v" ))
+(global-set-key   (kbd "C-S-v" ) 'x-clipboard-yank)
+(global-unset-key (kbd "C-S-c" ))
+(global-set-key   (kbd "C-S-c" ) 'clipboard-kill-ring-save)
+
 
 
 (setq indicate-empty-lines t)
