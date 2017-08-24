@@ -257,6 +257,13 @@
 ;; Make emacs faster by having less frequent garbage collection.
 ;; Default is 400000 bytes.
 ;;(setq gc-cons-threshhold 2000000)
+
+(defun just-stop-please-stop-dear-god-stop ()
+  "Really, just stop it."
+  (interactive)
+  (if (active-minibuffer-window)
+      (abort-recursive-edit)
+    (keyboard-quit)))
 
 ;;-----------------------------------------------------------------------------
 ;; Language environment
