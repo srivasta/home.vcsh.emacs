@@ -4014,6 +4014,10 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;(global-set-key "\C-cid" 'identica-direct-message-interactive)
 
 
+(require 'diff-hl)
+(add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+(add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
+
 ;;; (require 'highlight-symbol)
 ;;; (global-set-key [(control f3)] 'highlight-symbol-at-point)
 ;;; (global-set-key [f3] 'highlight-symbol-next)
