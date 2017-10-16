@@ -3337,71 +3337,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 (global-highlight-changes-mode -1)
+
 
 
-(add-hook 'compilation-mode-hook (lambda () (setenv "TERM" "emacs")))
-;; Setup compilation buffer to stop at the first error
-(setq compilation-scroll-output 'first-error)
-
-;; jabber
-(setq jabber-nickname "ManojSrivastava"
-      jabber-username (user-real-login-name)
-      jabber-connection-type (quote ssl)
-      jabber-network-server "jabber.org"
-      jabber-port 5223
-      jabber-server "jabber.org"
-      )
-
-;; If idle for 60 seconds, we seem to get booted. So to fix this, set
-;; the keepalive interval for 55 seconds and then start it up after connecting
-(setq jabber-keepalive-interval 55)
-(require 'tls)
-;;(require 'jabber)
-;;(add-hook 'jabber-post-connect-hook 'jabber-keepalive-start)
-
-;; Optionally connect automatically when starting Emacs
-;;(jabber-connect)
-
-
-(require 'server)
-(if (and (not (file-exists-p manoj-server-lock-file))
-         (not (string-equal "root" (getenv "USER")))
-         (or (not server-process)
-             (not (boundp 'server-process))
-             (not (eq (process-status server-process)  'listen)))
-         (not noninteractive))
-    (manoj-server-start)
-  (message "Emacs Server NOT started."))
-
-;; Remove lock file when emacs server ends
-(add-hook 'kill-emacs-hook
-          'manoj-server-remove-lock-file)
-
-(delete-selection-mode -1)
-(setq mouse-region-delete-keys '([delete]))
-
-(add-hook 'xgit-log-edit-mode-hook
-          (lambda ()
-            ;; flyspell mode to spell check everywhere
-            (flyspell-mode 1)))
-
-
-
-(require 'my-faces)
-(setq custom-enabled-themes '(manoj-dark))
-(load-theme  'manoj-dark)
-(setq bbdb-canonicalize-net-hook nil)
-
-(defun insert-date (prefix)
-  "Insert the current date. With prefix-argument, use ISO format. With
-   two prefix arguments, write out the day and month name."
-  (interactive "P")
-  (let ((format (cond
-                 ((not prefix) "%d.%m.%Y")
-                 ((equal prefix '(4)) "%Y-%m-%d")
-                 ((equal prefix '(16)) "%A, %d. %B %Y")))
-        (system-time-locale "en_US"))
-    (insert (format-time-string format))))
 
 (require 'cl-lib)
 (require 'cl-macs)
@@ -3461,6 +3399,14 @@ This requires the external program \"diff\" to be in your `exec-path'."
              (auto-fill-mode 1)
              (setq add-log-mailing-address debian-mailing-address)))
 (setq debian-changelog-local-variables-maybe-remove nil)
+
+(if (featurep 'smart-backspace)
+    (global-set-key [?\C-?] 'smart-backspace)
+  )
+(if (featurep 'smart-semicolon)
+    (add-hook 'c-mode-common-hook #'smart-semicolon-mode)
+  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3641,6 +3587,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;; Setup compilation buffer to stop at the first error
 (setq compilation-scroll-output 'first-error)
 
+
 ;; jabber
 (setq jabber-nickname "ManojSrivastava"
       jabber-username (user-real-login-name)
@@ -3701,68 +3648,23 @@ This requires the external program \"diff\" to be in your `exec-path'."
         (system-time-locale "en_US"))
     (insert (format-time-string format))))
 
-(require 'cl-lib)
-(require 'cl-macs)
-(require 'package)
-(package-initialize)
-
+
 ;;; Calendar integration
 (require 'org-gcal)
 (require 'calfw)
 (require 'calfw-org)
 (require 'calfw-cal)
 
-
 ;; set up git-gutter
-(require 'git-gutter)
-(global-git-gutter-mode t)
-(git-gutter:linum-setup)
+;;(require 'git-gutter)
+(if (featurep 'git-gutter)
+    (git-gutter:linum-setup)
+    )
+;;(global-git-gutter-mode t)
+(if (featurep 'git-gutter-fringe)
+    (global-git-gutter-mode t)
+    )
 
-(electric-pair-mode 1)
-;;; (require 'autopair)
-;;; (autopair-global-mode 1) ;; to enable in all buffers
-;;; ;; Disables autopair mode in JavaScript mode (js-mode) and C mode buffers.
-;;; (dolist (this-hook (list 'js-mode-hook 'c-mode-common-hook 'cperl-mode-hook
-;;;                          'erc-mode-hook))
-;;;   (add-hook this-hook
-;;;             #'(lambda ()
-;;;                 (setq autopair-dont-activate t)
-;;;                 (autopair-mode -1))))
-;;; (add-hook 'emacs-lisp-mode-hook
-;;;           #'(lambda ()
-;;;               (push '(?` . ?')
-;;;                     (getf autopair-extra-pairs :comment))
-;;;               (push '(?` . ?')
-;;;                     (getf autopair-extra-pairs :string))))
-;;; (setq autopair-autowrap t)
-
-(require 'member-function)
-(setq mf--source-file-extension "cpp")
-
-(global-set-key (kbd "C-M-+") 'shift-number-up)
-(global-set-key (kbd "C-M-_") 'shift-number-down)
-
-;; (setq ecb-compile-window-height 12)
-;;; activate and deactivate ecb
-(global-set-key (kbd "C-c C-;") 'ecb-activate)
-(global-set-key (kbd "C-c C-'") 'ecb-deactivate)
-;;; show/hide ecb window
-(global-set-key (kbd "C-;") 'ecb-show-ecb-windows)
-(global-set-key (kbd "C-'") 'ecb-hide-ecb-windows)
-
-(require 'smart-tab)
-(setq smart-tab-using-hippie-expand t)
-(global-smart-tab-mode 1)
-
-;; Set up the debian-chagelog mode
-(load-library "debian-changelog-mode")
-(add-hook 'debian-changelog-mode-hook
-          '(lambda ()
-             (make-local-variable 'add-log-mailing-address)
-             (flyspell-mode 1)
-             (auto-fill-mode 1)
-             (setq add-log-mailing-address debian-mailing-address)))
-(setq debian-changelog-local-variables-maybe-remove nil)
 
 ;;
 ;; Perl
