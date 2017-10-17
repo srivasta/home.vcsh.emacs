@@ -4169,6 +4169,9 @@ user."
 (global-set-key (kbd "C-:") 'ac-complete-with-helm)
 (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
+(if (file-exists-p "/usr/local/src/plantuml.jar")
+    (setq plantuml-jar-path "/usr/local/src/plantuml.jar")
+    )
 
 
 ;;; Local Variables:
