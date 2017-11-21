@@ -4171,8 +4171,15 @@ user."
 
 (if (file-exists-p "/usr/local/src/plantuml.jar")
     (setq plantuml-jar-path "/usr/local/src/plantuml.jar")
-    )
+  )
 
+(require 'atomic-chrome)
+(setq atomic-chrome-default-major-mode 'markdown-mode)
+(setq atomic-chrome-url-major-mode-alist
+      '(("github\\.com" . gfm-mode)
+        ("redmine" . textile-mode)))
+(setq atomic-chrome-buffer-open-style 'frame)
+(atomic-chrome-start-server)
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
