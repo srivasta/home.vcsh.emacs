@@ -20,18 +20,18 @@
 (require 'dired)
 
 (defvar temp-compatibility-dir
-	"/usr/local/share/emacs/site-lisp/site-start.d"
-	"*The directory where select debian emacs20 init scripts are kept."
-	)
+  "/usr/local/share/emacs/site-lisp/site-start.d"
+  "*The directory where select debian emacs20 init scripts are kept."
+  )
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/")
 (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
 (unless (boundp 'debian-emacs-flavor)
-	(defconst debian-emacs-flavor 'emacs24))
+  (defconst debian-emacs-flavor 'emacs25))
 
 (load "debian-startup")
 (debian-startup 'emacs24)
 (if (not (member temp-compatibility-dir load-path))
-	  (setq load-path (cons temp-compatibility-dir load-path)))
+    (setq load-path (cons temp-compatibility-dir load-path)))
 ;;(debian-run-directories temp-compatibility-dir)
 
 
@@ -50,7 +50,7 @@
   ;; <(config-file)>
 (setq
  custom-file (format "%scustom-emacs%d.el"
-		     (concat my-emacs-config-dir "/custom/")
+                     (concat my-emacs-config-dir "/custom/")
                      emacs-major-version))
 (load custom-file)
 
