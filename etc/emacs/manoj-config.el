@@ -36,7 +36,7 @@
 (defvar my-login-name-regexp
   (concat "\\<" (user-login-name) "\\|" (upcase (user-login-name)) "\\>")
   "* The users login name as a regular expression.")
-(defvar BiBTeX-file-list '( (concat real-home-directory "/tex/mybib.bib"))
+(defvar BiBTeX-file-list '((concat real-home-directory "/tex/mybib.bib"))
   "*Default bibliography database.")
 (defvar mail-organization-header "Manoj Srivastava's Home"
   "*The name of the organization.")
@@ -4181,6 +4181,9 @@ user."
         ("redmine" . textile-mode)))
 (setq atomic-chrome-buffer-open-style 'frame)
 ;;(atomic-chrome-start-server)
+
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
