@@ -3665,6 +3665,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
     (global-git-gutter-mode t)
     )
 
+(setq vc-follow-symlinks t)
 
 ;;
 ;; Perl
@@ -4179,7 +4180,7 @@ user."
       '(("github\\.com" . gfm-mode)
         ("redmine" . textile-mode)))
 (setq atomic-chrome-buffer-open-style 'frame)
-(atomic-chrome-start-server)
+;;(atomic-chrome-start-server)
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
