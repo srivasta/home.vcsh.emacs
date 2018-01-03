@@ -231,10 +231,6 @@
 (setq search-highlight t                 ;; highlight when searching...
       query-replace-highlight t)             ;; ...and replacing
 
-(eval-after-load "apropos"
-  (setq apropos-sort-by-scores 'verbose)
-  )
-
 (setq fill-column 80)            ;;when to split lines
 
 (setq split-width-threshold nil) ;;;  Do not split window horizontally
@@ -993,10 +989,6 @@ If no START and END is provided, the current `region-beginning' and
 (add-to-list 'filladapt-token-table '("Cc: " bullet))
 
 (add-hook 'text-mode-hook 'turn-on-filladapt-mode)
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (when (featurep 'filladapt)
-              (c-setup-filladapt))))
  ;;; (add-hook 'c-mode-hook 'turn-off-filladapt-mode)
 
 ;; combination of following two variables finally makes Emacs scroll
@@ -1862,9 +1854,6 @@ If no START and END is provided, the current `region-beginning' and
   ;; (add-to-list 'ac-sources 'ac-source-gtags)
   (linum-mode t)
   (semantic-mode t)
-  (c-toggle-auto-newline 1)
-  (c-toggle-hungry-state 1)
-  (c-toggle-auto-newline 1)
   (hs-minor-mode 1)
   )
 
@@ -4184,6 +4173,18 @@ user."
 
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+(if (require 'emojify nil 'noerror)
+    (global-emojify-mode))
+
+;;; Comment out sections of code faster, expands comment-dwim
+(if (require  'smart-comment nil 'noerror)
+    (global-set-key (kbd "M-;") 'smart-comment))
+
+(if (require 'smart-newline nil 'noerror)
+    (smart-newline-mode 1)
+  )
+(if (require 'smart-semicolon nil 'noerror)
+    (add-hook 'c-mode-common-hook #'smart-semicolon-mode))
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
