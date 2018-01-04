@@ -2592,11 +2592,16 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 ;; To use smtp auth
-(setq send-mail-function 'smtpmail-send-it) ; if you use `mail'
-(setq message-send-mail-function 'smtpmail-send-it) ; if you use message/Gnus
-(setq smtpmail-default-smtp-server "localhost")
-(setq smtpmail-local-domain "internal.golden-gryphon.com")
-(setq smtpmail-sendto-domain "golden-gryphon.com")
+(eval-when-compile (require 'smtpmail))
+(if (require 'smtpmail nil 'noerror)
+    (progn
+      (setq
+       send-mail-function 'smtpmail-send-it ; if you use `mail'
+       message-send-mail-function 'smtpmail-send-it ; if you use message/Gnus
+       smtpmail-default-smtp-server "localhost"
+       smtpmail-local-domain "internal.golden-gryphon.com"
+       smtpmail-sendto-domain "golden-gryphon.com")))
+
 ;;(setq smtpmail-debug-info t) ; only to debug problems
 ;;(setq smtpmail-auth-credentials  ; or use ~/.authinfo
 ;;      '(("YOUR SMTP HOST" 25 "username" "password")))
@@ -3672,6 +3677,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (autoload 'perlcritic-region "perlcritic" "" t)
 (autoload 'perlcritic-mode   "perlcritic" "" t)
 
+(eval-when-compile (require 'cperl-mode))
 (mapc
  (lambda (pair)
    (if (eq (cdr pair) 'perl-mode)
@@ -3733,16 +3739,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;     (set-default 'cperl-invalid-face 'cperl-my-trailing-spaces-face)
 
 (eval-when-compile (require 'cperl-mode))
-(defun my-cperl-eldoc-documentation-function ()
-  "Return meaningful doc string for `eldoc-mode'."
-  (car
-   (let ((cperl-message-on-help-error nil))
-     (cperl-get-help))))
-
-(add-hook 'cperl-mode-hook
-          (lambda ()
-            (set (make-local-variable 'eldoc-documentation-function)
-                 'my-cperl-eldoc-documentation-function)))
 (add-hook 'cperl-mode-hook
           (lambda ()
             (font-lock-add-keywords nil
