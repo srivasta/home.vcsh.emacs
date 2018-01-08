@@ -602,34 +602,8 @@ If no START and END is provided, the current `region-beginning' and
   (shell-command
    (concat ditaa-cmd " " buffer-file-name)))
 
-(eval-when-compile (require 'wikipedia-mode))
-(autoload 'wikipedia-mode
-  "wikipedia-mode"
-  "Major mode for editing documents in Wikipedia markup." t)
-
-;; (add-to-list 'auto-mode-alist
-;;    '("\\.wiki\\'" . wikipedia-mode))
-
-(eval-after-load "wikipedia-mode"
-  '(setq wikipedia-mode-directory "~/var/state/wiki"))
-
-;; ViewSourceWith is better, it has the site name in the file name
-(add-to-list 'auto-mode-alist '("wiki\\.boozallenet\\.com_" . wikipedia-mode))
-(setq auto-mode-alist
-      (cons '("\\.wiki\\'" . wikipedia-mode) auto-mode-alist))
-(add-to-list 'auto-mode-alist '("mozex.\\.*" . wikipedia-mode))
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-;; * You may want to enable `wikipedia-turn-on-eldoc-mode' for
-;;   `wikipedia-mode-hook'.  This way you will always see where a
-;;   particular link leads to.
-;;
-;; * Similarly, enabling `wikipedia-turn-on-longlines-mode' will
-;;   automatically and transparently break lines in articles.
-;;
-;;(add-hook 'wikipedia-mode-hook 'wikipedia-turn-on-eldoc-mode)
-(add-hook 'wikipedia-mode-hook 'flyspell-mode)
 
 (require 'whitespace)
 (setq whitespace-style '(face tabs spaces trailing lines-tail
@@ -651,17 +625,6 @@ If no START and END is provided, the current `region-beginning' and
             (setq show-trailing-whitespace t)))
 (add-hook 'java-mode-hook (lambda () (setq whitespace-line-column 100)))
 
-
-
-;;;One can pretty much replace longlines-mode with this:
-
-;;;    (visual-line-mode 1)
-;;;    (whitespace-newline-mode 1)
-;;;    (setq fill-column 999999)
-
-
-(add-to-list 'auto-mode-alist '("mozex.\\.*" . wikipedia-mode))
-(add-to-list 'auto-mode-alist '("mozex.\\.*" . wikipedia-mode))
 
 ;; C-k kills whole line and newline if at beginning of line
 (setq kill-whole-line t)
@@ -4044,8 +4007,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (define-key ac-complete-mode-map "\M-p" 'ac-previous)
 (setq
  ac-auto-start 2
- ac-auto-show-menu 0.5
- )
+ ac-auto-show-menu 0.5)
+
 (setq ac-dwim t)                        ;Do what i mean
 
 (require 'auto-complete-config)
@@ -4058,11 +4021,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (ac-config-default)
 (setq-default ac-sources
               (append
-               '(
-                 ac-source-semantic-raw
+               '(ac-source-semantic-raw
                  ac-source-semantic
-                 ac-source-gtags
-                 ) ac-sources))
+                 ac-source-gtags) ac-sources))
 ;;(setq-default ac-sources (append '(ac-source-semantic) ac-sources))
 
 ;;; use cycling as soon as there are less than 5 options available
@@ -4073,8 +4034,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (dolist (hook (list
                'emacs-lisp-mode-hook
-               'lisp-interaction-mode
-               ))
+               'lisp-interaction-mode))
   (add-hook hook '(lambda ()
                     (add-to-list 'ac-sources 'ac-source-symbols))))
 
@@ -4156,8 +4116,7 @@ user."
 (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
 (if (file-exists-p "/usr/local/src/plantuml.jar")
-    (setq plantuml-jar-path "/usr/local/src/plantuml.jar")
-  )
+    (setq plantuml-jar-path "/usr/local/src/plantuml.jar"))
 
 (require 'atomic-chrome)
 (setq atomic-chrome-default-major-mode 'markdown-mode)
