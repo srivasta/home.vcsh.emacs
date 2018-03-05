@@ -743,7 +743,7 @@ If no START and END is provided, the current `region-beginning' and
                (tramp-remote-shell-args ("-c"))))
 
 
-
+(require 'color)
 (require 'ansi-color)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (setq comint-prompt-read-only t)
@@ -3607,7 +3607,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 ;;; Calendar integration
-(require 'org-gcal)
 (require 'calfw)
 (require 'calfw-org)
 (require 'calfw-cal)
@@ -4127,6 +4126,41 @@ user."
 ;;(atomic-chrome-start-server)
 
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+;;; (cl-loop
+;;;  for index from 1 to rainbow-delimiters-max-face-count
+;;;  do
+;;;  (let ((face (intern (format "rainbow-delimiters-depth-%d-face" index))))
+;;;    (cl-callf color-saturate-name (face-foreground face) 30)))
+
+;;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil
+;;;                     :foreground 'unspecified
+;;;                     :inherit 'show-paren-mismatch)
+
+(if (require 'lsp-mode nil 'noerror)
+    (progn
+      (require 'lsp-imenu)
+      (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+
+      (require 'lsp-methods)
+      (setq lsp--sync-methods 2
+            lsp-document-sync-method 'incremental)
+
+      (require 'lsp-go)
+      (require 'lsp-python)
+      (require 'lsp-ui-doc)
+      )
+  )
+
+(if (require 'lsp-ui nil 'noerror)
+    (progn
+      (setq lsp-ui-doc-include-signature nil)
+
+      (require 'lsp-ui-flycheck)
+      (with-eval-after-load 'lsp-mode
+        (add-hook 'lsp-after-open-hook
+                  (lambda () (lsp-ui-flycheck-enable 1))))
+      ))
 
 (if (require 'emojify nil 'noerror)
     (global-emojify-mode))
