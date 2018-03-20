@@ -3295,15 +3295,13 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (global-highlight-changes-mode -1)
 
-
-
-
 (require 'cl-lib)
 (require 'cl-macs)
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  )
+;;; (when (>= emacs-major-version 24)
+;;;   (require 'package)
+;;;   (package-initialize)
+;;;   )
+
 
 
 (require 'notifications)
@@ -4174,6 +4172,8 @@ user."
   )
 (if (require 'smart-semicolon nil 'noerror)
     (add-hook 'c-mode-common-hook #'smart-semicolon-mode))
+
+(require 'clang-include-fixer nil 'noerror)
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
