@@ -4175,6 +4175,47 @@ user."
 
 (require 'clang-include-fixer nil 'noerror)
 
+(if (require 'gited nil 'noerror)
+    (define-key dired-mode-map "\C-x\C-g" 'gited-list-branches))
+
+(require 'bind-key nil 'noerror)
+
+(require 'synonymous nil 'noerror)
+
+(use-package magithub
+  :after magit
+  :ensure t
+  :config (magithub-feature-autoinject t))
+
+(require 'insert-shebang nil 'noerror)
+
+(if (require 'bm nil 'noerror)
+    (progn
+      (global-set-key (kbd "<right-fringe> <mouse-5>") 'bm-next-mouse)
+      (global-set-key (kbd "<right-fringe> <mouse-4>") 'bm-previous-mouse)
+      (global-set-key (kbd "<right-fringe> <mouse-1>") 'bm-toggle-mouse)
+      (setq bm-marker 'bm-marker-right)
+      ))
+
+(require 'electric-operator nil 'noerror)
+
+(if (require 'dot-mode nil 'noerror)
+    (add-hook 'find-file-hooks 'dot-mode-on)
+  )
+
+(require 'call-graph nil 'noerror)
+
+(if  (require 'autopair nil 'noerror)
+    (progn
+      (add-hook 'c-mode-common-hook #'(lambda () (autopair-mode)))
+      (add-hook 'lisp-mode-hook #'(lambda () (autopair-mode)))
+      ))
+
+(setq auto-indent-indent-style 'conservative)
+(if (require 'auto-indent-mode)
+    (auto-indent-global-mode))
+
+
 ;;; Local Variables:
 ;;; mode: emacs-lisp
 ;;; comment-start: ";;; "
