@@ -4080,8 +4080,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (setq minibuffer-prompt-properties
       '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt))
 
-(require 'pymacs)
-(pymacs-load "ropemacs" "rope-")
+;(require 'pymacs)
+(eval-after-load "pymacs"
+  (pymacs-load "ropemacs" "rope-"))
 
 (when (load "flymake" t)
       (defun flymake-pylint-init ()
@@ -4214,6 +4215,7 @@ user."
 (setq auto-indent-indent-style 'conservative)
 (if (require 'auto-indent-mode)
     (auto-indent-global-mode))
+
 
 
 ;;; Local Variables:
