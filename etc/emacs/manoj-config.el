@@ -504,12 +504,8 @@ If no START and END is provided, the current `region-beginning' and
   (other-window 1))
 
 (set-default 'ispell-skip-html t)
-(setq-default ispell-program-name "aspell")
-
 (setq
  ispell-use-framepop-p  (and window-system (condition-case () (require 'framepop) (error nil)))
- ispell-dictionary "american"
- ispell-local-dictionary "american"
  ispell-silently-savep t
  ispell-parser 'tex
  flyspell-sort-corrections nil
