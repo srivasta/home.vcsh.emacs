@@ -35,10 +35,8 @@
 ;;;       )
 
 (setq mail-sources
-      '(
-        (directory :path "~/var/spool/mail" :suffix ".spool")
-        ;;        (imap :server "smtp.golden-gryphon.com" :dontexpunge t :stream 'tls)
-        ))
+      '((directory :path "~/var/spool/mail" :suffix ".spool")))
+;;        (imap :server "smtp.golden-gryphon.com" :dontexpunge t :stream 'tls)
 
 (setq gnus-select-method
       '(nnml ""
@@ -1044,12 +1042,12 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
 
 ;;
 ;; Big brother database stuff
-(autoload 'bbdb/gnus-lines-and-from "bbdb-gnus")
-;;; Compiler hushing
-(eval-when-compile
-  (defvar gnus-optional-headers))
-(eval-when-compile (require 'bbdb-gnus))
-(require 'bbdb-gnus)
+;;; (autoload 'bbdb/gnus-lines-and-from "bbdb-gnus")
+;;; ;;; Compiler hushing
+;;; (eval-when-compile
+;;;   (defvar gnus-optional-headers))
+;;; (eval-when-compile (require 'bbdb-gnus))
+;;; (require 'bbdb-gnus)
 
 ;(add-hook 'gnus-select-group-hook 'dmoore::gnus-toggle-bbdb-popup)
 ;; (setq bbdb-use-pop-up nil)

@@ -515,6 +515,9 @@ If no START and END is provided, the current `region-beginning' and
  flyspell-sort-corrections nil
  )
 
+
+(require 'async-bytecomp nil 'noerror)
+
 (eval-when-compile (require 'flyspell))
 (eval-after-load "flyspell"
   '(progn
@@ -3820,11 +3823,13 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;; flymake minor mode
 ;; insure flymake errors get plopped into the *Messages* buffer
 ;; Setup for Flymake code checking.
-(require 'flycheck)
+(if (require 'flycheck nil 'noerror)
+    (add-hook 'after-init-hook #'global-flycheck-mode))
+
 (require 'flymake)
 (setq flymake-log-level 0)
 (require 'flymake-shell)
-(require 'flymake-perlcritic)
+;;(require 'flymake-perlcritic)
 (require 'flymake-yaml) ;; Not necessary if using ELPA package
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 (add-hook 'sh-set-shell-hook 'flymake-shell-load)
@@ -3998,34 +4003,41 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 ;;; ;; Autocomplete
 (require 'flycheck-ycmd)
-(require 'auto-complete)
-(global-auto-complete-mode t)
-(define-key ac-complete-mode-map "\M-n" 'ac-next)
-(define-key ac-complete-mode-map "\M-p" 'ac-previous)
-(setq
- ac-auto-start 2
- ac-auto-show-menu 0.5)
+(set-variable 'ycmd-server-command (list "/usr/bin/ycmd"))
+(if (require 'ycmd nil 'noerror)
+    (global-ycmd-mode 1))
 
-(setq ac-dwim t)                        ;Do what i mean
+(if (require 'company nil 'noerror)
+    (global-company-mode 1))
 
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories
-             (expand-file-name
-              "~/.emacs.d/el-get/auto-complete/dict"))
-(setq ac-comphist-file (expand-file-name
-                        "~/.emacs.d/ac-comphist.dat"))
+;;; (require 'auto-complete)
+;;; (global-auto-complete-mode t)
+;;; (define-key ac-complete-mode-map "\M-n" 'ac-next)
+;;; (define-key ac-complete-mode-map "\M-p" 'ac-previous)
+;;; (setq
+;;;  ac-auto-start 2
+;;;  ac-auto-show-menu 0.5)
 
-(ac-config-default)
-(setq-default ac-sources
-              (append
-               '(ac-source-semantic-raw
-                 ac-source-semantic
-                 ac-source-gtags) ac-sources))
-;;(setq-default ac-sources (append '(ac-source-semantic) ac-sources))
+;;; (setq ac-dwim t)                        ;Do what i mean
 
-;;; use cycling as soon as there are less than 5 options available
-(setq completion-cycle-threshold 5)
-(add-to-list 'completion-styles 'substring)
+;;; (require 'auto-complete-config)
+;;; (add-to-list 'ac-dictionary-directories
+;;;              (expand-file-name
+;;;               "~/.emacs.d/el-get/auto-complete/dict"))
+;;; (setq ac-comphist-file (expand-file-name
+;;;                         "~/.emacs.d/ac-comphist.dat"))
+
+;;; (ac-config-default)
+;;; (setq-default ac-sources
+;;;               (append
+;;;                '(ac-source-semantic-raw
+;;;                  ac-source-semantic
+;;;                  ac-source-gtags) ac-sources))
+;;; ;;(setq-default ac-sources (append '(ac-source-semantic) ac-sources))
+
+;;; ;;; use cycling as soon as there are less than 5 options available
+;;; (setq completion-cycle-threshold 5)
+;;; (add-to-list 'completion-styles 'substring)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4081,8 +4093,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
       '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt))
 
 ;(require 'pymacs)
-(eval-after-load "pymacs"
-  (pymacs-load "ropemacs" "rope-"))
+;;(eval-after-load "pymacs"
+;;  (pymacs-load "ropemacs" "rope-"))
 
 (when (load "flymake" t)
       (defun flymake-pylint-init ()
@@ -4094,9 +4106,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
           (list "epylint" (list local-file))))
       (add-to-list 'flymake-allowed-file-name-masks
                    '("\\.py\\'" flymake-pylint-init)))
-
-(when (load "indent-guide" t)
-  (indent-guide-global-mode))
 
 (defun my-find-file-as-root ()
   "Like `ido-find-file, but automatically edit the file with
@@ -4183,6 +4192,7 @@ user."
 
 (require 'synonymous nil 'noerror)
 
+(require 'magit nil 'noerror)
 (use-package magithub
   :after magit
   :ensure t
@@ -4206,7 +4216,7 @@ user."
 
 (require 'call-graph nil 'noerror)
 
-(if  (require 'autopair nil 'noerror)
+(if (require 'autopair nil 'noerror)
     (progn
       (add-hook 'c-mode-common-hook #'(lambda () (autopair-mode)))
       (add-hook 'lisp-mode-hook #'(lambda () (autopair-mode)))
@@ -4216,6 +4226,13 @@ user."
 (if (require 'auto-indent-mode)
     (auto-indent-global-mode))
 
+;;(if (require 'indent-guide nil 'noerror)
+;;    (indent-guide-global-mode))
+(if (require 'highlight-indent-guides nil 'noerror)
+    (progn
+      (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+      (setq highlight-indent-guides-responsive 'top)
+      ))
 
 
 ;;; Local Variables:
