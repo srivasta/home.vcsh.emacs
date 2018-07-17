@@ -56,6 +56,11 @@
 				 font-lock-warning-face t)))
   )
 
+(if (require 'irony nil 'noerror)
+    (progn
+      (add-hook 'c++-mode-hook 'irony-mode)
+      (add-hook 'c-mode-hook 'irony-mode)
+      ))
 
 
 (defun make-command()

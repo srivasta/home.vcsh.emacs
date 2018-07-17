@@ -1765,7 +1765,6 @@ If no START and END is provided, the current `region-beginning' and
   (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
   (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block)
   ;;  (define-key cedet-m3-mode-map "\C-cm" 'cedet-m3-menu-kbd)
-  ;; (add-to-list 'ac-sources 'ac-source-semantic)
   )
 ;; (add-hook 'semantic-init-hooks 'alexott/cedet-hook)
 (add-hook 'c-mode-common-hook 'manoj-cedet-hook)
@@ -1812,8 +1811,6 @@ If no START and END is provided, the current `region-beginning' and
   (local-set-key "\C-c-" 'semantic-tag-folding-fold-block)
   (local-set-key "\C-c\C-c+" 'semantic-tag-folding-show-all)
   (local-set-key "\C-c\C-c-" 'semantic-tag-folding-fold-all)
-  ;; (add-to-list 'ac-sources 'ac-source-etags)
-  ;; (add-to-list 'ac-sources 'ac-source-gtags)
   (linum-mode t)
   (semantic-mode t)
   (hs-minor-mode 1)
@@ -4006,56 +4003,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (if (require 'company nil 'noerror)
     (global-company-mode 1))
 
-;;; (require 'auto-complete)
-;;; (global-auto-complete-mode t)
-;;; (define-key ac-complete-mode-map "\M-n" 'ac-next)
-;;; (define-key ac-complete-mode-map "\M-p" 'ac-previous)
-;;; (setq
-;;;  ac-auto-start 2
-;;;  ac-auto-show-menu 0.5)
-
-;;; (setq ac-dwim t)                        ;Do what i mean
-
-;;; (require 'auto-complete-config)
-;;; (add-to-list 'ac-dictionary-directories
-;;;              (expand-file-name
-;;;               "~/.emacs.d/el-get/auto-complete/dict"))
-;;; (setq ac-comphist-file (expand-file-name
-;;;                         "~/.emacs.d/ac-comphist.dat"))
-
-;;; (ac-config-default)
-;;; (setq-default ac-sources
-;;;               (append
-;;;                '(ac-source-semantic-raw
-;;;                  ac-source-semantic
-;;;                  ac-source-gtags) ac-sources))
-;;; ;;(setq-default ac-sources (append '(ac-source-semantic) ac-sources))
-
-;;; ;;; use cycling as soon as there are less than 5 options available
-;;; (setq completion-cycle-threshold 5)
-;;; (add-to-list 'completion-styles 'substring)
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(dolist (hook (list
-               'emacs-lisp-mode-hook
-               'lisp-interaction-mode))
-  (add-hook hook '(lambda ()
-                    (add-to-list 'ac-sources 'ac-source-symbols))))
-
-
-
-(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-(ac-set-trigger-key "TAB")
-
-;;; if you want enable auto-complete at org-mode, uncomment this line
-(add-to-list 'ac-trigger-commands 'org-self-insert-command)
-
-(if (not (member 'org-mode ac-modes))
-    (add-to-list 'ac-modes 'org-mode))
-
-
-
 (require 'edit-server)
 (edit-server-start)
 
@@ -4114,9 +4062,6 @@ user."
     (find-file file)))
 ;; or some other keybinding...
 (global-set-key (kbd "C-x F") 'my-find-file-as-root)
-
-(global-set-key (kbd "C-:") 'ac-complete-with-helm)
-(define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
 (if (file-exists-p "/usr/local/src/plantuml.jar")
     (setq plantuml-jar-path "/usr/local/src/plantuml.jar"))
@@ -4222,11 +4167,11 @@ user."
 (if (require 'auto-indent-mode)
     (auto-indent-global-mode))
 
-;;(if (require 'indent-guide nil 'noerror)
-;;    (indent-guide-global-mode))
+;;(if (require 'indent-guide nil 'noerror) (indent-guide-global-mode))
 (if (require 'highlight-indent-guides nil 'noerror)
     (progn
       (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+      (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)
       (setq highlight-indent-guides-responsive 'top)
       ))
 
