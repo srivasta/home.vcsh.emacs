@@ -145,7 +145,7 @@
   "Set up mail stuff."
   ;;  (setq scroll-in-place t)
   (font-lock-mode 1)
-  (flyspell-mode 1)
+  ;; (flyspell-mode 1)
   (yas-minor-mode 0)
   (smart-tab-mode 0)
   (set (make-local-variable 'indent-line-function) 'indent-relative-maybe)
@@ -161,7 +161,7 @@
 ;; X-BeenThere: Kathmandu
     ;; Add a "Mailer" pseudo-header, if not defined already:
   (setq scroll-in-place t)
-  (flyspell-mode 1)
+  ;; (flyspell-mode 1)
   (font-lock-mode 1)
   (yas-minor-mode 0)
   (smart-tab-mode 0)

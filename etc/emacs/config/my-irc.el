@@ -217,7 +217,7 @@
    (erc-netsplit-mode 1)
    (erc-ring-mode t)
    ;;(erc-track-mode 1)
-   (flyspell-mode 1)
+   ;; (flyspell-mode 1)
    (pcomplete-erc-setup)
    (erc-completion-mode 1)
    ;; turn off fill mode in erc - erc has its own fill features

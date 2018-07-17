@@ -508,17 +508,17 @@ If no START and END is provided, the current `region-beginning' and
  ispell-use-framepop-p  (and window-system (condition-case () (require 'framepop) (error nil)))
  ispell-silently-savep t
  ispell-parser 'tex
- flyspell-sort-corrections nil
+ ;;; flyspell-sort-corrections nil
  )
 
 
 (require 'async-bytecomp nil 'noerror)
 
-(eval-when-compile (require 'flyspell))
-(eval-after-load "flyspell"
-  '(progn
-     (define-key flyspell-mode-map (kbd "C-+") 'flyspell-check-previous-highlighted-word)
-     (define-key flyspell-mode-map (kbd "C-#") 'flyspell-auto-correct-previous-word)))
+;;(eval-when-compile (require 'flyspell))
+;;; (eval-after-load "flyspell"
+;;;   '(progn
+;;;      (define-key flyspell-mode-map (kbd "C-+") 'flyspell-check-previous-highlighted-word)
+;;;      (define-key flyspell-mode-map (kbd "C-#") 'flyspell-auto-correct-previous-word)))
 
 (setq which-function-modes
       '(actionscript-mode
@@ -589,7 +589,7 @@ If no START and END is provided, the current `region-beginning' and
   "Major mode for editing Markdown files" t)
 (setq auto-mode-alist
       (cons '("\\.mdwn$" . markdown-mode) auto-mode-alist))
-(add-hook 'markdown-mode-hook 'flyspell-mode)
+;;; (add-hook 'markdown-mode-hook 'flyspell-mode)
 (setq auto-mode-case-fold t)
 
 
@@ -938,7 +938,7 @@ If no START and END is provided, the current `region-beginning' and
 (add-hook 'text-mode-hook 'my-text-mode-function)
 (setq major-mode 'paragraph-indent-text-mode )
 (add-hook 'text-mode-hook 'paragraph-indent-minor-mode)
-(add-hook 'text-mode-hook 'flyspell-mode)
+;;; (add-hook 'text-mode-hook 'flyspell-mode)
 
 (load-library "insert-box")
 
@@ -1816,7 +1816,7 @@ If no START and END is provided, the current `region-beginning' and
   (hs-minor-mode 1)
   )
 
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+;;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (add-hook 'prog-mode-hook
           (lambda ()
             (subword-mode 1)
@@ -2856,9 +2856,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 
-(add-hook 'nroff-mode-hook
-          '(lambda ()
-             (flyspell-mode 1)))
+;;; (add-hook 'nroff-mode-hook
+;;;           '(lambda ()
+;;;              (flyspell-mode 1)))
 ;;
 ;; Environement Variables
 ;;
@@ -3346,7 +3346,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (add-hook 'debian-changelog-mode-hook
           '(lambda ()
              (make-local-variable 'add-log-mailing-address)
-             (flyspell-mode 1)
+             ;; (flyspell-mode 1)
              (auto-fill-mode 1)
              (setq add-log-mailing-address debian-mailing-address)))
 (setq debian-changelog-local-variables-maybe-remove nil)
@@ -3576,10 +3576,11 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (delete-selection-mode -1)
 (setq mouse-region-delete-keys '([delete]))
 
-(add-hook 'xgit-log-edit-mode-hook
-          (lambda ()
-            ;; flyspell mode to spell check everywhere
-            (flyspell-mode 1)))
+;;; (add-hook 'xgit-log-edit-mode-hook
+;;;           (lambda ()
+;;;             ;; flyspell mode to spell check everywhere
+;;;             ;;(flyspell-mode 1)
+;;;             ))
 
 
 
@@ -3950,7 +3951,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
              (define-key LaTeX-mode-map "\C-cn" 'TeX-next-error)
              (define-key LaTeX-mode-map [tab] 'LaTeX-indent-line)
              (auto-fill-mode t)
-             (flyspell-mode t)
+             ;; (flyspell-mode t)
              ))
 
 (eval-when-compile (require 'reftex))
@@ -4019,7 +4020,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
             (local-set-key (kbd "\M-\C-p") 'outline-previous-visible-heading)
             (local-set-key (kbd "\M-\C-u") 'outline-up-heading)
             ;; flyspell mode to spell check everywhere
-            (flyspell-mode 1)))
+            ;; (flyspell-mode 1)
+            ))
 
 (require 'org-journal)
 (require 'my-org)

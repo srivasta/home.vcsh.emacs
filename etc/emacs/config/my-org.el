@@ -623,7 +623,7 @@ as the default task."
 (add-hook 'message-mode-hook
           (lambda nil
             (setq fill-column 72)
-            (flyspell-mode 1)
+            ;; (flyspell-mode 1)
             ;; (orgstruct++-mode 1)
             (turn-on-auto-fill)
             ))
