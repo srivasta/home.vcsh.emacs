@@ -944,14 +944,15 @@ If no START and END is provided, the current `region-beginning' and
 
 ;; Should allow me to fill nested quoted messages properly.  Has
 ;; zillions of options that can be set.
-(require 'filladapt)
-(setq-default filladapt-mode t)
-(setq filladapt-prefix-table nil)
-(add-to-list 'filladapt-token-table '("To: " bullet))
-(add-to-list 'filladapt-token-table '("Cc: " bullet))
+(if (require 'filladapt nil 'noerror)
+    (progn
+      (setq-default filladapt-mode t)
+      (setq filladapt-prefix-table nil)
+      (add-hook 'text-mode-hook 'turn-on-filladapt-mode)
+      ;;; (add-hook 'c-mode-hook 'turn-off-filladapt-mode)
+      (add-to-list 'filladapt-token-table '("To: " bullet))
+      (add-to-list 'filladapt-token-table '("Cc: " bullet))))
 
-(add-hook 'text-mode-hook 'turn-on-filladapt-mode)
- ;;; (add-hook 'c-mode-hook 'turn-off-filladapt-mode)
 
 ;; combination of following two variables finally makes Emacs scroll
 ;; nicely. scroll-conservatively is a variable that says Scroll up to
@@ -3603,10 +3604,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (require 'calfw-cal)
 
 ;; set up git-gutter
-;;(require 'git-gutter)
-(if (featurep 'git-gutter)
-    (git-gutter:linum-setup)
-    )
+(require 'git-gutter)
 ;;(global-git-gutter-mode t)
 (if (featurep 'git-gutter-fringe)
     (global-git-gutter-mode t)
@@ -4171,7 +4169,6 @@ user."
       (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)
       (setq highlight-indent-guides-responsive 'top)
       ))
-
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
