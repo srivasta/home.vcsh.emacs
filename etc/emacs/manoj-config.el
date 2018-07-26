@@ -253,7 +253,7 @@
 ;; Make emacs faster by having less frequent garbage collection.
 ;; Default is 400000 bytes.
 ;;(setq gc-cons-threshhold 2000000)
-
+(global-display-line-numbers-mode 1)
 (defun just-stop-please-stop-dear-god-stop ()
   "Really, just stop it."
   (interactive)
@@ -754,7 +754,7 @@ If no START and END is provided, the current `region-beginning' and
 
 
 
-(add-hook 'find-file-not-found-hooks 'set-auto-mode 'append)
+(add-hook 'find-file-not-found-functions 'set-auto-mode 'append)
 ;; (add-hook 'find-file-not-found-hooks 'maybe-make-header 'append)
 ;;; *NOTE* Trailing slash important
 (setq auto-insert-directory
@@ -1094,9 +1094,6 @@ If no START and END is provided, the current `region-beginning' and
 (global-set-key [C-prior] 'previous-buffer)  ; C-<page-down>
 (global-set-key [C-next] 'next-buffer)       ; C-<page-up>
 
-(require 'linum)
-(global-linum-mode 1)
-
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
 (global-set-key (kbd "C-<f6>") 'magit-status)               ;; ...git mode
 (global-set-key (kbd "C-<f7>") 'compile)                     ;; compile
@@ -1252,7 +1249,7 @@ If no START and END is provided, the current `region-beginning' and
 ;; fix some keys for the terminal
 (when (equal window-system nil)
  (global-set-key (kbd "C-c h") 'help-command)
- (add-hook 'term-setup-hook
+ (add-hook 'tty-setup-hook
            (lambda ()
              (define-key function-key-map "\e[3~" [delete])
              (define-key function-key-map "\e[1~" [home])
@@ -1635,7 +1632,7 @@ If no START and END is provided, the current `region-beginning' and
 
 (defun my-semantic-hook ()
   (imenu-add-to-menubar "TAGS"))
-(add-hook 'semantic-init-hooks 'my-semantic-hook)
+(add-hook 'semantic-init-hook 'my-semantic-hook)
 
 (setq gofmt-command "goimports")
 ;;(require 'go-mode-autoloads)
@@ -2403,7 +2400,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (eval-when-compile (require 'vm))
 (defvar mail-personal-alias-file (expand-file-name "~/.mailrc")
   "* File where mail aliases are kept.")
-(add-hook 'write-file-hooks 'alias-check)
+(add-hook 'write-file-functions 'alias-check)
 ;;(add-hook 'message-send-hook 'insert-xfile)
 (setq-default mail-signature t)
 (setq mm-inline-text-html-with-images t)
@@ -2467,7 +2464,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
  mail-user-agent 'gnus-user-agent
  message-directory my-mail-dir
  message-signature-before-forwarded-message nil
- message-from-style 'default
  ;; message-tab-body-function 'indent-for-tab-command
  message-tab-body-function 'tab-to-tab-stop
  message-x-body-function 'tab-to-tab-stop
@@ -3821,7 +3817,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
     (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (require 'flymake)
-(setq flymake-log-level 0)
 (require 'flymake-shell)
 ;;(require 'flymake-perlcritic)
 (require 'flymake-yaml) ;; Not necessary if using ELPA package
@@ -4044,7 +4039,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (when (load "flymake" t)
       (defun flymake-pylint-init ()
-        (let* ((temp-file (flymake-init-create-temp-buffer-copy
+        (let* ((temp-file (flymake-proc-init-create-temp-buffer-copy
                            'flymake-create-temp-inplace))
                (local-file (file-relative-name
                             temp-file
@@ -4154,7 +4149,7 @@ user."
 (require 'electric-operator nil 'noerror)
 
 (if (require 'dot-mode nil 'noerror)
-    (add-hook 'find-file-hooks 'dot-mode-on)
+    (add-hook 'find-file-hook 'dot-mode-on)
   )
 
 (require 'call-graph nil 'noerror)

@@ -438,7 +438,7 @@ stuff, to the current ERC buffer."
   "Start to waste time on IRC with ERC."
   (interactive)
 ;;  (erc-select :server "irc.freenode.net" :port 6667 :nick "Manoj"
-;;              :password "Talwsatgig" :full-name "Manoj Srivastava")
+;;              :password "Password" :full-name "Manoj Srivastava")
 ;;  (sit-for 10)
 ;;  (erc-autojoin-channels "irc.freenode.net" "Manoj")
   (if (file-exists-p
