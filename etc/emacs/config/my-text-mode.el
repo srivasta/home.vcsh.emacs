@@ -47,8 +47,8 @@
   (if (functionp 'pabbrev-mode)
       (pabbrev-mode 1))
   (yas-minor-mode 0)
-  (smart-tab-mode 0)
-  )
+  (if (featurep 'smart-tab)
+      (smart-tab-mode 0)))
 
 ;; Add a rectangular area containing numbers
 (defun rectangle-add (start end)

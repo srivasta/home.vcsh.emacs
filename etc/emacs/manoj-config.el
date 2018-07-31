@@ -3334,9 +3334,10 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (global-set-key (kbd "C-;") 'ecb-show-ecb-windows)
 (global-set-key (kbd "C-'") 'ecb-hide-ecb-windows)
 
-(require 'smart-tab)
-(setq smart-tab-using-hippie-expand t)
-(global-smart-tab-mode 1)
+(if (require 'smart-tab)
+    (progn
+      (setq smart-tab-using-hippie-expand t)
+      (global-smart-tab-mode 1)))
 
 ;; Set up the debian-chagelog mode
 (load-library "debian-changelog-mode")
