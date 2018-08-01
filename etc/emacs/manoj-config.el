@@ -187,7 +187,7 @@
 ;;                   General Settings                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'clipmon)
+(require 'clipmon nil 'noerror)
 (menu-bar-mode  t)                       ;; show the menu...
 (tool-bar-mode -1)                       ;; turn-off toolbar
 (setq fringe-mode '(8 . 8))              ;; emacs 22+
@@ -629,7 +629,7 @@ If no START and END is provided, the current `region-beginning' and
 (setq kill-whole-line t)
 
 (require 'xref)
-(require 'header2)
+(require 'header2 nil 'noerror)
 (add-hook 'emacs-lisp-mode-hook 'auto-make-header)
 (add-hook 'c-mode-common-hook   'auto-make-header)
 
@@ -1107,9 +1107,8 @@ If no START and END is provided, the current `region-beginning' and
 ;; Now bind the delete line function to the F9 key
 (global-set-key [f9] 'nuke-line)
 
-(require 'gse-number-rect)
-(global-set-key "\C-xru" 'gse-number-rectangle)
-
+(if (require 'gse-number-rect nil 'noerror)
+    (global-set-key "\C-xru" 'gse-number-rectangle))
 
 (global-set-key (kbd "C-x 4 k") (lambda ()
                                   (interactive)
@@ -3121,7 +3120,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;; apt-utils-show-package
 (require 'debian-bug nil 'noerror)
 (require 'debian-el nil 'noerror)
-(require 'my-irc)
+(require 'my-irc nil 'noerror)
 
 (autoload 'deb-find            "deb-view" "Debian Archive File Finder" t)
 (autoload 'deb-view-mode       "deb-view" "Debian Archive File Mode" t)
@@ -3319,7 +3318,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;                     (getf autopair-extra-pairs :string))))
 ;;; (setq autopair-autowrap t)
 
-(require 'member-function)
+(require 'member-function nil 'noerror)
 (setq mf--source-file-extension "cpp")
 
 (global-set-key (kbd "C-M-+") 'shift-number-up)
@@ -3362,12 +3361,12 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;                           BBDB stuff                           ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'clipmon)
 ;; (autoload 'bbdb-fontify-buffer              "bbdb-display" "")
 ;; (autoload 'bbdb-maybe-fontify-buffer        "bbdb-display" "")
 ;; (autoload 'bbdb-menu                        "bbdb-display" "")
 ;; (load-library "bbdb-hooks.el")
-(require 'bbdb)
+(if (require 'bbdb nil 'noerror)
+    (progn
 ;; (require 'bbdb-com)                             ;needs a debian package
 ;;(require 'bbdb-hooks)                         ;needs a debian package
 (load "bbdb-autoloads")
@@ -3531,6 +3530,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;(add-hook 'bbdb-change-hook 'bbdb-delete-redundant-nets)
 (add-hook 'bbdb-create-hook   'bbdb-creation-date-hook) ; creation date field
 (add-hook 'bbdb-notice-hook   'bbdb-auto-notes-hook) ; see -auto-notes-alist
+))
 
 (add-hook 'compilation-mode-hook (lambda () (setenv "TERM" "emacs")))
 ;; Setup compilation buffer to stop at the first error
@@ -3600,14 +3600,13 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 ;;; Calendar integration
-(require 'calfw)
-(require 'calfw-org)
-(require 'calfw-cal)
+(require 'org-gcal nil 'noerror)
+(require 'calfw nil 'noerror)
+(require 'calfw-org nil 'noerror)
+(require 'calfw-cal nil 'noerror)
 
 ;; set up git-gutter
-(require 'git-gutter)
-;;(global-git-gutter-mode t)
-(if (featurep 'git-gutter-fringe)
+(if (require 'git-gutter nil 'noerror)
     (global-git-gutter-mode t)
     )
 
@@ -3623,7 +3622,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (require 'compile)
 (require 'perlcritic)
-(require 'perltidy-mode)
+(require 'perltidy-mode nil 'noerror)
 ;; Autoloading perlcritic
 (autoload 'perlcritic        "perlcritic" "" t)
 (autoload 'perlcritic-region "perlcritic" "" t)
@@ -3816,9 +3815,9 @@ This requires the external program \"diff\" to be in your `exec-path'."
     (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (require 'flymake)
-(require 'flymake-shell)
+(require 'flymake-shell nil 'noerror)
 ;;(require 'flymake-perlcritic)
-(require 'flymake-yaml) ;; Not necessary if using ELPA package
+(require 'flymake-yaml nil 'noerror) ;; Not necessary if using ELPA package
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 (add-hook 'sh-set-shell-hook 'flymake-shell-load)
 (add-hook 'yaml-mode-hook 'flymake-yaml-load)
@@ -3850,12 +3849,12 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                Identica Mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'identica-mode)
+(require 'identica-mode nil 'noerror)
 ;;(global-set-key "\C-cip" 'identica-update-status-interactive)
 ;;(global-set-key "\C-cid" 'identica-direct-message-interactive)
 
 
-(require 'diff-hl)
+(require 'diff-hl nil 'noerror)
 (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
 (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
 
@@ -3864,12 +3863,12 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;; (global-set-key [f3] 'highlight-symbol-next)
 ;;; (global-set-key [(shift f3)] 'highlight-symbol-prev)
 ;;; (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
-(require 'symbol-overlay)
+(require 'symbol-overlay nil 'noerror)
 (global-set-key [f3] symbol-overlay-map)
 ;;; (define-key symbol-overlay-map (kbd "your-prefer-key") 'any-command)
 
-(require 'all)
-(require 'dedicated)
+(require 'all nil 'noerror)
+(require 'dedicated nil 'noerror)
 
 ;; dict support
 ;;(require 'dictionary)
@@ -3877,7 +3876,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;(global-set-key (kbd "C-c C-d m") 'dictionary-match-words)
 
 ;; show everything in kill ring
-(require 'browse-kill-ring)
+(require 'browse-kill-ring nil 'noerror)
 (global-set-key (kbd "C-c k") 'browse-kill-ring)
 
 ;; Tex Stuff
@@ -3899,8 +3898,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;; (add-hook 'TeX-mode-hook   'turn-on-font-lock 'append)
 ;;; (add-hook 'context-mode-hook 'turn-on-font-lock 'append)
 
-(require 'font-latex)
-(require 'tex-fold)
+(require 'font-latex nil 'noerror)
+(require 'tex-fold nil 'noerror)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (add-hook 'latex-mode-hook 'turn-on-reftex)
 
@@ -3962,7 +3961,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (load "auctex.el" nil t t)
 (load "preview-latex.el" nil t t)
 
-(require 'ess-site)
+(require 'ess-site nil 'noerror)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; YASnippet
@@ -3990,7 +3989,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 ;;; ;; Autocomplete
-(require 'flycheck-ycmd)
+(require 'flycheck-ycmd nil 'noerror)
 (set-variable 'ycmd-server-command (list "/usr/bin/ycmd"))
 (if (require 'ycmd nil 'noerror)
     (global-ycmd-mode 1))
@@ -3999,9 +3998,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
     (global-company-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'edit-server)
-(edit-server-start)
-
+(if (require 'edit-server nil 'noerror)
+    (edit-server-start))
 
 (global-set-key [?\e ?\[ ?1 ?~] 'beginning-of-buffer)
 (global-set-key [?\e ?\[ ?4 ?~] 'end-of-buffer)
@@ -4018,7 +4016,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
             ))
 
 (require 'org-journal)
-(require 'my-org)
+(require 'my-org nil 'noerror)
 (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
 (add-to-list 'org-agenda-files org-journal-dir)
 ;; If we leave Emacs running overnight - reset the appointments one
@@ -4062,13 +4060,13 @@ user."
 (if (file-exists-p "/usr/local/src/plantuml.jar")
     (setq plantuml-jar-path "/usr/local/src/plantuml.jar"))
 
-(require 'atomic-chrome)
-(setq atomic-chrome-default-major-mode 'markdown-mode)
-(setq atomic-chrome-url-major-mode-alist
-      '(("github\\.com" . gfm-mode)
-        ("redmine" . textile-mode)))
-(setq atomic-chrome-buffer-open-style 'frame)
-;;(atomic-chrome-start-server)
+;;; (require 'atomic-chrome)
+;;; (setq atomic-chrome-default-major-mode 'markdown-mode)
+;;; (setq atomic-chrome-url-major-mode-alist
+;;;       '(("github\\.com" . gfm-mode)
+;;;         ("redmine" . textile-mode)))
+;;; (setq atomic-chrome-buffer-open-style 'frame)
+;;; ;;(atomic-chrome-start-server)
 
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
@@ -4162,6 +4160,9 @@ user."
 (setq auto-indent-indent-style 'conservative)
 (if (require 'auto-indent-mode)
     (auto-indent-global-mode))
+(require 'company-ycmd nil 'noerror)
+(require 'flycheck-ycmd nil 'noerror)
+(require 'clang-include-fixer nil 'noerror)
 
 ;;(if (require 'indent-guide nil 'noerror) (indent-guide-global-mode))
 (if (require 'highlight-indent-guides nil 'noerror)
