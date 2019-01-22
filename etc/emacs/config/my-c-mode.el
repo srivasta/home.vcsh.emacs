@@ -41,11 +41,6 @@
   (c-toggle-electric-state 1)
   (setq c-electric-pound-behavior '(alignleft))
   (global-cwarn-mode 1)
-  ;; Indent the case expression in
-  ;; a switch statement.
-  (c-set-offset 'case-label '+)
-  (c-set-offset 'statement-cont '--)
-  (setq indent-tabs-mode nil)
   (setq fill-column 80)
   (linum-mode 1)
   (setq compilation-window-height 16)
@@ -61,7 +56,19 @@
       (add-hook 'c++-mode-hook 'irony-mode)
       (add-hook 'c-mode-hook 'irony-mode)
       ))
+(if (require 'modern-cpp-font-lock nil 'noerror)
+    (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
+(if (require 'google-c-style nil 'noerror)
+    (progn
+      (add-hook 'c-mode-common-hook 'google-set-c-style)
+      (add-hook 'c-mode-common-hook 'google-make-newline-indent))
+  (progn
+    ;; Indent the case expression in
+    ;; a switch statement.
+    (c-set-offset 'case-label '+)
+    (c-set-offset 'statement-cont '--)
+    (setq indent-tabs-mode nil)))
 
 (defun make-command()
   (if   (or (file-exists-p "makefile")

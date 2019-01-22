@@ -3091,9 +3091,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
 (autoload 'csv-mode "csv-mode"
   "Major mode for editing comma-separated value files." t)
-(defun my-activate-ctypes () (require 'ctypes))
-(add-hook 'c-mode-hook 'my-activate-ctypes)
-(add-hook 'c++-mode-hook 'my-activate-ctypes)
 
 (autoload 'map-lines "map-lines"
   "Map COMMAND over lines matching REGEX."
@@ -3317,6 +3314,11 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;               (push '(?` . ?')
 ;;;                     (getf autopair-extra-pairs :string))))
 ;;; (setq autopair-autowrap t)
+;;; (if (require 'autopair nil 'noerror)
+;;;     (progn
+;;;       (add-hook 'c-mode-common-hook #'(lambda () (autopair-mode)))
+;;;       (add-hook 'lisp-mode-hook #'(lambda () (autopair-mode)))
+;;;       ))
 
 (require 'member-function nil 'noerror)
 (setq mf--source-file-extension "cpp")
@@ -4080,30 +4082,6 @@ user."
 ;;;                     :foreground 'unspecified
 ;;;                     :inherit 'show-paren-mismatch)
 
-(if (require 'lsp-mode nil 'noerror)
-    (progn
-      (require 'lsp-imenu)
-      (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-
-      (require 'lsp-methods)
-      (setq lsp--sync-methods 2
-            lsp-document-sync-method 'incremental)
-
-      (require 'lsp-go)
-      (require 'lsp-python)
-      (require 'lsp-ui-doc)
-      )
-  )
-
-(if (require 'lsp-ui nil 'noerror)
-    (progn
-      (setq lsp-ui-doc-include-signature nil)
-
-      (require 'lsp-ui-flycheck)
-      (with-eval-after-load 'lsp-mode
-        (add-hook 'lsp-after-open-hook
-                  (lambda () (lsp-ui-flycheck-enable 1))))
-      ))
 
 (if (require 'emojify nil 'noerror)
     (global-emojify-mode))
@@ -4133,8 +4111,6 @@ user."
   :ensure t
   :config (magithub-feature-autoinject t))
 
-(require 'insert-shebang nil 'noerror)
-
 (if (require 'bm nil 'noerror)
     (progn
       (global-set-key (kbd "<right-fringe> <mouse-5>") 'bm-next-mouse)
@@ -4151,11 +4127,6 @@ user."
 
 (require 'call-graph nil 'noerror)
 
-(if (require 'autopair nil 'noerror)
-    (progn
-      (add-hook 'c-mode-common-hook #'(lambda () (autopair-mode)))
-      (add-hook 'lisp-mode-hook #'(lambda () (autopair-mode)))
-      ))
 
 (setq auto-indent-indent-style 'conservative)
 (if (require 'auto-indent-mode)
@@ -4172,6 +4143,11 @@ user."
       (setq highlight-indent-guides-responsive 'top)
       ))
 
+(if (require 'goto-chg nil 'noerror)
+    (progn
+      (global-set-key [(control ?.)] 'goto-last-change)
+      (global-set-key [(control ?,)] 'goto-last-change-reverse)
+      ))
 ;;; Local Variables:
 ;;; mode: emacs-lisp
 ;;; comment-start: ";;; "
