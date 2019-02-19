@@ -503,14 +503,7 @@ If no START and END is provided, the current `region-beginning' and
            (swap-windows (car slst) (cadr slst)))))
   (other-window 1))
 
-(set-default 'ispell-skip-html t)
-(setq
- ispell-use-framepop-p  (and window-system (condition-case () (require 'framepop) (error nil)))
- ispell-silently-savep t
- ispell-parser 'tex
- ;;; flyspell-sort-corrections nil
- )
-
+
 
 (require 'async-bytecomp nil 'noerror)
 
@@ -3014,7 +3007,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (setq confirm-nonexistent-file-or-buffer nil)
 
 ;;; Completion in the mini buffer
-(setq  completion-styles '(basic partial-completion initials substring  emacs22))
+(setq  completion-styles '(basic partial-completion flex initials emacs22))
 (setq completion-word-extra-chars '(" " "-"))
 ;; Loading this package implements a more fine-grained minibuffer
 ;; completion feedback scheme.  Prospective completions are concisely
@@ -4106,10 +4099,6 @@ user."
 (require 'synonymous nil 'noerror)
 
 (require 'magit nil 'noerror)
-(use-package magithub
-  :after magit
-  :ensure t
-  :config (magithub-feature-autoinject t))
 
 (if (require 'bm nil 'noerror)
     (progn
