@@ -111,6 +111,64 @@
 (require 'eshell)
 
 
+;;; Try to find a useful buffer to show
+(setq switch-to-prev-buffer-skip 'visible)
+(defvar shell-command-not-erase-buffer t)
+(setq
+ comment-style 'multi-line
+ find-file-visit-truename t
+ highlight-nonselected-windows t
+ backup-by-copying-when-linked t
+ backup-by-copying-when-mismatch t
+ history-delete-duplicates t
+ max-lisp-eval-depth 10000
+ max-specpdl-size 10000
+ initial-scratch-message ";; scratch buffer created -- happy hacking\n"
+ initial-buffer-choice  'remember-notes
+ visual-order-cursor-movement nil
+ )
+
+(require 'saveplace)
+(setq-default save-place t)
+(require 'recentf)
+;; Set up recentf so I can get a list of recent files when I start
+(recentf-mode 1)
+;;(recentf-open-files nil "*Recent Files*")
+(setq recentf-max-saved-items 1200)
+
+(setq isearch-allow-scroll t)
+(setq search-highlight t                 ;; highlight when searching...
+      query-replace-highlight t)             ;; ...and replacing
+
+(setq fill-column 80)            ;;when to split lines
+
+(setq split-width-threshold nil) ;;;  Do not split window horizontally
+(when (require 'winner nil 'noerror)
+  (winner-mode 1))
+(windmove-default-keybindings)
+;; (desktop-save-mode 1)
+
+(setq savehist-file (concat real-home-directory "/var/cache/emacs-history"))
+(savehist-mode 1)
+
+;;Whether to add a newline automatically at the end of the file.
+;;A value of t means do this only when the file is about to be saved.
+;;A value of `visit' means do this right after the file is visited.
+;;A value of `visit-save' means do it at both of those times.
+;;Any other non-nil value means ask user whether to add a newline, when saving.
+;;nil means don't add newlines.
+(setq require-final-newline 'visit-save)
+
+;; Make emacs faster by having less frequent garbage collection.
+;; Default is 400000 bytes.
+;;(setq gc-cons-threshhold 2000000)
+(global-display-line-numbers-mode 1)
+(defun just-stop-please-stop-dear-god-stop ()
+  "Really, just stop it."
+  (interactive)
+  (if (active-minibuffer-window)
+      (abort-recursive-edit)
+    (keyboard-quit)))
 
 ;;-----------------------------------------------------------------------------
 ;; Language environment
@@ -1470,17 +1528,16 @@ If no START and END is provided, the current `region-beginning' and
             ))
 
 
-;;; ;; Enable EDE (Project Management) features
-;;; (require 'ede nil 'noerror)
-;;; (global-ede-mode 1)
-;;; (require 'ede/generic nil 'noerror)
-;;; (ede-enable-generic-projects nil 'noerror)
-;;; (require 'ede/speedbar nil 'noerror)
-;;; (require 'ede/proj nil 'noerror)
-;;; (require 'ede/dired nil 'noerror)
+;; Enable EDE (Project Management) features
+;;(global-ede-mode 1)
+(require 'ede/generic)
+(ede-enable-generic-projects)
+(require 'ede/speedbar)
+(require 'ede/proj)
+(require 'ede/dired)
 
-;;; (eval-after-load 'speedbar
-;;;   (speedbar-add-supported-extension ".go"))
+(eval-after-load 'speedbar
+  (speedbar-add-supported-extension ".go"))
 
 ;; Enable EDE for a pre-existing C++ project
 ;; (ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
