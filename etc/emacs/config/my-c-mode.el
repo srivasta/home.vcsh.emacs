@@ -80,6 +80,8 @@
                                            c-lineup-gcc-asm-reg
                                            c-lineup-arglist))
     (c-set-offset 'statement-cont '(c-lineup-ternary-bodies +))
+    (c-set-offset 'innamespace 0)
+    (c-set-offset 'inextern-lang 0)
 
     (setq indent-tabs-mode nil)))
 

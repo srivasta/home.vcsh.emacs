@@ -1741,6 +1741,12 @@ If no START and END is provided, the current `region-beginning' and
 ;; C
 ;;
 (require 'hideshow)
+(if (require 'folding nil 'noerror)
+    (progn
+            (folding-add-to-marks-list 'ruby-mode "#{{{" "#}}}" nil t)
+            (folding-mode-add-find-file-hook)
+            )
+  (message "Library `folding' not found"))
 
 (defun manoj-c-mode-cedet-hook ()
   ;; (local-set-key "." 'semantic-complete-self-insert)
@@ -3585,7 +3591,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 
-(require 'my-faces)
+(require 'my-faces nil 'noerror)
 (setq custom-enabled-themes '(manoj-dark))
 (load-theme  'manoj-dark)
 (setq bbdb-canonicalize-net-hook nil)
@@ -3624,7 +3630,14 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;; (defalias 'perl-mode 'cperl-mode)
 
 (require 'compile)
-(require 'perlcritic)
+(if (require 'perlcritic nil 'noerror)
+    (progn
+          ;; Autoloading perlcritic
+          (autoload 'perlcritic        "perlcritic" "" t)
+          (autoload 'perlcritic-region "perlcritic" "" t)
+          (autoload 'perlcritic-mode   "perlcritic" "" t)
+          ))
+
 (require 'perltidy-mode nil 'noerror)
 ;; Autoloading perlcritic
 (autoload 'perlcritic        "perlcritic" "" t)
@@ -3857,8 +3870,8 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;; (global-set-key [f3] 'highlight-symbol-next)
 ;;; (global-set-key [(shift f3)] 'highlight-symbol-prev)
 ;;; (global-set-key [(meta f3)] 'highlight-symbol-query-replace)
-(require 'symbol-overlay nil 'noerror)
-(global-set-key [f3] symbol-overlay-map)
+(if (require 'symbol-overlay nil 'noerror)
+    (global-set-key [f3] symbol-overlay-map))
 ;;; (define-key symbol-overlay-map (kbd "your-prefer-key") 'any-command)
 
 (require 'all nil 'noerror)
@@ -4158,6 +4171,64 @@ user."
       (global-set-key [(control ?,)] 'goto-last-change-reverse)
       ))
 
+(add-hook 'find-file-hook 'flymake-find-file-hook)
+(add-hook 'sh-set-shell-hook 'flymake-shell-load)
+(add-hook 'yaml-mode-hook 'flymake-yaml-load)
+;;(add-hook 'find-file-hook 'flymake-find-file-hook)
+;;(add-hook 'cperl-mode-hook 'flymake-mode)
+;;(add-hook 'perl-mode-hook 'flymake-mode)
+;;(add-hook 'c-mode-common-hook 'flymake-mode)
+(defun flymake-get-tex-args (file-name)
+  (list "pdflatex" (list "-file-line-error" "-draftmode" "-interaction=nonstopmode" file-name)))
+;;;(if (require 'flycheck nil 'noerror)
+;;;    (add-hook 'after-init-hook #'global-flycheck-mode))
+
+;;; https://emacs.stackexchange.com/questions/24459/revert-all-open-buffers-and-ignore-errors
+(defun revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+   Buffers in modified (not yet saved) state in emacs will not be
+   reverted. They will be reverted though if they were modified
+   outside emacs.  Buffers visiting files which do not exist any
+   more or are no longer readable will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+                        (with-current-buffer buf
+                          (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
+
+;; (setq server-name
+;;       (cond
+;;        ;; If in citc client, name after that...
+;;        ((string-match "/\\([^/]*\\)/google3"
+;;                       (getenv "PWD"))
+;;         (concat "citc:" (match-string-no-properties 1 (getenv "PWD"))))
+;;        ;; Otherwise, just take the current directory name...
+;;        ((string-match ".*/\\([^/]*\\)"
+;;                       (getenv "PWD"))
+;;         (match-string-no-properties 1 (getenv "PWD")))
+;;        (t "server")))
+
+(defun install-package (package-name)
+  (unless (package-installed-p package-name)
+    (package-refresh-contents) (package-install package-name)))
+
+(install-package 'vc-hgcmd)
+(setq vc-handled-backends '(Hgcmd Git))
+
+
+(require 'diminish)
+(require 'bind-key)
 
 
 ;;; Local Variables:
