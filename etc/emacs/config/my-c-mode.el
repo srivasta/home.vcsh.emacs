@@ -15,6 +15,12 @@
 (require 'cc-styles)
 (require 'cc-cmds)
 
+(setq-default c-doc-comment-style
+              '((java-mode . javadoc)
+                (pike-mode . autodoc)
+                (c-mode    . doxygen)
+                (c++-mode  . doxygen)))
+
 (defun my-c-mode-ps-hook ()
   (require 'ps-print)
   (if (eq (car ps-left-header) 'ps-get-buffer-name)
@@ -68,6 +74,13 @@
     ;; a switch statement.
     (c-set-offset 'case-label '+)
     (c-set-offset 'statement-cont '--)
+    (c-set-offset 'arglist-cont '(c-lineup-ternary-bodies
+                                  c-lineup-gcc-asm-reg))
+    (c-set-offset 'arglist-cont-nonempty '(c-lineup-ternary-bodies
+                                           c-lineup-gcc-asm-reg
+                                           c-lineup-arglist))
+    (c-set-offset 'statement-cont '(c-lineup-ternary-bodies +))
+
     (setq indent-tabs-mode nil)))
 
 (defun make-command()
