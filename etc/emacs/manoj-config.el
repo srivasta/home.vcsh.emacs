@@ -51,6 +51,8 @@
 (defvar my-emacs-state-dir (concat real-home-directory "/var/state/emacs")
   "Emacs' state directory.")
 ;;(defvar buf my-emacs-state-dir "Temporary file name")
+(defvar my-client-name (getenv "MY_CLIENT_NAME"))
+
 
 ;;-----------------------------------------------------------------------------
 (defvar ulocal-lisp-subdirs
@@ -3274,6 +3276,10 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (defun manoj-server-start ()
   (interactive)
   (shell-command (concat "touch " manoj-server-lock-file))
+  (if (not my-client-name)
+      (progn
+        (set-frame-name my-client-name)
+        (set-variable 'server-name my-client-name)))
   (server-start)
   (message "Emacs Server started..."))
 
