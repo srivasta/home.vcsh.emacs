@@ -52,7 +52,7 @@
   "Emacs' state directory.")
 ;;(defvar buf my-emacs-state-dir "Temporary file name")
 (defvar my-client-name (getenv "MY_CLIENT_NAME"))
-
+(defvar clipmon--autoinsert nil)
 
 ;;-----------------------------------------------------------------------------
 (defvar ulocal-lisp-subdirs
@@ -274,25 +274,6 @@
               (re-search-forward "^    " (+ (point) 100000) t 10)))
        (set (make-local-variable 'indent-tabs-mode) t))))
 
-;; Package: clean-aindent-mode
-(use-package clean-aindent-mode
-  :init
-  (add-hook 'prog-mode-hook 'clean-aindent-mode))
-
-;; Package: dtrt-indent
-(use-package dtrt-indent
-  :init
-  (dtrt-indent-mode 1)
-  (setq dtrt-indent-verbosity 0))
-
-;; Package: ws-butler
-(use-package ws-butler
-  :init
-  (add-hook 'prog-mode-hook 'ws-butler-mode)
-  (add-hook 'text-mode 'ws-butler-mode)
-  (add-hook 'fundamental-mode 'ws-butler-mode))
-
-
 (defun iwb ()
   "indent whole buffer"
   (interactive)
@@ -469,12 +450,32 @@ If no START and END is provided, the current `region-beginning' and
 (when (not package-archive-contents)
   (package-refresh-contents))
 
+
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+;; Package: clean-aindent-mode
+(use-package clean-aindent-mode
+  :init
+  (add-hook 'prog-mode-hook 'clean-aindent-mode))
 
+;; Package: dtrt-indent
+(use-package dtrt-indent
+  :init
+  (dtrt-indent-mode 1)
+  (setq dtrt-indent-verbosity 0))
+
+;; Package: ws-butler
+(use-package ws-butler
+  :init
+  (add-hook 'prog-mode-hook 'ws-butler-mode)
+  (add-hook 'text-mode 'ws-butler-mode)
+  (add-hook 'fundamental-mode 'ws-butler-mode))
+
+
 
 ;; CUA mode indications
 ;; --------------------
@@ -2993,7 +2994,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
   (use-package flyspell-correct-ivy
     :ensure t)
   )
-(defvar clipmon--autoinsert nil)
+
 (use-package counsel
   :ensure t
   :config
@@ -3276,7 +3277,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (defun manoj-server-start ()
   (interactive)
   (shell-command (concat "touch " manoj-server-lock-file))
-  (if (not my-client-name)
+  (if my-client-name
       (progn
         (set-frame-name my-client-name)
         (set-variable 'server-name my-client-name)))
@@ -4045,10 +4046,13 @@ This requires the external program \"diff\" to be in your `exec-path'."
             ;; (flyspell-mode 1)
             ))
 
-(require 'org-journal)
+(use-package org-journal
+  :config
+  (add-to-list 'org-agenda-files org-journal-dir)
+  )
 (require 'my-org nil 'noerror)
 (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
-(add-to-list 'org-agenda-files org-journal-dir)
+
 ;; If we leave Emacs running overnight - reset the appointments one
 ;; minute after midnight
 (run-at-time "24:01" nil 'my-org-agenda-to-appt)
@@ -4184,8 +4188,6 @@ user."
 ;;(add-hook 'cperl-mode-hook 'flymake-mode)
 ;;(add-hook 'perl-mode-hook 'flymake-mode)
 ;;(add-hook 'c-mode-common-hook 'flymake-mode)
-(defun flymake-get-tex-args (file-name)
-  (list "pdflatex" (list "-file-line-error" "-draftmode" "-interaction=nonstopmode" file-name)))
 ;;;(if (require 'flycheck nil 'noerror)
 ;;;    (add-hook 'after-init-hook #'global-flycheck-mode))
 
