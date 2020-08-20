@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;; -*- Mode: Emacs-Lisp -*- ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;; -*- Mode: Emacs-Lisp -*- ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; manoj-config.el ---
 ;; Author           : Emacs Test User ( emacstest@glaurung.green-gryphon.com )
 ;; Created On       : Mon Nov 27 14:16:14 2000
@@ -110,156 +110,7 @@
 (require 'url-cache)
 (require 'eshell)
 
-(setq
- add-log-mailing-address debian-mailing-address
- add-log-time-zone-rule t
- debian-changelog-mailing-address debian-mailing-address
-;;; gnus-local-organization mail-organization-header
- mail-host-address "golden-gryphon.com"
- mail-self-address (concat "<" user-mail-address ">")
- message-user-organization mail-organization-header
- message-user-organization-file "/etc/news/organization"
- ecomplete-database-file   "~/etc/emacs/ecompleterc"
- vm-mail-header-from (concat (user-full-name) " <" user-mail-address ">")
- bbdb-file (concat real-home-directory "/var/lib/contacts/bbdb")
- bbdb-file-remote (concat real-home-directory "/var/lib/contacts/bbdb-local")
- ;; S/MIME
- smime-keys '(("manoj.srivastava@stdc.com" "~/certs/usercert.pem"
-               ("~/certs/thawte_cert.pem"))
-              ("srivasta@golden-gryphon.com" "~/certs/manoj_cert.pem"
-               ("~/certs/thawte_cert.pem"))
-              ("srivasta@acm.org" "~/certs/manoj_cert.pem"
-               ("~/certs/thawte_cert.pem"))
-              ("srivasta@debian.org" "~/certs/manoj_cert.pem"
-               ("~/certs/thawte_cert.pem"))
-              ("srivasta@ieee.org" "~/certs/manoj_cert.pem"
-               ("~/certs/thawte_cert.pem"))
-              ("srivasta@computer.org" "~/certs/manoj_cert.pem"
-               ("~/certs/thawte_cert.pem")))
- smime-CA-directory  "~/certs/CA-CERTS"
-;; diary
- diary-file (concat real-home-directory "/var/lib/diary")
-;; Store everything here...
- temporary-file-directory (concat real-home-directory "/var/tmp")
-;; The directory where cache files should be stored;
- url-cache-directory (concat real-home-directory "/var/cache")
-;;; w3-configuration-directory "~/etc/w3"
- )
 
-
-(defvar identica-username "USER"
-  "*The username for identica.")
-(defvar       identica-password "PASSWORD"
-  "*The username for identica.")
-(defvar       laconica-server "identi.ca"
-  "*The name of the identica server.")
-(defvar       oftc-password "PASSWORD"
-  "*The password for the oftc irc server.")
-(defvar       bitlbee-password "PASSWORD"
-  "*The password for the local bitlbee server.")
-
-
-;;; Load all the encrypted secrets
-(if (file-readable-p (concat (getenv-internal "GNUPGHOME") "/secring.gpg"))
-    (require 'secrets)
-    )
-
-
-;;------------------------------------------------------------------------
-;; locations of various changing files
-(defvar my-diary-file (concat my-emacs-config-dir "/custom")
-  "*The name of your diary file.")
-
-(setq
- ;; eshell dump
- eshell-directory-name (concat my-emacs-var-dir "eshell/")
- ;; where to put autosaved files
- auto-save-list-file-prefix (concat my-emacs-var-dir "autosave/")
- ;; where to put backups
- ;; backup-directory-alist (list (cons "." (concat my-emacs-var-dir "backup")))
- ;; custom file
- custom-file (format "%scustom-emacs%d.el"
-                     (concat my-emacs-config-dir "/custom/")
-                     emacs-major-version))
-(load custom-file)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                   General Settings                                 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'clipmon nil 'noerror)
-(menu-bar-mode  t)                       ;; show the menu...
-(tool-bar-mode -1)                       ;; turn-off toolbar
-(setq fringe-mode '(8 . 8))              ;; emacs 22+
-(delete-selection-mode nil)              ;; don’t delete the sel with a
-                                         ;; keypress, be explicit
-(set-scroll-bar-mode 'left)
-
-;; Basic customization
-
-(put 'narrow-to-region 'disabled nil)
-(put 'eval-expression 'disabled nil)
-(put 'erase-buffer 'disabled nil)        ;; ... useful things
-(file-name-shadow-mode t)                ;; be smart about filenames in mbuf
-
-;;; Try to find a useful buffer to show
-(setq switch-to-visible-buffer nil)
-(defvar shell-command-not-erase-buffer t)
-(setq
- comment-style 'multi-line
- find-file-visit-truename t
- highlight-nonselected-windows t
- backup-by-copying-when-linked t
- backup-by-copying-when-mismatch t
- history-delete-duplicates t
- max-lisp-eval-depth 10000
- max-specpdl-size 10000
- initial-scratch-message ";; scratch buffer created -- happy hacking\n"
- initial-buffer-choice  'remember-notes
- visual-order-cursor-movement nil
- )
-
-(require 'saveplace)
-(setq-default save-place t)
-(require 'recentf)
-;; Set up recentf so I can get a list of recent files when I start
-(recentf-mode 1)
-;;(recentf-open-files nil "*Recent Files*")
-(setq recentf-max-saved-items 1200)
-
-(setq isearch-allow-scroll t)
-(setq search-highlight t                 ;; highlight when searching...
-      query-replace-highlight t)             ;; ...and replacing
-
-(setq fill-column 80)            ;;when to split lines
-
-(setq split-width-threshold nil) ;;;  Do not split window horizontally
-(when (require 'winner nil 'noerror)
-  (winner-mode 1))
-(windmove-default-keybindings)
-;; (desktop-save-mode 1)
-
-(setq savehist-file (concat real-home-directory "/var/cache/emacs-history"))
-(savehist-mode 1)
-
-;;Whether to add a newline automatically at the end of the file.
-;;A value of t means do this only when the file is about to be saved.
-;;A value of `visit' means do this right after the file is visited.
-;;A value of `visit-save' means do it at both of those times.
-;;Any other non-nil value means ask user whether to add a newline, when saving.
-;;nil means don't add newlines.
-(setq require-final-newline 'visit-save)
-
-;; Make emacs faster by having less frequent garbage collection.
-;; Default is 400000 bytes.
-;;(setq gc-cons-threshhold 2000000)
-(global-display-line-numbers-mode 1)
-(defun just-stop-please-stop-dear-god-stop ()
-  "Really, just stop it."
-  (interactive)
-  (if (active-minibuffer-window)
-      (abort-recursive-edit)
-    (keyboard-quit)))
 
 ;;-----------------------------------------------------------------------------
 ;; Language environment
@@ -362,7 +213,26 @@
               ;; If there are at least 10 lines with a leading TAB, use TABs.
               (re-search-forward "^    " (+ (point) 100000) t 10)))
        (set (make-local-variable 'indent-tabs-mode) t))))
+
+;; Package: clean-aindent-mode
+(use-package clean-aindent-mode
+  :init
+  (add-hook 'prog-mode-hook 'clean-aindent-mode))
 
+;; Package: dtrt-indent
+(use-package dtrt-indent
+  :init
+  (dtrt-indent-mode 1)
+  (setq dtrt-indent-verbosity 0))
+
+;; Package: ws-butler
+(use-package ws-butler
+  :init
+  (add-hook 'prog-mode-hook 'ws-butler-mode)
+  (add-hook 'text-mode 'ws-butler-mode)
+  (add-hook 'fundamental-mode 'ws-butler-mode))
+
+
 (defun iwb ()
   "indent whole buffer"
   (interactive)
@@ -533,9 +403,19 @@ If no START and END is provided, the current `region-beginning' and
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+
 ;; CUA mode indications
 ;; --------------------
 ;; You can choose to let CUA use different cursor colors to indicate
@@ -609,6 +489,20 @@ If no START and END is provided, the current `region-beginning' and
         (newline-mark 10 [9166 10] [36 10]) ; 10 LINE FEED
         (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
         ))
+;; show whitespace in diff-mode
+(add-hook 'diff-mode-hook (lambda ()
+                            (setq-local whitespace-style
+                                        '(face
+                                          tabs
+                                          tab-mark
+                                          spaces
+                                          space-mark
+                                          trailing
+                                          indentation::space
+                                          indentation::tab
+                                          newline
+                                          newline-mark))
+                            (whitespace-mode 1)))
 
 ;; Show trailing space/tabs in makefile mode (so space after \ is very
 ;; visible)
@@ -618,8 +512,6 @@ If no START and END is provided, the current `region-beginning' and
 (add-hook 'java-mode-hook (lambda () (setq whitespace-line-column 100)))
 
 
-;; C-k kills whole line and newline if at beginning of line
-(setq kill-whole-line t)
 
 (require 'xref)
 (require 'header2 nil 'noerror)
@@ -924,7 +816,20 @@ If no START and END is provided, the current `region-beginning' and
 (add-hook 'before-save-hook 'time-stamp)
 
 
+;; Package: volatile-highlights
+;; GROUP: Editing -> Volatile Highlights
+(use-package volatile-highlights
+  :init
+  (volatile-highlights-mode t))
 
+;; Package: undo-tree
+;; GROUP: Editing -> Undo -> Undo Tree
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode 1))
+
+
+
 ;; ===== Make Text mode the default mode for new buffers =====
 ;;; These need to be incorporated
 (autoload 'my-text-mode-function               "my-text-mode")
@@ -934,19 +839,6 @@ If no START and END is provided, the current `region-beginning' and
 ;;; (add-hook 'text-mode-hook 'flyspell-mode)
 
 (load-library "insert-box")
-
-;; Should allow me to fill nested quoted messages properly.  Has
-;; zillions of options that can be set.
-(if (require 'filladapt nil 'noerror)
-    (progn
-      (setq-default filladapt-mode t)
-      (setq filladapt-prefix-table nil)
-      (add-hook 'text-mode-hook 'turn-on-filladapt-mode)
-      ;;; (add-hook 'c-mode-hook 'turn-off-filladapt-mode)
-      (add-to-list 'filladapt-token-table '("To: " bullet))
-      (add-to-list 'filladapt-token-table '("Cc: " bullet))))
-
-
 ;; combination of following two variables finally makes Emacs scroll
 ;; nicely. scroll-conservatively is a variable that says Scroll up to
 ;; this many lines, to bring point back on screen.If you set it to
@@ -1578,14 +1470,17 @@ If no START and END is provided, the current `region-beginning' and
             ))
 
 
-;; Enable EDE (Project Management) features
-;;(global-ede-mode 1)
-(require 'ede/generic)
-(ede-enable-generic-projects)
-(require 'ede/speedbar)
-(require 'ede/proj)
-(require 'ede/dired)
+;;; ;; Enable EDE (Project Management) features
+;;; (require 'ede nil 'noerror)
+;;; (global-ede-mode 1)
+;;; (require 'ede/generic nil 'noerror)
+;;; (ede-enable-generic-projects nil 'noerror)
+;;; (require 'ede/speedbar nil 'noerror)
+;;; (require 'ede/proj nil 'noerror)
+;;; (require 'ede/dired nil 'noerror)
 
+;;; (eval-after-load 'speedbar
+;;;   (speedbar-add-supported-extension ".go"))
 
 ;; Enable EDE for a pre-existing C++ project
 ;; (ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
@@ -1775,7 +1670,16 @@ If no START and END is provided, the current `region-beginning' and
 ;; Don't split large messages.
 (setq message-send-mail-partially-limit nil)
 
+
+;; setup GDB
+(setq
+ ;; use gdb-many-windows by default
+ gdb-many-windows t
 
+ ;; Non-nil means display source file containing the main routine at startup
+ gdb-show-main t
+ )
+
 ;;
 ;; C
 ;;
@@ -2826,12 +2730,13 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (require 'wdired)
 (setq wdired-allow-to-change-permissions 'advanced)
 (autoload 'wdired-change-to-wdired-mode "wdired")
-(add-hook 'dired-load-hook
-          '(lambda ()
-             (define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
-             (define-key dired-mode-map
-               [menu-bar immediate wdired-change-to-wdired-mode]
-               '("Edit File Names" . wdired-change-to-wdired-mode))))
+(with-eval-after-load 'dired
+  (progn
+    (define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
+    (define-key dired-mode-map
+      [menu-bar immediate wdired-change-to-wdired-mode]
+      '("Edit File Names" . wdired-change-to-wdired-mode))
+    ))
 (setq wdired-allow-to-change-permissions t)
 
 ;;; A better buffer-menu; with dired like functionality in the buffer
@@ -2952,6 +2857,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (setq-default frame-title-format `(,(user-login-name) "@" ,(system-name) " " global-mode-string " %b" ))
 
 (setq
+ gc-cons-threshold 100000000
  ;; no messages
  inhibit-startup-message nil
  inhibit-startup-echo-area-message (user-real-login-name)
@@ -2976,39 +2882,84 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq
- ido-everywhere         t
- ido-max-directory-size 100000
- )
-(require 'ido)
-(ido-mode t)
-(setq
- ido-ignore-buffers ;; ignore these guys
- '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "^\*trace"
-   "^\*compilation" "^\*GTAGS" "^session\.*" "^\*")
- ;;; iDO becomes very hectic when creating a new file. If you don't
- ;;; type the new file name fast enough, it searches for existing
- ;;; files in other directories with the same name and opens them
- ;;; instead. The following setting disables that feature.
- ido-auto-merge-work-directories-length -1
+;; (setq
+;;  ido-everywhere         t
+;;  ido-max-directory-size 100000
+;;  )
+;; (require 'ido)
+;; (ido-mode t)
+;; (setq
+;;  ido-ignore-buffers ;; ignore these guys
+;;  '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido" "^\*trace"
+;;    "^\*compilation" "^\*GTAGS" "^session\.*" "^\*")
+;;  ;;; iDO becomes very hectic when creating a new file. If you don't
+;;  ;;; type the new file name fast enough, it searches for existing
+;;  ;;; files in other directories with the same name and opens them
+;;  ;;; instead. The following setting disables that feature.
+;;  ido-auto-merge-work-directories-length -1
 
- ido-case-fold  t                 ; be case-insensitive
- ido-enable-last-directory-history t ; remember last used dirs
- ido-max-work-directory-list 30   ; should be enough
- ido-max-work-file-list      50   ; remember many
-;; ido-use-filename-at-point nil    ; don't use filename at point (annoying)
-;; ido-use-url-at-point nil         ; don't use url at point (annoying)
- ido-enable-flex-matching t       ; nil means don't try to be too smart
- ido-max-prospects 8              ; don't spam my minibuffer
- ido-use-virtual-buffers 'auto
- )
+;;  ido-case-fold  t                 ; be case-insensitive
+;;  ido-enable-last-directory-history t ; remember last used dirs
+;;  ido-max-work-directory-list 30   ; should be enough
+;;  ido-max-work-file-list      50   ; remember many
+;; ;; ido-use-filename-at-point nil    ; don't use filename at point (annoying)
+;; ;; ido-use-url-at-point nil         ; don't use url at point (annoying)
+;;  ido-enable-flex-matching t       ; nil means don't try to be too smart
+;;  ido-max-prospects 8              ; don't spam my minibuffer
+;;  ido-use-virtual-buffers 'auto
+;;  )
 
-;; when using ido, the confirmation is rather annoying...
-(setq confirm-nonexistent-file-or-buffer nil)
+;; ;; when using ido, the confirmation is rather annoying...
+;; (setq confirm-nonexistent-file-or-buffer nil)
+
+
+(use-package ivy
+  :init
+  (progn
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t
+          ivy-count-format "%d/%d "
+          ivy-re-builders-alist
+          '((t . ivy--regex-plus)))
+    (setq magit-completing-read-function 'ivy-completing-read)
+    (setq projectile-completion-system 'ivy)
+    (global-set-key (kbd "C-c s") 'swiper))
+  :config
+  (use-package flyspell-correct-ivy
+    :ensure t)
+  )
+(defvar clipmon--autoinsert nil)
+(use-package counsel
+  :ensure t
+  :config
+  (use-package smex
+    :ensure t)
+  (use-package flx
+    :ensure t)
+  (use-package counsel-bbdb
+    :ensure t)
+  :bind
+  (("M-x" . counsel-M-x)
+   ("M-y" . counsel-yank-pop)
+   ("C-c r" . counsel-recentf)
+   ("C-x C-f" . counsel-find-file)
+   ("<f1> f" . counsel-describe-function)
+   ("<f1> v" . counsel-describe-variable)
+   ("<f1> l" . counsel-load-library)
+   ("C-h f" . counsel-describe-function)
+   ("C-h v" . counsel-describe-variable)
+   ("C-h l" . counsel-load-library)))
+
+(use-package counsel-projectile
+  :init
+  (counsel-projectile-mode))
+
 
 ;;; Completion in the mini buffer
 (setq  completion-styles '(basic partial-completion flex initials emacs22))
 (setq completion-word-extra-chars '(" " "-"))
+
+
 ;; Loading this package implements a more fine-grained minibuffer
 ;; completion feedback scheme.  Prospective completions are concisely
 ;; indicated within the minibuffer itself, with each successive
@@ -3841,16 +3792,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (autoload 'boxquote-shell-command              "boxquote")
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                Identica Mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'identica-mode nil 'noerror)
-;;(global-set-key "\C-cip" 'identica-update-status-interactive)
-;;(global-set-key "\C-cid" 'identica-direct-message-interactive)
-
-
 (require 'diff-hl nil 'noerror)
-(add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
 (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode)
 
 ;;; (require 'highlight-symbol)
@@ -3984,13 +3926,30 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 ;;; ;; Autocomplete
-(require 'flycheck-ycmd nil 'noerror)
 (set-variable 'ycmd-server-command (list "/usr/bin/ycmd"))
-(if (require 'ycmd nil 'noerror)
-    (global-ycmd-mode 1))
+;;; (if (require 'ycmd nil 'noerror)
+;;;     (progn
+;;;       (require 'flycheck-ycmd nil 'noerror)
+;;;       (global-ycmd-mode 1))
+;;;   )
 
 (if (require 'company nil 'noerror)
-    (global-company-mode 1))
+    (progn
+      (if (featurep 'ycmd)
+          (require 'company-ycmd nil 'noerror))
+      (global-company-mode 1)))
+;; Package: projejctile
+(use-package projectile
+  :init
+  (projectile-mode)
+  (setq projectile-enable-caching t))
+
+;; Package zygospore
+(use-package zygospore
+  :bind (("C-x 1" . zygospore-toggle-delete-other-windows)
+         ("RET" .   newline-and-indent)))
+
+  ; automatically indent when press RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (if (require 'edit-server nil 'noerror)
@@ -4116,12 +4075,17 @@ user."
 
 (require 'call-graph nil 'noerror)
 
+(require 'ggtags)
+
+(ggtags-mode 1)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
 
 (setq auto-indent-indent-style 'conservative)
 (if (require 'auto-indent-mode)
     (auto-indent-global-mode))
-(require 'company-ycmd nil 'noerror)
-(require 'flycheck-ycmd nil 'noerror)
 (require 'clang-include-fixer nil 'noerror)
 
 ;;(if (require 'indent-guide nil 'noerror) (indent-guide-global-mode))
@@ -4129,7 +4093,6 @@ user."
     (progn
       (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
       (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)
-      (setq highlight-indent-guides-responsive 'top)
       ))
 
 (if (require 'goto-chg nil 'noerror)
@@ -4137,6 +4100,9 @@ user."
       (global-set-key [(control ?.)] 'goto-last-change)
       (global-set-key [(control ?,)] 'goto-last-change-reverse)
       ))
+
+
+
 ;;; Local Variables:
 ;;; mode: emacs-lisp
 ;;; comment-start: ";;; "

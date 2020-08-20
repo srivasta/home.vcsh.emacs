@@ -149,11 +149,10 @@ Prefix arguments are interpreted as with \\[yank]."
                ;;
                ;; Browse URLS
                ;;
-               (setq browse-url-browser-function 'browse-url-firefox)
+               (setq browse-url-browser-function 'browse-url-chromium)
                (setq browse-url-new-window-flag t
                      browse-url-firefox-new-window-is-tab t
-                     browse-url-browser-function '(("^mailto:" . browse-url-mail)
-                                                   ("." . browse-url-firefox)))
+                     )
                (setq
                      lpr-command "xpp"
                      ps-lpr-command "xpp"

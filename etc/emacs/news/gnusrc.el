@@ -34,8 +34,8 @@
 ;;;       nnspool-spool-directory "/var/spool/news/articles"
 ;;;       )
 
-(setq mail-sources
-      '((directory :path "~/var/spool/mail" :suffix ".spool")))
+(setq mail-sources '((directory :path "~/var/spool/mail/"
+                                :predicate 'identity)))
 ;;        (imap :server "smtp.golden-gryphon.com" :dontexpunge t :stream 'tls)
 
 (setq gnus-select-method
@@ -61,8 +61,8 @@
               (nntp-open-connection-function nntp-open-ssl-stream)
               (nntp-port-number 563))
 
-        (nntp "news.gmane.org"
-              (nntp-address "news.gmane.org")
+        (nntp "news.gmane.io"
+              (nntp-address "news.gmane.io")
               (nntp-connection-timeout 300)
               (nntp-open-connection-function nntp-open-network-stream)
               (nntp-port-number 119))
@@ -903,84 +903,82 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
  gnus-outlook-deuglify-unwrap-stop-chars  ".?!"
  )
 ;;; ;; Spam
-;;; (eval-when-compile (require 'spam))
+(eval-when-compile (require 'spam))
 
-;;; (setq
-;;;  spam-log-to-registry t     ; for spam autodetection
-;;;  ;; all groups with `spam' in the name contain spam
-;;;  gnus-spam-newsgroup-contents
-;;;  '(("spam" gnus-group-spam-classification-spam))
-;;;  ;; see documentation for these
-;;;  spam-mark-ham-unread-before-move-from-spam-group t
-;;; ;; gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.org:" "nnml:spam")
-;;; ;;                                  ("^nnml.*" "nnml:spam"))
-;;;  gnus-spam-process-destinations '(("nnml:spam")
-;;;                                   ("^nnml.*" "nnml:spam"))
-;;;  gnus-ham-process-destinations
-;;;  '(("^nnml:spam" "nnml:reclassify"))
-;;;  spam-mark-ham-unread-before-move-from-spam-group t
-;;;  spam-use-crm114 t
-;;;  spam-use-hashcash t
-;;;  spam-use-blacklist t
-;;;  spam-use-whitelist t
-;;; )
-;;; ;; Where to put incoming mail
-;;; (setq spam-crm114-database-directory (expand-file-name "~/var/lib/crm114"))
-;;; (setq gnus-spam-autodetect-methods
-;;;       '(
-;;;         ("^gmane\\." . (spam-use-blacklist
-;;;                         spam-use-BBDB spam-use-hashcash
-;;;                         spam-use-gmane-xref))
-;;;         ("^nntp+news\\.gmane\\.org" . (spam-use-blacklist
-;;;                         spam-use-BBDB
-;;;                         spam-use-gmane-xref))
-;;;         (".*" . (spam-use-blacklist spam-use-hashcash
-;;;                  spam-use-BBDB))
-;;;         ))
+(setq
+ spam-log-to-registry t     ; for spam autodetection
+ ;; all groups with `spam' in the name contain spam
+ gnus-spam-newsgroup-contents
+ '(("spam" gnus-group-spam-classification-spam))
+ ;; see documentation for these
+ spam-mark-ham-unread-before-move-from-spam-group t
+ gnus-spam-process-destinations '(("^nntp\\+news\\.gmane\\.io:" "nnml:spam")
+                                  ("^nnml.*" "nnml:spam"))
+ gnus-ham-process-destinations
+ '(("^nnml:spam" "nnml:reclassify"))
+ spam-mark-ham-unread-before-move-from-spam-group t
+ spam-use-crm114 t
+ spam-use-hashcash t
+ spam-use-blacklist t
+ spam-use-whitelist t
+)
+;; Where to put incoming mail
+(setq spam-crm114-database-directory (expand-file-name "~/var/lib/crm114"))
+(setq gnus-spam-autodetect-methods
+      '(
+        ("^gmane\\." . (spam-use-blacklist
+                        spam-use-BBDB spam-use-hashcash
+                        spam-use-gmane-xref))
+        ("^nntp+news\\.gmane\\.io" . (spam-use-blacklist
+                        spam-use-BBDB
+                        spam-use-gmane-xref))
+        (".*" . (spam-use-blacklist spam-use-hashcash
+                 spam-use-BBDB))
+        ))
 
-;;; (setq gnus-spam-autodetect '(("^nntp.*" . t)
-;;;                              ("^gmane\\." .t)
-;;;                              ("^nnml:\\(debian-.*\\)$" . t)))
+(setq gnus-spam-autodetect '(("^nntp.*" . t)
+                             ("^gmane\\." .t)
+                             ("^nnml:\\(debian-.*\\)$" . t)))
 
-;;; (setq gnus-spam-process-newsgroups
-;;;       '(("^nntp\\+news\\.gmane\\.org"
-;;;          ((spam spam-use-gmane)
-;;;           (spam spam-use-blacklist)
-;;;           ))
-;;;         ("^gmane\\."
-;;;          ((spam spam-use-gmane)
-;;;           (spam spam-use-blacklist)
-;;;           ))
-;;;         ("^nnml:\\(debian-.*\\)$"
-;;;          ((spam-use-resend)))
-;;;         (".*"
-;;;          ((spam spam-use-blacklist)
-;;;           ))
-;;;         ))
+(setq gnus-spam-process-newsgroups
+      '(("^nntp\\+news\\.gmane\\.org"
+         ((spam spam-use-gmane)
+          (spam spam-use-blacklist)
+          ))
+        ("^gmane\\."
+         ((spam spam-use-gmane)
+          (spam spam-use-blacklist)
+          ))
+        ("^nnml:\\(debian-.*\\)$"
+         ((spam-use-resend)))
+        (".*"
+         ((spam spam-use-blacklist)
+          ))
+        ))
 
-;;; (add-to-list
-;;;  'gnus-parameters
-;;;  '("^nnml\\."
-;;;    (spam-autodetect-methods (spam-use-whitelist spam-use-BBDB))
-;;;    ))
-;;; (add-to-list
-;;;  'gnus-parameters
-;;;  '("^gmane\\."
-;;;    (spam-autodetect . t)
-;;;    (spam-autodetect-methods spam-use-gmane-xref spam-use-BBDB)
-;;;    (spam-process '(spam spame-use-gmane))
-;;;    (spam-contents gnus-group-spam-classification-ham)
-;;;    ))
-;;; (add-to-list
-;;;  'gnus-parameters
-;;;  '("^nntp+news.gmane.org"
-;;;    (spam-autodetect . t)
-;;;    (spam-process (
-;;;                   (spam spam-use-gmane)
-;;;                   (spam spam-use-blacklist)
-;;;                   (ham spam-use-whitelist)
-;;;                   ))
-;;;    ))
+(add-to-list
+ 'gnus-parameters
+ '("^nnml\\."
+   (spam-autodetect-methods (spam-use-whitelist spam-use-BBDB))
+   ))
+(add-to-list
+ 'gnus-parameters
+ '("^gmane\\."
+   (spam-autodetect . t)
+   (spam-autodetect-methods spam-use-gmane-xref spam-use-BBDB)
+   (spam-process '(spam spame-use-gmane))
+   (spam-contents gnus-group-spam-classification-ham)
+   ))
+(add-to-list
+ 'gnus-parameters
+ '("^nntp+news.gmane.io"
+   (spam-autodetect . t)
+   (spam-process (
+                  (spam spam-use-gmane)
+                  (spam spam-use-blacklist)
+                  (ham spam-use-whitelist)
+                  ))
+   ))
 
 
 ;;; n order to set “spam-report-resend-to” from a group parameter
@@ -1106,22 +1104,21 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
     ad-do-it))
 
 
-;;
-;;; Toggle on bbdb noticing only in nnml groups.
-(defun dmoore::gnus-toggle-bbdb-noticing ()
-  (let ((method (gnus-find-method-for-group gnus-newsgroup-name)))
-    (cond ((eq 'nnml (car method))
-           (setq bbdb/news-auto-create-p 'bbdb-ignore-most-messages-hook)
-           ;; renamed for tm, dammit.
-           ;;(setq tm-bbdb/auto-create-p bbdb/news-auto-create-p)
-           (setq bbdb-notice-hook 'bbdb-auto-notes-hook))
-          (t
-           (setq bbdb/news-auto-create-p nil)
-           ;; renamed for tm, dammit.
-           ;;(setq tm-bbdb/auto-create-p bbdb/news-auto-create-p)
-           (setq bbdb-notice-hook nil)))))
+;;; ;;
+;;; ;;; Toggle on bbdb noticing only in nnml groups.
+;;; (defun dmoore::gnus-toggle-bbdb-noticing ()
+;;;   (let ((method (gnus-find-method-for-group gnus-newsgroup-name)))
+;;;     (cond ((eq 'nnml (car method))
+;;;            (setq bbdb/news-auto-create-p 'bbdb-ignore-most-messages-hook)
+;;;            ;; renamed for tm, dammit.
+;;;            ;;(setq tm-bbdb/auto-create-p bbdb/news-auto-create-p)
+;;;            (setq bbdb-notice-hook 'bbdb-auto-notes-hook))
+;;;           (t
+;;;            ;; renamed for tm, dammit.
+;;;            ;;(setq tm-bbdb/auto-create-p bbdb/news-auto-create-p)
+;;;            (setq bbdb-notice-hook nil)))))
 
-(add-hook 'gnus-select-group-hook 'dmoore::gnus-toggle-bbdb-noticing)
+;;; (add-hook 'gnus-select-group-hook 'dmoore::gnus-toggle-bbdb-noticing)
 
 ;; Only do automatic bbdb entry popups in nnml groups.
 (defun dmoore::gnus-toggle-bbdb-popup ()
@@ -1186,7 +1183,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
         ;;;      (organization "Manoj Srivastava's Home")
         ;;;      (signature-file "~/etc/mail/signature"))
 
-        ("nntp+news.gmane.org:gmane.user-groups.linux.kolkata"
+        ("nntp+news.gmane.io:gmane.user-groups.linux.kolkata"
          (name "Manoj Srivastava")
          (address "srivasta@debian.org")
          ("X-URL" "http://www.debian.org/%7Esrivasta/")
@@ -1194,7 +1191,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
          (Mail-Copies-To "never")
          (organization "The Debian Project")
          (signature-file "~/etc/mail/signature.debian"))
-        ("nntp+news.gmane.org:gmane.user-groups.linux.mumbai"
+        ("nntp+news.gmane.io:gmane.user-groups.linux.mumbai"
          (name "Manoj Srivastava")
          (address "srivasta@debian.org")
          (Gmane-Reply-To-List "yes")
@@ -1202,7 +1199,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
          ("X-URL" "http://www.debian.org/%7Esrivasta/")
          (organization "The Debian Project")
          (signature-file "~/etc/mail/signature.debian"))
-        ("nntp+news.gmane.org:gmane.user-groups.linux.delhi"
+        ("nntp+news.gmane.io:gmane.user-groups.linux.delhi"
          (name "Manoj Srivastava")
          (address "srivasta@debian.org")
          (Gmane-Reply-To-List "yes")
@@ -1210,7 +1207,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
          ("X-URL" "http://www.debian.org/%7Esrivasta/")
          (organization "The Debian Project")
          (signature-file "~/etc/mail/signature.debian"))
-        ("nntp+news.gmane.org:gmane.org.user-groups.linux.ilugc"
+        ("nntp+news.gmane.io:gmane.io.user-groups.linux.ilugc"
          (name "Manoj Srivastava")
          (address "srivasta@debian.org")
          ("X-URL" "http://www.debian.org/%7Esrivasta/")
@@ -1255,7 +1252,7 @@ You need to add `Content-Type' to `nnmail-extra-headers' and
          ("X-URL" "http://www.debian.org/%7Esrivasta/")
          (organization "The Debian Project")
          (signature-file "~/etc/mail/signature.debian"))
-        ("^nntp+news.gmane.org:gmane.linux.debian.*"
+        ("^nntp+news.gmane.io:gmane.linux.debian.*"
          (name "Manoj Srivastava")
          (address "srivasta@debian.org")
          ("X-URL" "http://www.debian.org/%7Esrivasta/")

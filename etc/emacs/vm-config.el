@@ -1,3 +1,4 @@
+
 (setq
 
  ;;; `M-x vm' causes VM to visit a folder known as your "primary inbox"
@@ -270,8 +271,6 @@
  vm-netscape-program "firefox"
  vm-url-browser 'vm-mouse-send-url-to-netscape
  vm-netscape-program-switches nil
-
-
 )
 
 ;;; If you want VM to always display messages using threads, you should
@@ -428,7 +427,6 @@
                      '(1 font-lock-warning-face t)))
   (font-lock-mode 1)
   (turn-on-auto-fill)
-  (turn-on-filladapt-mode)
   (flyspell-mode 1)
 
   )
@@ -456,6 +454,9 @@
          ("application/x-www-form-urlencoded"  "text/plain")
          ("message/disposition-notification"  "text/plain")
          ("application/mac-binhex40" "application/octet-stream" "hexbin -s")))
+
+(autoload 'vm-select-recipient-from-sender "vm-reply"
+  "Select a recipient's address from the current message's sender, if there is a current message.")
 
 
 
