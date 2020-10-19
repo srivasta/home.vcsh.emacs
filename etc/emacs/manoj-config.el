@@ -441,8 +441,8 @@ If no START and END is provided, the current `region-beginning' and
 
 (add-to-list 'package-archives
              '("ELPA" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+;;;(add-to-list 'package-archives
+;;;             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
@@ -1970,6 +1970,17 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (add-hook 'kill-buffer-hook 'kill-associated-diff-buf)
 
+;;; with editor
+
+
+(use-package with-editor
+  :ensure t
+  :init
+  (add-hook 'server-visit-hook 'with-editor-mode))
+(add-hook 'shell-mode-hook  'with-editor-export-editor)
+(add-hook 'term-exec-hook   'with-editor-export-editor)
+(add-hook 'eshell-mode-hook 'with-editor-export-editor)
+
 ;; ediff:
 ;; (setq ediff-diff-options "--minimal -w")
 
@@ -2315,6 +2326,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
  gnus-home-directory         "~/etc/emacs/news"
  gnus-directory              "~/var/spool/news"
  message-directory           "~/var/spool/mail"
+ bbdb-file                   "~/var/lib/contacts/bbdb"
  gnus-startup-file           (concat gnus-home-directory "/newsrc")
  gnus-init-file              (concat gnus-home-directory "/gnusrc")
  news-directory              (concat gnus-directory      "/articles/")
