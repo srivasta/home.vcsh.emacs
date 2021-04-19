@@ -50,5 +50,10 @@
 (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-9"))
 (set-frame-parameter nil 'font "Liberation Mono-10")
 (add-to-list 'default-frame-alist '(font . "Liberation Mono-10"))
+
+(byte-recompile-directory "~/etc/emacs" nil 'force)
+(byte-recompile-directory "~/etc/emacs/config" nil 'force)
+(byte-recompile-directory "~/etc/emacs/lisp" nil 'force)
+(byte-recompile-directory "~/etc/emacs/news" nil 'force)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; notes ends here

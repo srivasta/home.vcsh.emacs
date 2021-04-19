@@ -243,7 +243,7 @@
 ;;Here is some code to get rid of the ugly equal signs under the date:
 
 (add-hook 'fancy-diary-display-mode-hook
-          '(lambda ()
+          #'(lambda ()
              (alt-clean-equal-signs)))
 
 
@@ -436,9 +436,6 @@ If no START and END is provided, the current `region-beginning' and
 (setq recentf-exclude (append recentf-exclude '(".ftp:.*" ".sudo:.*")))
 (setq recentf-keep '(file-remote-p file-readable-p))
 
-(setq package-archives
-      '(("gnu" . "http://elpa.gnu.org/packages/")))
-
 (add-to-list 'package-archives
              '("ELPA" . "http://tromey.com/elpa/") t)
 ;;;(add-to-list 'package-archives
@@ -3369,7 +3366,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;; Set up the debian-chagelog mode
 (load-library "debian-changelog-mode")
 (add-hook 'debian-changelog-mode-hook
-          '(lambda ()
+          #'(lambda ()
              (make-local-variable 'add-log-mailing-address)
              ;; (flyspell-mode 1)
              (auto-fill-mode 1)
@@ -3663,76 +3660,81 @@ This requires the external program \"diff\" to be in your `exec-path'."
 (autoload 'perlcritic-region "perlcritic" "" t)
 (autoload 'perlcritic-mode   "perlcritic" "" t)
 
-(eval-when-compile (require 'cperl-mode))
-(mapc
- (lambda (pair)
-   (if (eq (cdr pair) 'perl-mode)
-       (setcdr pair 'cperl-mode)))
- (append auto-mode-alist interpreter-mode-alist))
-(setq  interpreter-mode-alist
-       (append interpreter-mode-alist
-               '(("miniperl" . perl-mode)))
-       ;;; Turns on most of the CPerlMode options
-       cperl-hairy t
-       face-list (if (fboundp 'face-list)
-                     (face-list)
-                   nil)
-       ;;; Non-nil means automatically newline before and after braces,
-       cperl-auto-newline t
-
-       ;;; Not-nil means not overwrite C-h f.
-       cperl-clobber-lisp-bindings t
-       ;;;  if, elsif, while, until, else, for, foreach have open
-       ;;;  braces on same line
-       cperl-extra-newline-before-brace nil
-
-       cperl-merge-trailing-else t
-       ;;; Indentation of CPerl statements with respect to containing block
-       cperl-indent-level 2
-       ;;; Non-nil means indent statements in if/etc block relative brace,
-       ;;; not if/etc
-       cperl-indent-wrt-brace nil
-       ;;; on-nil means automatically indent after insertion of (semi)colon.
-       cperl-autoindent-on-semi t
-       cperl-indent-parens-as-block t
-       cperl-close-paren-offset     -2
-
-       cperl-auto-indent-on-semi t
-       cperl-tab-always-indent t
-       ;;; expands for keywords such as foreach, while, etc...
-       cperl-electric-keywords t
-       cperl-electric-lbrace-space nil
-       cperl-electric-linefeed t
-       cperl-electric-parens nil
-       cperl-font-lock t
-       cperl-highlight-variables-indiscriminately t
-       cperl-indent-parens-as-block t
-       cperl-indent-region-fix-constructs nil
-       cperl-info-on-command-no-prompt t
-       cperl-lazy-help-time 5
-       cperl-invalid-face nil
-       )
-
-;;; (defface cperl-my-trailing-spaces-face
-;;;   '((((class color))
-;;;      ;; blah, blah
-;;;      ;; define your tastes (background, foreground)
-;;;      ))
-;;;   "My face for trailing spaces in cperl mode"
-;;;   :group 'cperl-mode) ; Here is the most important part. It says to add
-;;;                           ; this face to the customizable group cperl-mode
-;;;     ;; now you can "bind" this face to cperl-invalid-face
-;;;     (set-default 'cperl-invalid-face 'cperl-my-trailing-spaces-face)
-
-(eval-when-compile (require 'cperl-mode))
-(add-hook 'cperl-mode-hook
-          (lambda ()
-            (font-lock-add-keywords nil
-                                    '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+;;; (eval-when-compile
+;;;   (require 'cperl-mode nil 'noerror)
+;;;   )
 
 
-(setq cperl-extra-newline-before-brace-multiline
-      cperl-extra-newline-before-brace)
+
+;;; (mapc
+;;;  (lambda (pair)
+;;;    (if (eq (cdr pair) 'perl-mode)
+;;;        (setcdr pair 'cperl-mode)))
+;;;  (append auto-mode-alist interpreter-mode-alist))
+;;; (setq  interpreter-mode-alist
+;;;        (append interpreter-mode-alist
+;;;                '(("miniperl" . perl-mode)))
+;;;        ;;; Turns on most of the CPerlMode options
+;;;        cperl-hairy t
+;;;        face-list (if (fboundp 'face-list)
+;;;                      (face-list)
+;;;                    nil)
+;;;        ;;; Non-nil means automatically newline before and after braces,
+;;;        cperl-auto-newline t
+
+;;;        ;;; Not-nil means not overwrite C-h f.
+;;;        cperl-clobber-lisp-bindings t
+;;;        ;;;  if, elsif, while, until, else, for, foreach have open
+;;;        ;;;  braces on same line
+;;;        cperl-extra-newline-before-brace nil
+
+;;;        cperl-merge-trailing-else t
+;;;        ;;; Indentation of CPerl statements with respect to containing block
+;;;        cperl-indent-level 2
+;;;        ;;; Non-nil means indent statements in if/etc block relative brace,
+;;;        ;;; not if/etc
+;;;        cperl-indent-wrt-brace nil
+;;;        ;;; on-nil means automatically indent after insertion of (semi)colon.
+;;;        cperl-autoindent-on-semi t
+;;;        cperl-indent-parens-as-block t
+;;;        cperl-close-paren-offset     -2
+
+;;;        cperl-auto-indent-on-semi t
+;;;        cperl-tab-always-indent t
+;;;        ;;; expands for keywords such as foreach, while, etc...
+;;;        cperl-electric-keywords t
+;;;        cperl-electric-lbrace-space nil
+;;;        cperl-electric-linefeed t
+;;;        cperl-electric-parens nil
+;;;        cperl-font-lock t
+;;;        cperl-highlight-variables-indiscriminately t
+;;;        cperl-indent-parens-as-block t
+;;;        cperl-indent-region-fix-constructs nil
+;;;        cperl-info-on-command-no-prompt t
+;;;        cperl-lazy-help-time 5
+;;;        cperl-invalid-face nil
+;;;        )
+
+;;; ;;; (defface cperl-my-trailing-spaces-face
+;;; ;;;   '((((class color))
+;;; ;;;      ;; blah, blah
+;;; ;;;      ;; define your tastes (background, foreground)
+;;; ;;;      ))
+;;; ;;;   "My face for trailing spaces in cperl mode"
+;;; ;;;   :group 'cperl-mode) ; Here is the most important part. It says to add
+;;; ;;;                           ; this face to the customizable group cperl-mode
+;;; ;;;     ;; now you can "bind" this face to cperl-invalid-face
+;;; ;;;     (set-default 'cperl-invalid-face 'cperl-my-trailing-spaces-face)
+
+;;; (eval-when-compile (require 'cperl-mode))
+;;; (add-hook 'cperl-mode-hook
+;;;           (lambda ()
+;;;             (font-lock-add-keywords nil
+;;;                                     '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+
+
+;;; (setq cperl-extra-newline-before-brace-multiline
+;;;       cperl-extra-newline-before-brace)
 (setq
  ;; Non-nil means TAB in Perl mode should always indent the current
  ;; line, regardless of where in the line point is when the TAB
@@ -3965,7 +3967,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
                                              ;default
 
 
-(add-hook `LaTeX-mode-hook
+(add-hook 'LaTeX-mode-hook
           '(lambda ()
              (define-key LaTeX-mode-map "\C-cn" 'TeX-next-error)
              (define-key LaTeX-mode-map [tab] 'LaTeX-indent-line)
@@ -4064,7 +4066,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
   )
 (require 'my-org nil 'noerror)
 (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
-
+(require 'org-tempo nil 'noerror)
 ;; If we leave Emacs running overnight - reset the appointments one
 ;; minute after midnight
 (run-at-time "24:01" nil 'my-org-agenda-to-appt)
@@ -4175,9 +4177,6 @@ user."
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
               (ggtags-mode 1))))
 
-(setq auto-indent-indent-style 'conservative)
-(if (require 'auto-indent-mode)
-    (auto-indent-global-mode))
 (require 'clang-include-fixer nil 'noerror)
 
 ;;(if (require 'indent-guide nil 'noerror) (indent-guide-global-mode))
@@ -4246,10 +4245,18 @@ user."
 (install-package 'vc-hgcmd)
 (setq vc-handled-backends '(Hgcmd Git))
 
-
+(setq rust-format-on-save t)
 (require 'diminish)
 (require 'bind-key)
 
+
+;; Workaround for https://debbugs.gnu.org/cgi/bugreport.cgi?bug=45824, which
+;; causes Emacs not to run screen.el when TERM=screen.xterm-256color.
+(add-to-list 'term-file-aliases '("screen.xterm-256color" . "screen-256color"))
+;; Enable Emacs to write to the system clipboard through OSC 52 codes.
+(setq xterm-screen-extra-capabilities '(modifyOtherKeys setSelection))
+
+(setq xterm-tmux-extra-capabilities '(modifyOtherKeys setSelection))
 
 ;;; Local Variables:
 ;;; mode: emacs-lisp
