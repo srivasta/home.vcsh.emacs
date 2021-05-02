@@ -436,6 +436,7 @@ If no START and END is provided, the current `region-beginning' and
 (setq recentf-exclude (append recentf-exclude '(".ftp:.*" ".sudo:.*")))
 (setq recentf-keep '(file-remote-p file-readable-p))
 
+(setq package-native-compile t)
 (add-to-list 'package-archives
              '("ELPA" . "http://tromey.com/elpa/") t)
 ;;;(add-to-list 'package-archives
@@ -453,25 +454,6 @@ If no START and END is provided, the current `region-beginning' and
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-
-;; Package: clean-aindent-mode
-(use-package clean-aindent-mode
-  :init
-  (add-hook 'prog-mode-hook 'clean-aindent-mode))
-
-;; Package: dtrt-indent
-(use-package dtrt-indent
-  :init
-  (dtrt-indent-mode 1)
-  (setq dtrt-indent-verbosity 0))
-
-;; Package: ws-butler
-(use-package ws-butler
-  :init
-  (add-hook 'prog-mode-hook 'ws-butler-mode)
-  (add-hook 'text-mode 'ws-butler-mode)
-  (add-hook 'fundamental-mode 'ws-butler-mode))
-
 
 
 ;; CUA mode indications
@@ -872,20 +854,6 @@ If no START and END is provided, the current `region-beginning' and
 
 (add-hook 'find-file-hook 'auto-insert)
 (add-hook 'before-save-hook 'time-stamp)
-
-
-;; Package: volatile-highlights
-;; GROUP: Editing -> Volatile Highlights
-(use-package volatile-highlights
-  :init
-  (volatile-highlights-mode t))
-
-;; Package: undo-tree
-;; GROUP: Editing -> Undo -> Undo Tree
-(use-package undo-tree
-  :init
-  (global-undo-tree-mode 1))
-
 
 
 ;; ===== Make Text mode the default mode for new buffers =====
@@ -1526,6 +1494,7 @@ If no START and END is provided, the current `region-beginning' and
                                       )
                                     )
             ))
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 
 ;; Enable EDE (Project Management) features
@@ -3844,26 +3813,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
             (setq indent-tabs-mode nil)
             ))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; flymake minor mode
-;; insure flymake errors get plopped into the *Messages* buffer
-;; Setup for Flymake code checking.
-(if (require 'flycheck nil 'noerror)
-    (add-hook 'after-init-hook #'global-flycheck-mode))
-
-(require 'flymake)
-(require 'flymake-shell nil 'noerror)
-;;(require 'flymake-perlcritic)
-(require 'flymake-yaml nil 'noerror) ;; Not necessary if using ELPA package
-(add-hook 'find-file-hook 'flymake-find-file-hook)
-(add-hook 'sh-set-shell-hook 'flymake-shell-load)
-(add-hook 'yaml-mode-hook 'flymake-yaml-load)
-;;(add-hook 'find-file-hook 'flymake-find-file-hook)
-;;(add-hook 'cperl-mode-hook 'flymake-mode)
-;;(add-hook 'perl-mode-hook 'flymake-mode)
-;;(add-hook 'c-mode-common-hook 'flymake-mode)
-(defun flymake-get-tex-args (file-name)
-  (list "pdflatex" (list "-file-line-error" "-draftmode" "-interaction=nonstopmode" file-name)))
 
 
 (eval-after-load "message"
@@ -4034,12 +3983,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
   :init
   (projectile-mode)
   (setq projectile-enable-caching t))
-
-;; Package zygospore
-(use-package zygospore
-  :bind (("C-x 1" . zygospore-toggle-delete-other-windows)
-         ("RET" .   newline-and-indent)))
-
   ; automatically indent when press RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lisp mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4081,17 +4024,6 @@ This requires the external program \"diff\" to be in your `exec-path'."
 ;(require 'pymacs)
 ;;(eval-after-load "pymacs"
 ;;  (pymacs-load "ropemacs" "rope-"))
-
-(when (load "flymake" t)
-      (defun flymake-pylint-init ()
-        (let* ((temp-file (flymake-proc-init-create-temp-buffer-copy
-                           'flymake-create-temp-inplace))
-               (local-file (file-relative-name
-                            temp-file
-                            (file-name-directory buffer-file-name))))
-          (list "epylint" (list local-file))))
-      (add-to-list 'flymake-allowed-file-name-masks
-                   '("\\.py\\'" flymake-pylint-init)))
 
 (defun my-find-file-as-root ()
   "Like `ido-find-file, but automatically edit the file with
@@ -4192,16 +4124,6 @@ user."
       (global-set-key [(control ?,)] 'goto-last-change-reverse)
       ))
 
-(add-hook 'find-file-hook 'flymake-find-file-hook)
-(add-hook 'sh-set-shell-hook 'flymake-shell-load)
-(add-hook 'yaml-mode-hook 'flymake-yaml-load)
-;;(add-hook 'find-file-hook 'flymake-find-file-hook)
-;;(add-hook 'cperl-mode-hook 'flymake-mode)
-;;(add-hook 'perl-mode-hook 'flymake-mode)
-;;(add-hook 'c-mode-common-hook 'flymake-mode)
-;;;(if (require 'flycheck nil 'noerror)
-;;;    (add-hook 'after-init-hook #'global-flycheck-mode))
-
 ;;; https://emacs.stackexchange.com/questions/24459/revert-all-open-buffers-and-ignore-errors
 (defun revert-all-file-buffers ()
   "Refresh all open file buffers without confirmation.
