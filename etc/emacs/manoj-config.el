@@ -488,7 +488,7 @@ If no START and END is provided, the current `region-beginning' and
 (global-set-key   (kbd "C-S-v" ) 'x-clipboard-yank)
 (global-unset-key (kbd "C-S-c" ))
 (global-set-key   (kbd "C-S-c" ) 'clipboard-kill-ring-save)
-
+(setq save-interprogram-paste-before-kill t)
 
 
 (setq indicate-empty-lines t)
@@ -502,7 +502,7 @@ If no START and END is provided, the current `region-beginning' and
   "Major mode for editing Markdown files" t)
 (setq auto-mode-alist
       (cons '("\\.mdwn$" . markdown-mode) auto-mode-alist))
-;;; (add-hook 'markdown-mode-hook 'flyspell-mode)
+(add-hook 'markdown-mode-hook 'flyspell-mode)
 (setq auto-mode-case-fold t)
 
 
@@ -862,7 +862,7 @@ If no START and END is provided, the current `region-beginning' and
 (add-hook 'text-mode-hook 'my-text-mode-function)
 (setq major-mode 'paragraph-indent-text-mode )
 (add-hook 'text-mode-hook 'paragraph-indent-minor-mode)
-;;; (add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'text-mode-hook 'flyspell-mode)
 
 (load-library "insert-box")
 ;; combination of following two variables finally makes Emacs scroll
@@ -1046,7 +1046,7 @@ If no START and END is provided, the current `region-beginning' and
 (define-key global-map (kbd "C-c SPC") 'cua-set-mark)
 
 (global-set-key (kbd "C-c /")
-                '(lambda()
+                #'(lambda()
                    "Refine display of unified diff hunks"
                    (interactive)
                    (save-excursion
@@ -1742,7 +1742,7 @@ If no START and END is provided, the current `region-beginning' and
   (hs-minor-mode 1)
   )
 
-;;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (add-hook 'prog-mode-hook
           (lambda ()
             (subword-mode 1)
@@ -1764,7 +1764,7 @@ If no START and END is provided, the current `region-beginning' and
 
 
 (add-hook 'c++-mode-hook
-          '(lambda ()
+          #'(lambda ()
              (c-set-offset 'stream-op 'c-lineup-streamop)))
 
 ;;allow compile window to vanish if no errors.
@@ -1862,7 +1862,7 @@ If no START and END is provided, the current `region-beginning' and
 
 ;; Automatically indents the new line.
 (add-hook 'lisp-mode-hook
-          '(lambda ()
+          #'(lambda ()
              (local-set-key (kbd "RET") 'newline-and-indent)))
 ;;;     (define-key global-map (kbd "RET") 'newline-and-indent)
 ;;; (add-hook 'f90-mode-hook
@@ -2657,7 +2657,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 (add-hook
  'mail-setup-hook
- '(lambda ()
+ #'(lambda ()
     (substitute-key-definition
      'end-of-buffer 'mail-abbrev-end-of-buffer
      mail-mode-map global-map)
@@ -3593,11 +3593,11 @@ This requires the external program \"diff\" to be in your `exec-path'."
     (insert (format-time-string format))))
 
 
-;;; Calendar integration
-(require 'org-gcal nil 'noerror)
-(require 'calfw nil 'noerror)
-(require 'calfw-org nil 'noerror)
-(require 'calfw-cal nil 'noerror)
+;;; ;;; Calendar integration
+;;; (require 'org-gcal nil 'noerror)
+;;; (require 'calfw nil 'noerror)
+;;; (require 'calfw-org nil 'noerror)
+;;; (require 'calfw-cal nil 'noerror)
 
 ;; set up git-gutter
 (if (require 'git-gutter nil 'noerror)
@@ -3917,12 +3917,10 @@ This requires the external program \"diff\" to be in your `exec-path'."
 
 
 (add-hook 'LaTeX-mode-hook
-          '(lambda ()
-             (define-key LaTeX-mode-map "\C-cn" 'TeX-next-error)
-             (define-key LaTeX-mode-map [tab] 'LaTeX-indent-line)
-             (auto-fill-mode t)
-             ;; (flyspell-mode t)
-             ))
+          #'(lambda ()
+              (auto-fill-mode t)
+              (flyspell-mode t)
+              ))
 
 (eval-when-compile (require 'reftex))
 (setq reftex-enable-partial-scans t)
@@ -4000,7 +3998,7 @@ This requires the external program \"diff\" to be in your `exec-path'."
             (local-set-key (kbd "\M-\C-p") 'outline-previous-visible-heading)
             (local-set-key (kbd "\M-\C-u") 'outline-up-heading)
             ;; flyspell mode to spell check everywhere
-            ;; (flyspell-mode 1)
+            (flyspell-mode 1)
             ))
 
 (use-package org-journal

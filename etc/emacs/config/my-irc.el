@@ -198,6 +198,8 @@
 (setq erc-current-nick-highlight-type 'nick-or-keyword)
 
 
+
+
 ;; after starting erc
 (setq erc-mode-hook nil)
 (add-hook
@@ -490,6 +492,26 @@ stuff, to the current ERC buffer."
   (setq erc-join-buffer 'frame)
   (call-interactively 'my-irc)
   )
+
+(add-hook
+ 'window-configuration-change-hook
+ #'(lambda ()
+     (save-excursion
+       (walk-windows
+        (lambda (w)
+          (let ((buffer (window-buffer w)))
+            (set-buffer buffer)
+            (when (eq major-mode 'erc-mode)
+              (setq erc-fill-column (- (window-width w) 10)))))))))
+
+(defun my-erc-refill (column)
+  "Fill the ERC messages in the current buffer to COLUMN.
+    Using a very high number will undo any previous filling.
+    See also `erc-fill-prefix'."
+  (interactive "nFill at which column? ")
+  (let ((erc-fill-column column))
+    ;; `erc-fill' fills the whole buffer, no need to set region
+    (erc-fill)))
 
 ;;; (if (display-graphic-p)
 ;;;     (setq erc-join-buffer 'frame)
