@@ -315,6 +315,17 @@
   "Insert the current date and time using the format required for debian files."
   (interactive)
   (shell-command "date +'%a, %d %b %Y %H:%m:%S %z'" t))
+
+(defun insert-date (prefix)
+  "Insert the current date. With PREFIX, use American format.
+With two prefix arguments, write out the day and month name."
+  (interactive "P")
+  (let ((format (cond
+                 ((not prefix) "%Y-%m-%d")
+                 ((equal prefix '(4)) "%d.%m.%Y")
+                 ((equal prefix '(16)) "%A, %d. %B %Y"))))
+    (insert (format-time-string format))))
+
 (defun rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
